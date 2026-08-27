@@ -688,6 +688,18 @@ button { font: inherit; color: inherit; }
 .sel-wrap select:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 .date-arrow { color: var(--ink-3); font-size: .8125rem; flex: none; }
 
+/* yüksek kardinaliteli boyut için arama kutusu (380 müşteri çip olamaz) */
+.slicer-search {
+  width: 100%; font: inherit; font-size: .8125rem;
+  padding: .38rem .6rem; border-radius: 7px;
+  border: 1px solid var(--control); background: var(--surface); color: var(--ink);
+  transition: border-color .18s var(--ease), box-shadow .18s var(--ease);
+}
+.slicer-search::placeholder { color: var(--ink-3); }
+.slicer-search:hover { border-color: var(--accent); }
+.slicer-search:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.slicer-hint { font-size: .7rem; color: var(--ink-3); line-height: 1.4; padding: .15rem 0; }
+
 /* çipler */
 .chip-row { display: flex; flex-wrap: wrap; gap: .3rem; }
 .slicers .chip {
@@ -884,6 +896,26 @@ table.dt th.sortable:hover { color: var(--accent); }
   border: 1px solid color-mix(in srgb, var(--critical) 45%, var(--rule));
   background: color-mix(in srgb, var(--critical) 8%, var(--surface)); color: var(--ink);
 }
+
+/* ---------- başlık satırı anahtarı ---------- */
+.hdr-toggle {
+  display: flex; align-items: center; gap: .6rem 1rem; flex-wrap: wrap;
+  padding: .7rem .9rem; margin-bottom: .7rem;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--surface);
+}
+.hdr-q { font-size: .8125rem; font-weight: 600; }
+.hdr-note { font-size: .78rem; color: var(--ink-3); margin-left: auto; }
+@media (max-width: 620px) { .hdr-note { margin-left: 0; flex-basis: 100%; } }
+
+/* ---------- düzenlenebilir kolon adı ---------- */
+.col-name {
+  font-family: var(--f-mono); font-size: .78rem; color: var(--ink);
+  background: transparent; border: 1px solid transparent; border-radius: 4px;
+  padding: .12rem .3rem; width: 100%; min-width: 90px; max-width: 190px;
+  transition: border-color .15s var(--ease), background .15s var(--ease);
+}
+.col-name:hover { border-color: var(--rule-2); background: var(--surface-2); }
+.col-name:focus { outline: none; border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-soft); }
 
 /* ---------- data preview table (greenbar in earnest) ---------- */
 .tbl-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
@@ -1091,6 +1123,106 @@ pre.code .f { color: var(--s7); font-weight: 500; }
 .empty-state p { font-size: .875rem; max-width: 44ch; margin-inline: auto; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ============================================================
+   MODEL ADIMI — sayfalar arası ilişkiler
+   ============================================================ */
+.mdl-tbls { display: flex; flex-wrap: wrap; gap: .6rem; }
+.mdl-tbl {
+  display: grid; gap: .12rem; padding: .6rem .85rem; min-width: 160px;
+  border: 1px solid var(--rule); border-left: 3px solid var(--rule-2);
+  border-radius: 7px; background: var(--surface);
+}
+.mdl-tbl b { font-size: .8125rem; font-weight: 600; }
+.mdl-tbl span:last-child { font-size: .72rem; color: var(--ink-3); }
+.mdl-role {
+  font-family: var(--f-mono); font-size: .62rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.mdl-tbl[data-role="olgu"]  { border-left-color: var(--accent); }
+.mdl-tbl[data-role="olgu"] .mdl-role { color: var(--accent); }
+.mdl-tbl[data-role="boyut"] { border-left-color: var(--s3); }
+.mdl-tbl[data-role="boyut"] .mdl-role { color: var(--s3); }
+
+.rel-list { display: grid; gap: .55rem; }
+.rel-card {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .85rem;
+  align-items: start; padding: .8rem 1rem;
+  border: 1px solid var(--rule); border-radius: 8px; background: var(--surface);
+  /* kademeli görünüm: kartlar aynı anda düşmez */
+  opacity: 0; transform: translateY(12px);
+  animation: rel-rise .34s var(--ease) both;
+  animation-delay: calc(var(--n, 0) * 60ms);
+}
+@keyframes rel-rise { to { opacity: 1; transform: none; } }
+.rel-card[data-on="false"] { opacity: .62; }
+.rel-card[data-on="false"] .rel-path { color: var(--ink-3); }
+.rel-path { font-size: .8125rem; line-height: 1.5; }
+.rel-path b { font-weight: 650; }
+.rel-arrow { color: var(--accent); padding: 0 .2rem; font-weight: 600; }
+.rel-meta { font-size: .74rem; color: var(--ink-3); margin-top: .2rem; }
+.rel-warn {
+  font-size: .76rem; color: var(--ink-2); line-height: 1.55; margin-top: .45rem;
+  padding-left: .6rem; border-left: 2px solid var(--warning);
+}
+.rel-conf {
+  font-family: var(--f-mono); font-size: .66rem; white-space: nowrap;
+  padding: .18rem .45rem; border: 1px solid var(--rule); border-radius: 4px; color: var(--ink-3);
+}
+.rel-conf[data-c="high"] { border-color: color-mix(in srgb, var(--good) 45%, var(--rule)); color: var(--good-ink); }
+.rel-conf[data-c="suggested"] { border-color: color-mix(in srgb, var(--warning) 55%, var(--rule)); color: var(--serious); }
+
+/* açma/kapama anahtarı — yay hissi veren tutamak */
+.rel-sw { display: inline-flex; cursor: pointer; margin-top: .12rem; }
+.rel-sw input { position: absolute; opacity: 0; width: 0; height: 0; }
+.rel-track {
+  display: block; width: 34px; height: 19px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--control);
+  transition: background .2s var(--ease), border-color .2s var(--ease);
+}
+.rel-track i {
+  display: block; width: 13px; height: 13px; margin: 2px; border-radius: 50%;
+  background: var(--ink-3);
+  transition: transform .34s var(--spring), background .2s var(--ease);
+}
+.rel-sw input:checked + .rel-track { background: var(--accent-soft); border-color: var(--accent); }
+.rel-sw input:checked + .rel-track i { transform: translateX(15px); background: var(--accent); }
+.rel-sw input:focus-visible + .rel-track { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rel-sw:active .rel-track i { transform: scale(.9) translateX(var(--x, 0)); }
+.rel-sw input:checked:active + .rel-track i { --x: 16px; }
+
+.rel-reds { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: 7px; overflow: hidden; background: var(--surface); }
+.rel-red {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .3rem .75rem;
+  padding: .6rem 1rem; border-bottom: 1px solid var(--rule); font-size: .78rem;
+}
+.rel-red:last-child { border-bottom: 0; }
+.rel-red:nth-child(odd) { background: color-mix(in srgb, var(--surface-2) 50%, transparent); }
+.rel-red > span { color: var(--ink-2); font-family: var(--f-mono); font-size: .72rem; }
+.rel-red > b { font-size: .72rem; color: var(--crit-ink); white-space: nowrap; }
+.rel-red > p { grid-column: 1 / -1; font-size: .74rem; color: var(--ink-3); line-height: 1.5; }
+
+.rel-add { align-items: end; }
+.role-pill[data-r="virtual"] { border-color: color-mix(in srgb, var(--s7) 55%, var(--rule)); color: var(--s7); }
+.row-virtual { background: color-mix(in srgb, var(--surface-2) 45%, transparent); }
+.row-virtual .virt-src { font-size: .68rem; color: var(--ink-3); margin-top: .15rem; font-family: var(--f-mono); }
+
+@media (prefers-reduced-motion: reduce) {
+  .rel-card { opacity: 1; transform: none; animation: none; }
+}
+@media (max-width: 620px) {
+  .rel-card { grid-template-columns: auto minmax(0, 1fr); }
+  .rel-conf { grid-column: 2; justify-self: start; }
+}
+
+.rel-todo { list-style: none; display: grid; gap: .3rem; margin-top: .7rem; }
+.rel-todo li {
+  display: flex; flex-wrap: wrap; gap: .5rem; align-items: baseline;
+  padding: .4rem .65rem; border-radius: 5px;
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+}
+.rel-todo .mono { font-family: var(--f-mono); font-size: .74rem; color: var(--ink); }
+.rel-todo em { font-style: normal; font-size: .7rem; color: var(--ink-3); }
 </style>
 <header class="mast">
   <div class="wrap mast-in">
@@ -1302,9 +1434,10 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     <div class="steps" role="tablist" aria-label="Rapor adımları">
       <button class="step-btn" role="tab" data-step="0" aria-selected="true"><i>1</i> Veri</button>
       <button class="step-btn" role="tab" data-step="1" aria-selected="false" disabled><i>2</i> Profil &amp; Kalite</button>
-      <button class="step-btn" role="tab" data-step="2" aria-selected="false" disabled><i>3</i> Özet Rapor</button>
-      <button class="step-btn" role="tab" data-step="3" aria-selected="false" disabled><i>4</i> İçgörüler</button>
-      <button class="step-btn" role="tab" data-step="4" aria-selected="false" disabled><i>5</i> Power BI Paketi</button>
+      <button class="step-btn" role="tab" data-step="2" aria-selected="false" disabled><i>3</i> Model</button>
+      <button class="step-btn" role="tab" data-step="3" aria-selected="false" disabled><i>4</i> Özet Rapor</button>
+      <button class="step-btn" role="tab" data-step="4" aria-selected="false" disabled><i>5</i> İçgörüler</button>
+      <button class="step-btn" role="tab" data-step="5" aria-selected="false" disabled><i>6</i> Power BI Paketi</button>
     </div>
 
     <div class="pane on" id="pane-0">
@@ -1327,9 +1460,10 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     </div>
 
     <div class="pane" id="pane-1"><div id="profileBox"></div></div>
-    <div class="pane" id="pane-2"><div id="reportBox"></div></div>
-    <div class="pane" id="pane-3"><div id="insightBox"></div></div>
-    <div class="pane" id="pane-4"><div id="pbiBox"></div></div>
+    <div class="pane" id="pane-2"><div id="modelBox"></div></div>
+    <div class="pane" id="pane-3"><div id="reportBox"></div></div>
+    <div class="pane" id="pane-4"><div id="insightBox"></div></div>
+    <div class="pane" id="pane-5"><div id="pbiBox"></div></div>
   </div>
 </section>
 
@@ -1675,8 +1809,64 @@ function parseBool(v) {
   return k in boolWords ? boolWords[k] : null;
 }
 
+/** Aday satır gerçekten başlık mı, yoksa veri mi?
+    Başlıklar metindir ve altındaki kolonun tipiyle eşleşmez. Aday hücre,
+    altındaki kolonla aynı tipte (sayı/tarih) ayrıştırılabiliyorsa o satır
+    büyük olasılıkla bir kayıttır — başlık değil. */
+/** "Not 1" → "aA 9" gibi bir biçim imzası. Başlık hücresi altındaki
+    değerlerle aynı imzayı taşıyorsa o satır başlık değil, veridir. */
+function shapeOf(v) {
+  return String(v).trim()
+    .replace(/[0-9]+/g, '9')
+    .replace(/[^\W\d_]+/gu, 'a')
+    .slice(0, 24);
+}
+
+function looksLikeHeader(headerRow, body, width) {
+  let dataLike = 0, textish = 0, filled = 0;
+  for (let c = 0; c < width; c++) {
+    const h = headerRow[c];
+    if (isBlank(h)) continue;
+    filled++;
+    let num = 0, dat = 0, tot = 0;
+    for (let r = 0; r < Math.min(body.length, 40); r++) {
+      const v = body[r] ? body[r][c] : null;
+      if (isBlank(v)) continue;
+      tot++;
+      if (v instanceof Date || parseDate(v)) dat++;
+      else if (typeof v === 'number' || parseNum(v) !== null) num++;
+    }
+    if (!tot) continue;
+    const colNum = num / tot >= .7, colDate = dat / tot >= .7;
+    const hNum = typeof h === 'number' || parseNum(h) !== null;
+    const hDate = h instanceof Date || !!parseDate(h);
+    // Biçim imzası aynıysa (ör. "Not 1" ile "Not 2") bu bir kayıttır.
+    // Ama imza ancak RAKAM taşıyorsa kanıttır: yalın "a" imzası hiçbir şey
+    // söylemez — tek kelimelik her başlık tek kelimelik her değerle aynı
+    // görünür ("Şehir" ↔ "İstanbul"). Boyut sayfaları tam olarak böyle
+    // olduğu için bu ayrım olmadan hepsi "başlıksız" sanılıyordu.
+    const hShape = shapeOf(h);
+    let sameShape = 0, shapeTot = 0;
+    if (/9/.test(hShape)) {
+      for (let r = 0; r < Math.min(body.length, 30); r++) {
+        const v = body[r] ? body[r][c] : null;
+        if (isBlank(v)) continue;
+        shapeTot++;
+        if (shapeOf(v) === hShape) sameShape++;
+      }
+    }
+    const shapeMatch = shapeTot >= 3 && sameShape / shapeTot >= 0.7;
+
+    if ((colNum && hNum) || (colDate && hDate) || shapeMatch) dataLike++;
+    else if (typeof h === 'string' && !hNum && !hDate) textish++;
+  }
+  if (!filled) return false;
+  return dataLike / filled < 0.34 && textish >= Math.max(1, Math.ceil(filled * 0.5));
+}
+
 /** Başlık satırını tahmin et: ilk 12 satırın içinde en çok metin taşıyan ve
-    altındaki satırlardan tip olarak farklılaşan satır. */
+    altındaki satırlardan tip olarak farklılaşan satır. Hiçbiri başlık gibi
+    durmuyorsa { hasHeader: false } döner — bu durumda ilk satır da veridir. */
 function findHeader(rows) {
   const limit = Math.min(12, rows.length);
   let best = 0, bestScore = -1;
@@ -1690,8 +1880,46 @@ function findHeader(rows) {
     const score = textish * 2 + filled.length + (below.length ? (belowNum / below.length) * 8 : 0) - i * 0.6;
     if (score > bestScore) { bestScore = score; best = i; }
   }
-  return best;
+  const width = (rows[best] || []).length;
+  const hasHeader = looksLikeHeader(rows[best] || [], rows.slice(best + 1), width);
+  return { index: best, hasHeader };
 }
+
+/* ---------- özet (ara toplam) satırı tespiti ----------
+   Excel'den gelen raporlarda veri arasına serpiştirilmiş "ARA TOPLAM" /
+   "GENEL TOPLAM" satırları normal kayıt sanılırsa bütün toplamlar sessizce
+   şişer. Bu, bir raporlama aracının yapabileceği en tehlikeli hatadır. */
+const AGG_EXACT_RE = /^\s*(ara|genel|alt|üst|ust)?\s*(toplam|total|subtotal|grand\s*total|sum|ortalama|average|yekun|yekûn)\s*:?\s*$/i;
+const AGG_PART_RE  = /((ara|genel|alt)\s*toplam|grand\s*total|sub\s*total|toplam\s*:)/i;
+
+function detectAggRows(fields, data) {
+  const textCols = fields.filter(f => f.type === 'text' || f.type === 'empty').map(f => f.idx);
+  const measCols = fields.filter(f => f.type === 'number').map(f => f.idx);
+  const keyCols  = fields.filter(f => f.type !== 'number').map(f => f.idx);
+  const agg = new Set();
+  const reasons = { keyword: 0, sparse: 0 };
+
+  for (let i = 0; i < data.length; i++) {
+    const r = data[i];
+    let hit = '';
+    for (const c of textCols) {
+      const v = r[c];
+      if (typeof v === 'string' && (AGG_EXACT_RE.test(v) || AGG_PART_RE.test(v))) { hit = 'keyword'; break; }
+    }
+    // Anahtar/boyut kolonlarının çoğu boş ama ölçü dolu → özet satırı deseni
+    if (!hit && measCols.length && keyCols.length >= 3) {
+      const measFilled = measCols.some(c => !isBlank(r[c]));
+      const blankKeys = keyCols.reduce((n, c) => n + (isBlank(r[c]) ? 1 : 0), 0);
+      if (measFilled && blankKeys >= Math.ceil(keyCols.length * 0.7)) hit = 'sparse';
+    }
+    if (hit) { agg.add(i); reasons[hit]++; }
+  }
+  return { set: agg, reasons };
+}
+
+/* ---------- para birimi kolonu ---------- */
+const CUR_CODE_RE = /^(TRY|TL|USD|EUR|GBP|CHF|JPY|RUB|AED|SAR|CNY|₺|\$|€|£)$/i;
+const CUR_NAME_RE = /(para\s*birimi|currency|döviz|doviz|kur)/i;
 
 const ID_RE = /(^|[\s_\-.])(id|kod|code|no|num|numara|barkod|sku|ref|referans|tckn|vkn|fiş|fis|fatura|sipariş|siparis)([\s_\-.]|$)/i;
 const MEASURE_RE = /(tutar|ciro|satış|satis|gelir|hasılat|hasilat|toplam|net|brüt|brut|amount|revenue|sales|total|value|price|fiyat|maliyet|cost|kar|kâr|adet|miktar|qty|quantity|bakiye|borç|borc|alacak|puan|skor)/i;
@@ -1724,7 +1952,9 @@ function inferField(name, raw) {
   if (f.type !== 'text' && (nums + dates + bools) / sn < 0.98) f.mixed = true;
 
   const seen = new Set();
-  for (const v of vals) { seen.add(f.type === 'date' ? String(toDate(v) && toDate(v).getTime()) : String(v).trim().toLowerCase()); if (seen.size > 5000) break; }
+  // Sayım 5000'de kesilince 40 bin satırlık tabloda benzersizlik oranı yanlış
+  // hesaplanıyor, sipariş numarası gibi anahtarlar "metin" sayılıyordu.
+  for (const v of vals) { seen.add(f.type === 'date' ? String(toDate(v) && toDate(v).getTime()) : String(v).trim().toLowerCase()); if (seen.size > MAX_ROWS) break; }
   f.distinct = seen.size;
   f.uniqRatio = f.distinct / n;
 
@@ -1782,10 +2012,20 @@ function inferField(name, raw) {
     f.role = (nameIsId && f.allInt) || (f.allInt && f.uniqRatio > 0.92 && n > 20) ? 'id' : 'measure';
   } else if (f.type === 'bool') f.role = 'dim';
   else {
+    // Müşteri (380 farklı) ve Ürün Kodu (240 farklı) gibi kolonlar eskiden
+    // 60 sınırına takılıp "metin" sayılıyor, kırılım olarak kullanılamıyordu —
+    // oysa satış raporunda en çok istenen kırılımlar tam olarak bunlar.
+    // Ayırt edici ölçüt artık benzersizlik ORANI: her satırda farklıysa
+    // anahtar, tekrar ediyorsa boyut.
     if (f.uniqRatio > 0.85 && n > 25) f.role = 'id';
-    else if (f.distinct <= 60) f.role = 'dim';
+    else if (f.distinct <= 3000) f.role = 'dim';
     else f.role = 'text';
+    // Çok değerli boyut: dilimleyicide çip listesi yerine arama kutusu gerekir
+    f.highCard = f.role === 'dim' && f.distinct > 25;
   }
+  // Para birimi kolonu: birden fazla değer varsa ölçüler toplanamaz
+  f.isCurrency = f.type === 'text' && f.distinct > 0 && f.distinct <= 12 &&
+    (CUR_NAME_RE.test(f.name) || (f.samples || []).every(s => CUR_CODE_RE.test(String(s).trim())));
   return f;
 }
 
@@ -1798,22 +2038,50 @@ function fmtRaw(v) {
   return String(v);
 }
 
+/* ---------- alan çözücüsü ----------
+   Bir alanın değeri artık HER YERDE `f.get(t, i)` ile okunur — `t.data[i][f.idx]`
+   ile değil. Yerel alanda bu doğrudan hücreyi döndürür; ilişkili (sanal) alanda
+   boyut tablosundan arama yapan bir kapanış olur. Tek erişim noktası olduğu için
+   groupBy / applyFilters / byPeriod / aggregate çok tablolu modelde de çalışır.
+
+   `f.idx` bundan sonra iki iş görür: yerel alanlarda `t.data` kolon indeksi,
+   her alanda ise kalıcı kimlik numarası (filtre anahtarı, `data-i`, `<option>`).
+   Sanal alanlar dizinin sonuna eklendiği için ikisi çakışmaz. */
+const localGet = idx => (t, i) => t.data[i][idx];
+
+/** Alanı kimlik numarasıyla bulur — `t.fields[i]` yerine bunu kullanın. */
+const fieldAt = (t, i) => t.fields.find(f => f.idx === +i) || null;
+
+/** Tablonun kendi (fiziksel) kolonları — `t.data` genişliğiyle birebir.
+    Ham veri gösteren ve satıra yazan her yer bunu kullanmalı. */
+const ownFields = t => t.fields.filter(f => !f.virtual);
+
 /** Ham satırlardan tablo modeli kurar. */
-function buildTable(rows, sheetName) {
-  const hi = findHeader(rows);
-  const headerRow = rows[hi] || [];
+const COL_LETTER = n => { let s = ''; n++; while (n > 0) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = (n - 1 - r) / 26; } return s; };
+
+/** @param opts.hasHeader  true/false ile kullanıcı kararı zorlanabilir;
+ *  verilmezse otomatik tespit edilir. */
+function buildTable(rows, sheetName, opts) {
+  const det = findHeader(rows);
+  const hi = det.index;
+  const hasHeader = (opts && typeof opts.hasHeader === 'boolean') ? opts.hasHeader : det.hasHeader;
+  const headerRow = hasHeader ? (rows[hi] || []) : [];
   const width = rows.slice(hi, hi + 200).reduce((w, r) => Math.max(w, r.length), headerRow.length);
 
   const names = [];
   for (let c = 0; c < width; c++) {
     let nm = headerRow[c];
-    nm = isBlank(nm) ? 'Kolon ' + (c + 1) : String(nm).trim().replace(/\s+/g, ' ');
+    // Başlık yoksa Excel'deki gibi harf adı verilir; veri satırının içeriği
+    // kolon adı olarak kullanılmaz.
+    nm = isBlank(nm) ? (hasHeader ? 'Kolon ' + (c + 1) : 'Kolon ' + COL_LETTER(c))
+                     : String(nm).trim().replace(/\s+/g, ' ');
     let base = nm, k = 2;
     while (names.includes(nm)) nm = base + ' (' + (k++) + ')';
     names.push(nm);
   }
 
-  const body = rows.slice(hi + 1).filter(r => r.some(c => !isBlank(c)));
+  // Başlık yoksa o satır da veridir, tüketilmez.
+  const body = rows.slice(hasHeader ? hi + 1 : hi).filter(r => r.some(c => !isBlank(c)));
   const cols = names.map((_, c) => body.map(r => (r[c] === undefined ? null : r[c])));
   let fields = names.map((nm, c) => inferField(nm, cols[c]));
 
@@ -1821,16 +2089,26 @@ function buildTable(rows, sheetName) {
   const keep = fields.map((f, i) => f.type !== 'empty' ? i : -1).filter(i => i >= 0);
   fields = keep.map(i => fields[i]);
   const data = body.map(r => keep.map(i => (r[i] === undefined ? null : r[i])));
-  fields.forEach((f, i) => { f.idx = i; });
+  fields.forEach((f, i) => { f.idx = i; f.get = localGet(i); });
 
-  // yinelenen satırlar
+  // özet (ara toplam) satırları — analizden çıkarılır, kullanıcıya bildirilir
+  const aggInfo = detectAggRows(fields, data);
+
+  // yinelenen satırlar (özet satırları sayıma girmez)
   const seen = new Set(); let dupes = 0;
-  for (const r of data) {
-    const k = r.map(v => (v instanceof Date ? v.getTime() : String(v ?? '').trim().toLowerCase())).join('');
+  for (let i = 0; i < data.length; i++) {
+    if (aggInfo.set.has(i)) continue;
+    const k = data[i].map(v => (v instanceof Date ? v.getTime() : String(v ?? '').trim().toLowerCase())).join('');
     if (seen.has(k)) dupes++; else seen.add(k);
   }
 
-  return { sheetName, headerIndex: hi, fields, data, rowCount: data.length, dupes, truncated: rows.length >= MAX_ROWS };
+  return {
+    sheetName, headerIndex: hi, hasHeader, autoHasHeader: det.hasHeader, fields, data,
+    rowCount: data.length,
+    aggRows: aggInfo.set, aggCount: aggInfo.set.size, aggReasons: aggInfo.reasons,
+    dataRowCount: data.length - aggInfo.set.size,
+    dupes, truncated: rows.length >= MAX_ROWS
+  };
 }
 
 function pickRoles(t) {
@@ -1848,8 +2126,249 @@ function pickRoles(t) {
     const s = (f) => (MEASURE_RE.test(f.name) ? 100 : 0) + (f.sum > 0 ? 10 : 0) + Math.min(10, Math.log10(Math.abs(f.sum) + 1));
     return s(b) - s(a);
   });
-  return { dateField: dates[0] || null, dateFields: dates, measures, dims };
+  // Dilimleyicide çip listesi ancak az değerli boyutlar için okunur; müşteri /
+  // ürün gibi yüzlerce değerli boyutlar arama kutusuyla sunulur.
+  const slicerDims = dims.filter(f => !f.highCard);
+  const searchDims = dims.filter(f => f.highCard);
+  return { dateField: dates[0] || null, dateFields: dates, measures, dims, slicerDims, searchDims };
 }
+
+/* ============================================================
+   ÇOK TABLOLU MODEL — ilişki tespiti
+   Gerçek Excel dosyaları çok tablodur: sipariş detayı bir sayfada, müşteri
+   bilgileri başka sayfada. Aşağısı sayfalar arasındaki (kolon × kolon)
+   çiftlerini puanlayıp hangisinin gerçek bir yabancı anahtar olduğunu bulur.
+   ============================================================ */
+
+/** İlişki anahtarı. "ANKARA", " Ankara " ve "ankara" aynı anahtardır —
+    yazım farkı ilişkiyi bozmamalı. Boş hücre anahtar değildir (null). */
+function relKey(v, type) {
+  if (v === null || v === undefined) return null;
+  if (type === 'number') { const n = toNum(v); return n === null ? null : 'n' + n; }
+  if (v instanceof Date) return 'd' + v.getTime();
+  if (typeof v === 'number') return isFinite(v) ? 'n' + v : null;
+  if (typeof v === 'boolean') return 'b' + v;
+  const s = String(v).trim().replace(/\s+/g, ' ');
+  return s ? 's' + s.toLocaleLowerCase('tr-TR') : null;
+}
+
+/** Tip uyumu — zorunlu şart. Sayı ile metin arasında ilişki kurulmaz. */
+const relTypeOk = (a, b) => a.type === b.type && a.type !== 'empty';
+
+/** Kolon adı benzerliği. "Ürün Kodu" ↔ "Ürün Kodu" tam eşleşme;
+    "Müşteri" ↔ "Müşteri Kodu" da güçlü sinyaldir (ek kaldırılır). */
+const REL_SUFFIX_RE = /(kodu|kod|adı|adi|ismi|numarası|numarasi|no|id)$/;
+function relName(s) {
+  const x = String(s).toLocaleLowerCase('tr-TR').replace(/[\s_\-.()]+/g, '');
+  const trimmed = x.replace(REL_SUFFIX_RE, '');
+  return trimmed.length >= 3 ? trimmed : x;
+}
+function nameScore(a, b) {
+  const x = relName(a), y = relName(b);
+  if (!x || !y) return 0;
+  if (x === y) return 1;
+  if (x.length >= 4 && y.length >= 4 && (x.includes(y) || y.includes(x))) return 0.75;
+  return 0;
+}
+
+/** Bir kolonun anahtar dizini: anahtar → satır no. `unique` false ise
+    o kolon aday anahtar değildir ve ilişkinin BOYUT tarafı olamaz. */
+function keyIndex(t, f) {
+  const map = new Map();
+  let dup = 0, blanks = 0;
+  for (let i = 0; i < t.data.length; i++) {
+    if (t.aggRows && t.aggRows.has(i)) continue;
+    const k = relKey(f.get(t, i), f.type);
+    if (k === null) { blanks++; continue; }
+    if (map.has(k)) { dup++; continue; }
+    map.set(k, i);
+  }
+  return { map, dup, blanks, unique: dup === 0 && map.size >= 2 };
+}
+
+/** Olgu tarafındaki farklı değerler: anahtar → { satır sayısı, ham değer } */
+function factKeys(t, f) {
+  const map = new Map();
+  let rows = 0, blankRows = 0;
+  for (let i = 0; i < t.data.length; i++) {
+    if (t.aggRows && t.aggRows.has(i)) continue;
+    const v = f.get(t, i);
+    const k = relKey(v, f.type);
+    if (k === null) { blankRows++; continue; }
+    rows++;
+    const e = map.get(k);
+    if (e) e.n++; else map.set(k, { n: 1, raw: v });
+  }
+  return { map, rows, blankRows, unique: map.size === rows && map.size >= 2 };
+}
+
+/* Yabancı anahtar olabilecek roller. Ölçü ve tarih kolonları anahtar değildir;
+   "Adet" kolonunun boyut tablosundaki bir sayıyla örtüşmesi ilişki değil rastlantıdır. */
+const FK_ROLES = { dim: 1, id: 1, text: 1 };
+
+/** Tek bir (olgu kolonu × boyut kolonu) çiftinin ölçümü.
+    `ok:false` ise gerekçesi `reason` alanındadır — ilişki sessizce yutulmaz. */
+function pairStats(fact, factIdx, fc, dim, ti, dc, dimIdx, fk) {
+  if (!relTypeOk(fc, dc)) return { ok: false, reason: 'tip uyuşmuyor' };
+  const ends = {
+    from: { table: fact.sheetName, col: fc.name, ti: factIdx, idx: fc.idx },
+    to:   { table: dim.sheetName,  col: dc.name, ti,          idx: dc.idx }
+  };
+  dimIdx = dimIdx || keyIndex(dim, dc);
+  fk = fk || factKeys(fact, fc);
+  if (!dimIdx.unique) return Object.assign({ ok: false, dupes: dimIdx.dup,
+    reason: dimIdx.map.size < 2 ? 'boyut tarafında yeterli değer yok' : (fk.unique ? 'ters yön' : 'çoka-çok') }, ends);
+  if (!fk.map.size) return Object.assign({ ok: false, reason: 'olgu tarafı boş' }, ends);
+
+  let hitDist = 0, missRows = 0;
+  const missSample = [];
+  for (const [k, e] of fk.map) {
+    if (dimIdx.map.has(k)) hitDist++;
+    else { missRows += e.n; if (missSample.length < 8) missSample.push(String(e.raw)); }
+  }
+  const overlap = hitDist / fk.map.size;
+  if (overlap < 0.5) return Object.assign({ ok: false, reason: 'düşük örtüşme', overlap }, ends);
+
+  const ns = nameScore(fc.name, dc.name);
+  return Object.assign({ ok: true }, ends, {
+    id: `${factIdx}.${fc.idx}→${ti}.${dc.idx}`,
+    overlap, unique: true,
+    confidence: overlap > 0.9 ? 'high' : 'suggested',
+    score: overlap * 0.65 + ns * 0.35,
+    nameScore: ns,
+    distinct: fk.map.size, matched: hitDist,
+    missingKeys: fk.map.size - hitDist, missingRows: missRows,
+    blankRows: fk.blankRows, missingSample: missSample,
+    dimRows: dimIdx.map.size
+  });
+}
+
+/** Kullanıcının elle kurduğu ilişki de aynı ölçütlerden geçer: "istedim" bir
+    çoka-çok ilişkiyi geçerli yapmaz, sessizce yanlış toplam üretirdi. */
+function evaluateRelation(tables, factIdx, fromIdx, toTi, toIdx) {
+  const fact = tables[factIdx], dim = tables[toTi];
+  const fc = fact && fieldAt(fact, fromIdx), dc = dim && fieldAt(dim, toIdx);
+  if (!fc || !dc) return { ok: false, reason: 'kolon bulunamadı' };
+  if (fc.virtual || dc.virtual) return { ok: false, reason: 'zincir ilişki bu sürümde yok' };
+  const r = pairStats(fact, factIdx, fc, dim, toTi, dc);
+  if (r.ok) { r.enabled = true; r.manual = true; }
+  return r;
+}
+
+/**
+ * Olgu tablosu ile diğer sayfalar arasındaki ilişkileri bulur.
+ * @param  {Array}  tables   buildTable çıktıları
+ * @param  {number} factIdx  olgu tablosunun sırası
+ * @return {{relations:Array, rejected:Array}}
+ */
+function detectRelations(tables, factIdx) {
+  const relations = [], rejected = [];
+  const fact = tables && tables[factIdx];
+  if (!fact || !tables || tables.length < 2) return { relations, rejected };
+
+  // Olgu tarafındaki her aday kolon için anahtar kümesi BİR KEZ kurulur.
+  const factCols = ownFields(fact).filter(f => f.type !== 'empty' && f.role !== 'skip' && f.role !== 'date');
+  const fkCache = new Map();
+  const fkOf = f => { if (!fkCache.has(f.idx)) fkCache.set(f.idx, factKeys(fact, f)); return fkCache.get(f.idx); };
+
+  const cands = [];
+  for (let ti = 0; ti < tables.length; ti++) {
+    if (ti === factIdx) continue;                      // kendine ilişki bu fazda yok
+    const dim = tables[ti];
+    if (!dim || !dim.data.length) continue;
+    for (const dc of ownFields(dim)) {
+      if (dc.type === 'empty' || dc.role === 'skip') continue;
+      let dimIdx = null;
+      for (const fc of factCols) {
+        if (!relTypeOk(fc, dc)) continue;              // tip uyumu — zorunlu
+        const ns = nameScore(fc.name, dc.name);
+        // Ölçü rolündeki kolon ancak adı birebir tutuyorsa anahtar sayılır
+        if (!FK_ROLES[fc.role] && ns < 0.75) continue;
+
+        if (dimIdx === null) dimIdx = keyIndex(dim, dc);
+        const r = pairStats(fact, factIdx, fc, dim, ti, dc, dimIdx, fkOf(fc));
+        if (r.ok) { cands.push(r); continue; }
+        // Reddedilen aday ancak makul görünüyorsa bildirilir; yoksa yüzlerce
+        // anlamsız satır çıkar. Sessizce yutulan tek şey zaten olmayan ilişki.
+        if ((ns >= 0.75 && r.reason !== 'düşük örtüşme') || (ns >= 1 && r.reason === 'düşük örtüşme')) rejected.push(r);
+      }
+    }
+  }
+
+  // Aynı olgu kolonu iki boyuta, aynı boyut tablosu iki kolona bağlanamaz:
+  // Power BI'da tablo çifti başına yalnız bir etkin ilişki olur. En yüksek
+  // puanlı aday kazanır, kalanlar "belirsiz" diye reddedilir.
+  cands.sort((a, b) => b.score - a.score || b.overlap - a.overlap);
+  const usedCol = new Set(), usedTable = new Set();
+  for (const c of cands) {
+    if (usedCol.has(c.from.idx) || usedTable.has(c.to.ti)) { rejected.push(Object.assign({ reason: 'belirsiz' }, c)); continue; }
+    usedCol.add(c.from.idx); usedTable.add(c.to.ti);
+    c.enabled = c.confidence === 'high';   // "önerilen" kullanıcı onayına bırakılır
+    relations.push(c);
+  }
+  relations.sort((a, b) => a.to.ti - b.to.ti);
+  return { relations, rejected };
+}
+
+/**
+ * Onaylı ilişkilerden SANAL ALAN üretir. Tablolar fiziksel olarak
+ * birleştirilmez (bellek); boyut tablosunun kolonları olgu tablosunda
+ * okunur birer alan olarak görünür, değer istendiğinde aramayla gelir.
+ * Yeniden çağrılabilir: önceki sanal alanlar silinip baştan kurulur.
+ */
+function applyRelations(tables, factIdx, relations) {
+  const fact = tables[factIdx];
+  fact.fields = ownFields(fact);
+  fact.fields.forEach((f, i) => { f.idx = i; f.get = localGet(i); });
+  fact.relations = [];
+  let next = fact.fields.length;
+
+  for (const rel of (relations || [])) {
+    if (!rel.enabled || rel.from.ti !== factIdx) continue;
+    const dim = tables[rel.to.ti];
+    const fk = fieldAt(fact, rel.from.idx);
+    const keyF = dim && fieldAt(dim, rel.to.idx);
+    if (!fk || !keyF) continue;
+
+    // Arama haritası boyut tablosu başına BİR KEZ kurulur; satır başına değil.
+    const look = new Map();
+    for (let i = 0; i < dim.data.length; i++) {
+      if (dim.aggRows && dim.aggRows.has(i)) continue;
+      const k = relKey(keyF.get(dim, i), keyF.type);
+      if (k === null || look.has(k)) continue;
+      look.set(k, i);
+    }
+    const fkType = fk.type;
+
+    for (const src of ownFields(dim)) {
+      if (src.idx === keyF.idx) continue;              // anahtarın kendisi olguda zaten var
+      if (src.role === 'skip' || src.type === 'empty') continue;
+      const get = (t, i) => {
+        const k = relKey(fk.get(t, i), fkType);
+        if (k === null) return null;
+        const row = look.get(k);
+        return row === undefined ? null : src.get(dim, row);
+      };
+      const vals = fact.data.map((_, i) => get(fact, i));
+      let name = src.name;
+      if (fact.fields.some(f => f.name === name)) name = src.name + ' · ' + dim.sheetName;
+      const vf = inferField(name, vals);
+      vf.idx = next++;
+      vf.get = get;
+      vf.virtual = true;
+      vf.sourceTable = dim.sheetName;
+      vf.sourceCol = src.name;
+      vf.viaCol = fk.name;
+      vf.relId = rel.id;
+      fact.fields.push(vf);
+    }
+    fact.relations.push(rel);
+  }
+  return fact;
+}
+
+/** Kırılım seçicisinde ilişkili alan kaynağıyla görünür: "Şehir (Müşteri Listesi)" */
+const fieldLabel = f => (f && f.virtual ? f.name + ' (' + f.sourceTable + ')' : (f ? f.name : '—'));
 /* ============================================================
    ANALİZ — toplulaştırma, kalite puanı, içgörü üretimi
    ============================================================ */
@@ -1877,23 +2396,31 @@ const keyLabelLong = k => MONTHS[k % 12] + ' ' + Math.floor(k / 12);
 
 /** Filtre uygulanmış satır indeksleri */
 function applyFilters(t, st) {
-  const di = st.dateField ? st.dateField.idx : -1;
+  const df = st.dateField || null;
+  const agg = t.aggRows;
+  // Filtre alanları döngü dışında bir kez çözülür; 40 bin satırda her satır için
+  // `fields.find` çalıştırmak ölçülebilir bir yavaşlama demek.
+  const filters = [];
+  for (const fk in st.filters) {
+    const set = st.filters[fk];
+    if (!set || !set.size) continue;
+    const f = fieldAt(t, fk);
+    if (f) filters.push([f, set]);
+  }
   const out = [];
   for (let i = 0; i < t.data.length; i++) {
-    const r = t.data[i];
-    if (di >= 0) {
-      const d = toDate(r[di]);
+    // Ara toplam / genel toplam satırları hiçbir hesaba katılmaz
+    if (agg && agg.has(i)) continue;
+    if (df) {
+      const d = toDate(df.get(t, i));
       if (!d) continue;
       const k = monthKey(d);
       if (st.from !== null && k < st.from) continue;
       if (st.to !== null && k > st.to) continue;
     }
     let ok = true;
-    for (const fk in st.filters) {
-      const set = st.filters[fk];
-      if (!set || !set.size) continue;
-      const f = t.fields[+fk];
-      if (!set.has(cellKey(r[f.idx]))) { ok = false; break; }
+    for (const [f, set] of filters) {
+      if (!set.has(cellKey(f.get(t, i)))) { ok = false; break; }
     }
     if (ok) out.push(i);
   }
@@ -1902,13 +2429,12 @@ function applyFilters(t, st) {
 const cellKey = v => (v === null || v === undefined || String(v).trim() === '' ? '(boş)' : (typeof v === 'boolean' ? (v ? 'Evet' : 'Hayır') : String(v).trim()));
 
 function aggregate(t, rowIdx, measure, agg) {
-  const mi = measure ? measure.idx : -1;
   let sum = 0, n = 0, cnt = 0;
   const arr = [];
   for (const i of rowIdx) {
     cnt++;
-    if (mi < 0) continue;
-    const x = toNum(t.data[i][mi]);
+    if (!measure) continue;
+    const x = toNum(measure.get(t, i));
     if (x === null) continue;
     sum += x; n++; if (arr.length < 200000) arr.push(x);
   }
@@ -1920,14 +2446,13 @@ function aggregate(t, rowIdx, measure, agg) {
 }
 
 function groupBy(t, rowIdx, field, measure, agg) {
-  const gi = field.idx, mi = measure ? measure.idx : -1;
   const map = new Map();
   for (const i of rowIdx) {
-    const k = cellKey(t.data[i][gi]);
+    const k = cellKey(field.get(t, i));
     let e = map.get(k);
     if (!e) { e = { key: k, sum: 0, n: 0, cnt: 0 }; map.set(k, e); }
     e.cnt++;
-    if (mi >= 0) { const x = toNum(t.data[i][mi]); if (x !== null) { e.sum += x; e.n++; } }
+    if (measure) { const x = toNum(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
   }
   const out = [...map.values()].map(e => ({ key: e.key, value: agg === 'count' ? e.cnt : agg === 'avg' ? (e.n ? e.sum / e.n : 0) : e.sum, cnt: e.cnt }));
   out.sort((a, b) => b.value - a.value);
@@ -1950,15 +2475,14 @@ const granLong = (g, k) => (g === 'month' ? keyLabelLong(k) : GRAN[g].text(k));
 function byPeriod(t, rowIdx, dateField, measure, agg, gran) {
   if (!dateField) return [];
   const G = GRAN[gran] || GRAN.month;
-  const di = dateField.idx, mi = measure ? measure.idx : -1;
   const map = new Map();
   for (const i of rowIdx) {
-    const d = toDate(t.data[i][di]); if (!d) continue;
+    const d = toDate(dateField.get(t, i)); if (!d) continue;
     const k = G.key(d);
     let e = map.get(k);
     if (!e) { e = { k, sum: 0, n: 0, cnt: 0 }; map.set(k, e); }
     e.cnt++;
-    if (mi >= 0) { const x = toNum(t.data[i][mi]); if (x !== null) { e.sum += x; e.n++; } }
+    if (measure) { const x = toNum(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
   }
   const keys = [...map.keys()].sort((a, b) => a - b);
   if (!keys.length) return [];
@@ -1976,15 +2500,14 @@ function byPeriod(t, rowIdx, dateField, measure, agg, gran) {
 
 function byMonth(t, rowIdx, dateField, measure, agg) {
   if (!dateField) return [];
-  const di = dateField.idx, mi = measure ? measure.idx : -1;
   const map = new Map();
   for (const i of rowIdx) {
-    const d = toDate(t.data[i][di]); if (!d) continue;
+    const d = toDate(dateField.get(t, i)); if (!d) continue;
     const k = monthKey(d);
     let e = map.get(k);
     if (!e) { e = { k, sum: 0, n: 0, cnt: 0 }; map.set(k, e); }
     e.cnt++;
-    if (mi >= 0) { const x = toNum(t.data[i][mi]); if (x !== null) { e.sum += x; e.n++; } }
+    if (measure) { const x = toNum(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
   }
   const keys = [...map.keys()].sort((a, b) => a - b);
   if (!keys.length) return [];
@@ -1999,10 +2522,16 @@ function byMonth(t, rowIdx, dateField, measure, agg) {
 /* ---------- veri kalitesi ---------- */
 function quality(t) {
   const issues = [];
+  const roles = pickRoles(t), roles0 = roles;
   const n = t.rowCount;
   let score = 100;
 
-  const lowFill = t.fields.filter(f => f.fillRate < 0.97 && f.role !== 'skip')
+  // Kalite puanı bu sayfanın KENDİ verisini ölçer. İlişkiden gelen sanal
+  // alanlar kaynağında zaten profillenir; eşleşmeyen anahtar da Model
+  // adımında ayrıca bildirilir — aynı sorun iki kez cezalandırılmaz.
+  const own = ownFields(t);
+
+  const lowFill = own.filter(f => f.fillRate < 0.97 && f.role !== 'skip')
                           .sort((a, b) => a.fillRate - b.fillRate);
   if (lowFill.length) {
     const worst = lowFill[0];
@@ -2021,7 +2550,7 @@ function quality(t) {
       fix: 'Table.Distinct' });
   }
 
-  const mixed = t.fields.filter(f => f.mixed);
+  const mixed = own.filter(f => f.mixed);
   if (mixed.length) {
     score -= Math.min(18, mixed.length * 7);
     issues.push({ sev: 'warning', title: `${mixed.length} kolonda tip tutarsızlığı`,
@@ -2029,7 +2558,44 @@ function quality(t) {
       fix: 'Değişen Tür adımı' });
   }
 
-  const textNum = t.fields.filter(f => f.type === 'number' && f.textNums > 0)
+  // Başlık satırı yoksa kolonlar adsızdır; kullanıcı ne olduğunu bilmeden
+  // rapor üretmek anlamsızdır.
+  if (t.hasHeader === false) {
+    score -= 18;
+    issues.push({ sev: 'critical', title: 'Dosyada başlık satırı yok',
+      body: `İlk satır da veri gibi görünüyor, bu yüzden kolonlara geçici adlar verildi (Kolon A, Kolon B…) ve <b>hiçbir satır atlanmadı</b>. Aşağıdaki kolon profilinden adları düzenleyebilir, yanlış tespit ettiysek üstteki anahtarla değiştirebilirsiniz.`,
+      fix: 'Kolon adlarını girin' });
+  }
+
+  // EN KRİTİK BULGU: özet satırları normal kayıt sanılırsa bütün toplamlar şişer
+  if (t.aggCount > 0) {
+    score -= Math.min(30, 12 + (t.aggCount / n) * 200);
+    let sisme = 0;
+    // Kolon sırasındaki ilk ölçü (ör. "Adet") anlamsız kalıyordu; iş anlamı
+    // taşıyan birincil ölçü kullanılır (ör. "Tutar").
+    const meas = roles0.measures.length ? roles0.measures : own.filter(f => f.role === 'measure');
+    if (meas.length) {
+      for (const i of t.aggRows) { const x = toNum(meas[0].get(t, i)); if (x) sisme += x; }
+    }
+    issues.push({ sev: 'critical', title: `${nf(t.aggCount)} ara toplam satırı tespit edildi`,
+      body: `Veri satırlarının arasına serpiştirilmiş “ARA TOPLAM / GENEL TOPLAM” satırları normal kayıt sanılırsa bütün toplamlar şişer` +
+        (sisme ? ` — “${meas[0].name}” için <b>${compact(sisme)}</b> fazla sayılırdı` : '') +
+        `. Bu satırlar analizden çıkarıldı.`,
+      fix: 'Table.SelectRows ile ele' });
+  }
+
+  // Çoklu para birimi: farklı birimlerdeki tutarlar toplanamaz
+  const curField = own.find(f => f.isCurrency);
+  if (curField && curField.distinct > 1 && roles0.measures.length) {
+    const dist = groupBy(t, t.data.map((_, i) => i).filter(i => !t.aggRows || !t.aggRows.has(i)), curField, null, 'count')
+      .slice(0, 4).map(d => `${d.key} (${pct(d.cnt / n, 0)})`).join(', ');
+    score -= 14;
+    issues.push({ sev: 'critical', title: 'Tutarlar birden fazla para biriminde',
+      body: `“${curField.name}” kolonunda ${curField.distinct} farklı birim var: ${dist}. Farklı para birimlerindeki tutarları toplamak anlamsız bir sayı üretir — önce ortak bir birime çevrilmeli.`,
+      fix: 'Kur tablosu + dönüşüm' });
+  }
+
+  const textNum = own.filter(f => f.type === 'number' && f.textNums > 0)
                           .sort((a, b) => b.textNums - a.textNums);
   if (textNum.length) {
     score -= Math.min(16, 6 + textNum[0].textNums / n * 60);
@@ -2038,7 +2604,7 @@ function quality(t) {
       fix: 'Text → Number dönüşümü' });
   }
 
-  const negs = t.fields.filter(f => f.role === 'measure' && f.negs > 0 && !/(iade|indirim|fark|sapma|kar|kâr|bakiye)/i.test(f.name));
+  const negs = own.filter(f => f.role === 'measure' && f.negs > 0 && !/(iade|indirim|fark|sapma|kar|kâr|bakiye)/i.test(f.name));
   if (negs.length) {
     score -= 5;
     issues.push({ sev: 'warning', title: 'Beklenmedik negatif değerler',
@@ -2046,7 +2612,6 @@ function quality(t) {
       fix: 'İş kuralı kontrolü' });
   }
 
-  const roles = pickRoles(t);
   if (!roles.dateField) {
     score -= 15;
     issues.push({ sev: 'critical', title: 'Tarih kolonu bulunamadı',
@@ -2060,7 +2625,7 @@ function quality(t) {
       fix: 'Tip dönüşümü' });
   }
 
-  const wide = t.fields.filter(f => /^(oca|şub|mar|nis|may|haz|tem|ağu|eyl|eki|kas|ara|ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık|jan|feb|mar|apr|q[1-4]|20\d\d)/i.test(f.name.trim()));
+  const wide = own.filter(f => /^(oca|şub|mar|nis|may|haz|tem|ağu|eyl|eki|kas|ara|ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık|jan|feb|mar|apr|q[1-4]|20\d\d)/i.test(f.name.trim()));
   if (wide.length >= 3) {
     score -= 10;
     issues.push({ sev: 'warning', title: 'Tablo çapraz (pivot) biçimde',
@@ -2068,11 +2633,11 @@ function quality(t) {
       fix: 'Table.UnpivotOtherColumns' });
   }
 
-  const idish = t.fields.filter(f => f.role === 'dim' && f.distinct > 0);
+  const idish = own.filter(f => f.role === 'dim' && f.distinct > 0);
   const caseDupes = [];
   for (const f of idish) {
     const raw = new Set(), lower = new Set();
-    for (const r of t.data) { const v = r[f.idx]; if (isBlank(v)) continue; raw.add(String(v).trim()); lower.add(String(v).trim().toLocaleLowerCase(TR)); if (raw.size > 800) break; }
+    for (let i = 0; i < t.data.length; i++) { const v = f.get(t, i); if (isBlank(v)) continue; raw.add(String(v).trim()); lower.add(String(v).trim().toLocaleLowerCase(TR)); if (raw.size > 800) break; }
     if (raw.size - lower.size > 0) caseDupes.push({ f, diff: raw.size - lower.size });
   }
   if (caseDupes.length) {
@@ -2568,7 +3133,7 @@ function starSchema(host, model) {
     svg.appendChild(el('line', { x1: ax, y1: ay, x2: cx, y2: cy }, 'stroke:var(--rule-2);stroke-width:1.4'));
     // kardinalite etiketi kutulardan uzağa, çizginin %42'sine konur
     const t = 0.42;
-    svg.appendChild(txt(ax + (cx - ax) * t, ay + (cy - ay) * t + 3, '1 → *', 'axis-txt',
+    svg.appendChild(txt(ax + (cx - ax) * t, ay + (cy - ay) * t + 3, d.card || '1 → *', 'axis-txt',
       HALO + ';text-anchor:middle;fill:var(--ink-3);font-size:9px'));
   });
 
@@ -3134,15 +3699,20 @@ renderStatic();
 /* ============================================================
    STÜDYO
    ============================================================ */
-const S = { table: null, sheets: null, sheetIdx: 0, fileName: '', roles: null, qual: null,
+const S = { table: null, tables: null, sheets: null, sheetIdx: 0, fileName: '', roles: null, qual: null,
+            relations: [], rejected: [],
             measure: null, agg: 'sum', dimField: null, dateField: null, from: null, to: null, filters: {} };
 let curStep = 0;
+
+/* Adım sırası: 0 Veri · 1 Profil · 2 Model · 3 Rapor · 4 İçgörüler · 5 Power BI */
+const STEP_REPORT = 3;
 
 function setStep(i) {
   curStep = i;
   $$('.step-btn').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.step === i)));
   $$('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-' + i));
-  if (i === 2) renderReport();
+  if (i === 2) renderModel();
+  if (i === STEP_REPORT) renderReport();
 }
 $$('.step-btn').forEach(b => b.addEventListener('click', () => { if (!b.disabled) setStep(+b.dataset.step); }));
 const enableSteps = on => $$('.step-btn').forEach(b => { if (+b.dataset.step > 0) b.disabled = !on; });
@@ -3162,7 +3732,8 @@ $('#resetBtn').addEventListener('click', reset);
 const showErr = m => { $('#uploadErr').innerHTML = `<div class="err"><b>Dosya okunamadı.</b><br>${esc(m)}</div>`; };
 
 function reset() {
-  Object.assign(S, { table: null, sheets: null, sheetIdx: 0, fileName: '', roles: null, qual: null,
+  Object.assign(S, { table: null, tables: null, sheets: null, sheetIdx: 0, fileName: '', roles: null, qual: null, headerOverride: undefined,
+                     relations: [], rejected: [],
                      measure: null, agg: 'sum', dimField: null, dateField: null, from: null, to: null, filters: {} });
   $('#uploadErr').innerHTML = ''; $('#sheetPick').innerHTML = ''; $('#previewBox').innerHTML = '';
   $('#fileChip').classList.remove('on'); $('#resetBtn').style.display = 'none';
@@ -3194,6 +3765,10 @@ function loadDemo() {
 
 function loadSheets(sheets, size) {
   S.sheets = sheets;
+  S.headerOverride = undefined;   // her yeni dosyada otomatik tespite dön
+  // Bütün sayfalar tablo olarak kurulur: ilişki tespiti için hepsi gerekli.
+  // Diğer sayfalar artık görmezden gelinmiyor.
+  S.tables = sheets.map(sh => buildTable(sh.rows, sh.name));
   // en çok satırı olan sayfayı varsayılan seç
   S.sheetIdx = sheets.reduce((best, s, i) => (s.rows.length > sheets[best].rows.length ? i : best), 0);
   $('#sheetPick').innerHTML = sheets.length > 1
@@ -3211,10 +3786,18 @@ function loadSheets(sheets, size) {
 function useSheet() {
   $$('#sheetPick .sheet-tab').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.i === S.sheetIdx)));
   const sh = S.sheets[S.sheetIdx];
-  const t = buildTable(sh.rows, sh.name);
+  // Başlık kararı yalnız seçili sayfaya uygulanır; diğerleri kurulu kalır.
+  if (S.headerOverride !== undefined) S.tables[S.sheetIdx] = buildTable(sh.rows, sh.name, { hasHeader: S.headerOverride });
+  const t = S.tables[S.sheetIdx];
   if (!t.rowCount || !t.fields.length) { $('#previewBox').innerHTML = ''; showErr('Bu sayfada tablo biçiminde veri bulunamadı. Başlık satırının üstündeki boş/başlık bloklarını kaldırmayı deneyin.'); return; }
 
   S.table = t;
+  // Seçili sayfa olgu tablosudur; diğer sayfalar boyut adayı olarak taranır.
+  const det = detectRelations(S.tables, S.sheetIdx);
+  S.relations = det.relations;
+  S.rejected = det.rejected;
+  applyRelations(S.tables, S.sheetIdx, S.relations);
+
   const q = quality(t);
   S.qual = q; S.roles = q.roles;
   S.dateField = q.roles.dateField;
@@ -3229,35 +3812,70 @@ function useSheet() {
   enableSteps(true);
   renderPreview();
   renderProfile();
+  renderModel();
   renderInsights();
   renderPBI();
   setStep(1);
 }
 
+/** Kullanıcı bir ilişkiyi açıp kapattığında: sanal alanlar baştan kurulur,
+    roller yeniden atanır. Sanal alan nesneleri yenilendiği için onlara işaret
+    eden seçimler (kırılım/ölçü) ve filtreler tazelenmek zorunda. */
+function relink() {
+  applyRelations(S.tables, S.sheetIdx, S.relations);
+  const q = quality(S.table);
+  S.qual = q; S.roles = q.roles;
+  const alive = f => f && S.table.fields.indexOf(f) >= 0;
+  if (!alive(S.dimField)) S.dimField = q.roles.dims[0] || null;
+  if (!alive(S.measure)) S.measure = q.roles.measures[0] || null;
+  if (!alive(S.dateField)) S.dateField = q.roles.dateField;
+  // Filtreler alan kimliğine bağlı; sanal alan numaraları kaydığı için sıfırlanır.
+  S.filters = {};
+  renderModel(); renderProfile(); renderPreview(); renderInsights(); renderPBI();
+  if (curStep === STEP_REPORT) renderReport();
+}
+
 function monthRange(t, f) {
+  if (!t || !f || !f.get) return null;
   let lo = Infinity, hi = -Infinity;
-  for (const r of t.data) { const d = toDate(r[f.idx]); if (!d) continue; const k = monthKey(d); if (k < lo) lo = k; if (k > hi) hi = k; }
+  for (let i = 0; i < t.data.length; i++) { const d = toDate(f.get(t, i)); if (!d) continue; const k = monthKey(d); if (k < lo) lo = k; if (k > hi) hi = k; }
   return isFinite(lo) ? [lo, hi] : null;
 }
 
 /* ---------- önizleme ---------- */
 function renderPreview() {
   const t = S.table, n = 12;
+  // Önizleme ham veriyi gösterir: ilişkiden gelen sanal alanlar buraya girmez.
+  const own = ownFields(t);
   $('#previewBox').innerHTML = `
     <div style="display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem">
       <p class="eyebrow">Ham veri · ilk ${n} satır</p>
       <span style="font-size:.8125rem;color:var(--ink-3)">
-        ${nf(t.rowCount)} satır × ${t.fields.length} kolon${t.headerIndex > 0 ? ` · başlık ${t.headerIndex + 1}. satırda bulundu` : ''}
+        ${nf(t.rowCount)} satır × ${own.length} kolon${t.headerIndex > 0 ? ` · başlık ${t.headerIndex + 1}. satırda bulundu` : ''}
       </span>
     </div>
+    <div class="hdr-toggle">
+      <span class="hdr-q">İlk satır kolon başlığı mı?</span>
+      <div class="seg" role="group" aria-label="İlk satır başlık mı">
+        <button class="seg-btn" type="button" data-hdr="1" aria-pressed="${t.hasHeader}">Evet, başlık</button>
+        <button class="seg-btn" type="button" data-hdr="0" aria-pressed="${!t.hasHeader}">Hayır, veri</button>
+      </div>
+      <span class="hdr-note">${t.hasHeader
+        ? `${t.headerIndex + 1}. satır başlık olarak alındı`
+        : 'Başlık bulunamadı — hiçbir satır atlanmadı, kolonlara geçici ad verildi'}</span>
+    </div>
     <div class="tbl-wrap"><table class="dt">
-      <thead><tr><th class="rowno">#</th>${t.fields.map(f => `<th>${esc(f.name)}</th>`).join('')}</tr></thead>
-      <tbody>${t.data.slice(0, n).map((r, i) => `<tr><td class="rowno">${i + 1}</td>${r.map((v, c) => cellHtml(v, t.fields[c])).join('')}</tr>`).join('')}</tbody>
+      <thead><tr><th class="rowno">#</th>${own.map(f => `<th>${esc(f.name)}</th>`).join('')}</tr></thead>
+      <tbody>${t.data.slice(0, n).map((r, i) => `<tr><td class="rowno">${i + 1}</td>${own.map(f => cellHtml(f.get(t, i), f)).join('')}</tr>`).join('')}</tbody>
     </table></div>
     <div class="note" style="margin-top:.9rem">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/></svg>
       <span>Kolon tipleri ve rolleri otomatik tespit edildi. <b>Profil &amp; Kalite</b> adımında neyin nasıl yorumlandığını görebilir, <b>Özet Rapor</b> adımında ölçü ve kırılımı değiştirebilirsiniz.</span>
     </div>`;
+  $$('#previewBox .seg-btn').forEach(b => b.addEventListener('click', () => {
+    S.headerOverride = b.dataset.hdr === '1';
+    useSheet();
+  }));
 }
 
 function cellHtml(v, f) {
@@ -3321,6 +3939,18 @@ function renderProfile() {
       nedeniyle toplanmamalı — bir sipariş numarasını toplamak anlamsız bir sayı üretir. Bu ayrım, modelde
       yanlışlıkla toplanan kolonların önüne geçer.</span>
     </div>`;
+  $$('#profileBox .col-name').forEach(inp => {
+    const apply = () => {
+      const v = inp.value.trim();
+      const f = S.table.fields.find(x => x.idx === +inp.dataset.i);
+      if (!v || !f || v === f.name) { inp.value = f ? f.name : inp.value; return; }
+      if (S.table.fields.some(x => x !== f && x.name === v)) { inp.value = f.name; return; }
+      f.name = v;
+      renderProfile(); renderReport(); renderInsights(); renderPBI(); renderPreview();
+    };
+    inp.addEventListener('blur', apply);
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); if (e.key === 'Escape') { inp.value = ''; inp.blur(); } });
+  });
 }
 
 function profileRow(f) {
@@ -3335,8 +3965,20 @@ function profileRow(f) {
   const flag = f.textNums > 0
     ? ' <span class="role-pill" style="border-color:var(--critical);color:var(--crit-ink)">metin sayı</span>'
     : f.mixed ? ' <span class="role-pill" style="border-color:var(--serious);color:var(--serious)">karışık</span>' : '';
+  // İlişkiden gelen alan bu tablonun kolonu değildir: adı düzenlenemez,
+  // hangi sayfadan ve hangi anahtar üzerinden geldiği yazılır.
+  if (f.virtual) return `<tr class="row-virtual">
+    <td><b>${esc(f.name)}</b> <span class="role-pill" data-r="virtual">ilişkili</span>
+      <p class="virt-src">${esc(f.sourceTable)} · ${esc(f.viaCol)} üzerinden</p></td>
+    <td>${TYPE_TR[f.type] || f.type}</td>
+    <td><span class="role-pill" data-r="${f.role}">${ROLE_TR[f.role] || f.role}</span></td>
+    <td><span class="fillbar"><span class="track"><i class="${fillCls}" style="width:${(f.fillRate * 100).toFixed(1)}%"></i></span><span>${pct(f.fillRate, 0)}</span></span></td>
+    <td class="n">${nf(f.distinct)}</td>
+    <td style="color:var(--ink-2)">${esc(summary)}</td>
+    <td style="color:var(--ink-3)">${esc(f.samples.join(' · ').slice(0, 46))}</td>
+  </tr>`;
   return `<tr>
-    <td><span class="mono" style="font-size:.78rem">${esc(f.name)}</span>${flag}</td>
+    <td><input class="col-name" value="${esc(f.name)}" data-i="${f.idx}" aria-label="Kolon adı" spellcheck="false">${flag}</td>
     <td>${TYPE_TR[f.type] || f.type}</td>
     <td><span class="role-pill" data-r="${f.role}">${ROLE_TR[f.role] || f.role}</span></td>
     <td><span class="fillbar"><span class="track"><i class="${fillCls}" style="width:${(f.fillRate * 100).toFixed(1)}%"></i></span><span>${pct(f.fillRate, 0)}</span></span></td>
@@ -3346,7 +3988,184 @@ function profileRow(f) {
   </tr>`;
 }
 
-/* ---------- 3. özet rapor ---------- */
+/* ---------- 3. model ----------
+   Çok tablolu dosyalarda asıl iş burada: hangi sayfa hangi sayfaya nasıl
+   bağlanıyor. Tespit otomatiktir ama karar kullanıcınındır — sessizce
+   kurulan bir ilişki, sessizce yanlış sayı demektir. */
+const REL_REASON = {
+  'çoka-çok': 'Boyut tarafındaki değerler benzersiz değil — çoka-çok ilişki toplamları çoğaltır.',
+  'ters yön': 'Benzersiz olan olgu tarafı; ilişki ters yönde. Boyut tablosunu olgu olarak seçin.',
+  'düşük örtüşme': 'Değerlerin yarısından azı karşı tarafta bulunuyor — aynı anahtar değiller.',
+  'belirsiz': 'Aynı tabloya daha güçlü bir aday bağlandı. Power BI\'da tablo çifti başına tek etkin ilişki olur.',
+  'tip uyuşmuyor': 'Kolon tipleri farklı (sayı ↔ metin).',
+  'boyut tarafında yeterli değer yok': 'Boyut tablosunda anahtar sayılacak kadar değer yok.',
+  'olgu tarafı boş': 'Olgu tarafındaki kolon boş.'
+};
+
+/** Diyagram ve kod üretimi için ortak model tanımı. */
+function modelShape() {
+  const t = S.table, roles = S.roles;
+  const rels = (S.relations || []).filter(r => r.enabled);
+  return {
+    fact: { name: t.sheetName, cols: `${roles.measures.length} ölçü · ${ownFields(t).length} kolon`, rows: nf(t.rowCount) + ' satır' },
+    dims: [
+      ...(roles.dateField ? [{ name: 'Tarih', cols: 'Yıl · Çeyrek · Ay · Gün', tone: 's7', card: '1 → *' }] : []),
+      ...rels.map(r => ({ name: r.to.table, cols: `${r.to.col} · ${nf(S.tables[r.to.ti].rowCount)} satır`, tone: 's3', card: '* → 1' }))
+    ],
+    rels
+  };
+}
+
+function renderModel() {
+  const t = S.table; if (!t) return;
+  const rels = S.relations || [], tables = S.tables || [t];
+  const on = rels.filter(r => r.enabled);
+  const virt = t.fields.filter(f => f.virtual);
+  const single = tables.length < 2;
+
+  const tableCards = tables.map((x, i) => {
+    const role = i === S.sheetIdx ? 'olgu' : (on.some(r => r.to.ti === i) ? 'boyut' : 'bağsız');
+    return `<div class="mdl-tbl" data-role="${role}">
+      <span class="mdl-role">${role}</span>
+      <b>${esc(x.sheetName)}</b>
+      <span>${nf(x.rowCount)} satır · ${ownFields(x).length} kolon</span>
+    </div>`;
+  }).join('');
+
+  const relCards = rels.map((r, n) => {
+    const pctTxt = pct(r.overlap, r.overlap === 1 ? 0 : 1);
+    const warn = r.missingKeys > 0
+      ? `<p class="rel-warn"><b>${nf(r.missingKeys)}</b> değer (${esc(r.from.col)}) “${esc(r.to.table)}” içinde yok —
+         ${nf(r.missingRows)} satır etkileniyor, bu satırlar kırılımda <b>(boş)</b> altında toplanır ve düşmez.
+         Örnek: ${r.missingSample.slice(0, 3).map(esc).join(', ')}</p>` : '';
+    const blank = r.blankRows > 0
+      ? `<p class="rel-warn">${nf(r.blankRows)} satırda “${esc(r.from.col)}” boş — bu satırlar hiçbir boyuta bağlanmaz.</p>` : '';
+    return `<div class="rel-card" data-conf="${r.confidence}" data-on="${!!r.enabled}" style="--n:${Math.min(n, 12)}">
+      <label class="rel-sw">
+        <input type="checkbox" data-rel="${esc(r.id)}"${r.enabled ? ' checked' : ''}
+               aria-label="${esc(r.from.table + '[' + r.from.col + '] → ' + r.to.table + '[' + r.to.col + ']')} ilişkisini kullan">
+        <span class="rel-track" aria-hidden="true"><i></i></span>
+      </label>
+      <div class="rel-body">
+        <p class="rel-path"><b>${esc(r.from.table)}</b>[${esc(r.from.col)}]
+          <span class="rel-arrow" aria-hidden="true">→</span><span class="sr-only"> şuraya bağlanır: </span>
+          <b>${esc(r.to.table)}</b>[${esc(r.to.col)}]</p>
+        <p class="rel-meta"><span class="num">${pctTxt}</span> eşleşme ·
+          ${nf(r.distinct)} farklı değer · ${nf(r.dimRows)} boyut satırı · çoktan bire, tek yön${r.manual ? ' · elle eklendi' : ''}</p>
+        ${warn}${blank}
+      </div>
+      <span class="rel-conf" data-c="${r.confidence}">${r.confidence === 'high' ? 'yüksek güven' : 'önerilen — onayınıza bağlı'}</span>
+    </div>`;
+  }).join('');
+
+  const red = (S.rejected || []).slice(0, 6).map(r => `<div class="rel-red">
+      <span>${esc(r.from.col)} <span aria-hidden="true">→</span> ${esc(r.to.table)}[${esc(r.to.col)}]</span>
+      <b>${esc(r.reason)}</b>
+      <p>${esc(REL_REASON[r.reason] || '')}</p>
+    </div>`).join('');
+
+  const factOpts = ownFields(t).filter(f => f.role !== 'skip' && f.type !== 'date')
+    .map(f => `<option value="${f.idx}">${esc(f.name)}</option>`).join('');
+  const dimOpts = tables.map((x, i) => i === S.sheetIdx ? '' :
+    `<optgroup label="${esc(x.sheetName)}">${ownFields(x).filter(f => f.role !== 'skip')
+      .map(f => `<option value="${i}:${f.idx}">${esc(f.name)}</option>`).join('')}</optgroup>`).join('');
+
+  $('#modelBox').innerHTML = `
+    <div class="section-head" style="margin-bottom:1.25rem">
+      <p class="eyebrow">Veri modeli</p>
+      <h2 style="font-size:1.375rem">Sayfalar arası ilişkiler</h2>
+      <p style="font-size:.9375rem">Tablolar birleştirilmez — boyut tablosunun kolonları olgu tablosunda
+      <b>okunur alan</b> olarak görünür. Bu yüzden bellek şişmez ve toplamlar değişmez.
+      Bir ilişkiyi kapatırsanız ondan gelen kırılımlar da listeden düşer.</p>
+    </div>
+
+    <p class="eyebrow" style="margin-bottom:.6rem">Dosyadaki tablolar</p>
+    <div class="mdl-tbls">${tableCards}</div>
+
+    <p class="eyebrow" style="margin:1.5rem 0 .6rem">Tespit edilen ilişkiler${rels.length ? ` · ${on.length}/${rels.length} açık` : ''}</p>
+    ${rels.length ? `<div class="rel-list">${relCards}</div>` : `
+      <div class="empty-state" style="text-align:left">
+        <h3>${single ? 'Dosyada tek çalışma sayfası var' : 'Sayfalar arasında ilişki bulunamadı'}</h3>
+        <p>${single
+          ? 'İlişki kurmak için en az iki sayfa gerekir. Tek sayfalı dosyalarda tüm kolonlar zaten olgu tablosundadır.'
+          : 'İlişki için boyut tarafındaki kolonun <b>benzersiz</b> olması ve olgu tarafındaki değerlerin karşılığını bulması gerekir. Aşağıdan elle deneyebilirsiniz.'}</p>
+      </div>`}
+
+    ${virt.length ? `<div class="note" style="margin-top:1rem">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7A5 5 0 017 7h2M15 7h2a5 5 0 010 10h-2M8 12h8"/></svg>
+      <span><b>${virt.length} ilişkili alan</b> kırılım listesine eklendi:
+      ${virt.slice(0, 8).map(f => `<span class="mono">${esc(fieldLabel(f))}</span>`).join(', ')}${virt.length > 8 ? '…' : ''}</span>
+    </div>` : ''}
+
+    ${red ? `<p class="eyebrow" style="margin:1.5rem 0 .6rem">Değerlendirilip reddedilenler</p>
+      <div class="rel-reds">${red}</div>` : ''}
+
+    ${single ? '' : `
+    <p class="eyebrow" style="margin:1.5rem 0 .6rem">Elle ilişki ekle</p>
+    <div class="ctl-rail rel-add">
+      <div class="ctl"><label for="relFrom">Olgu kolonu (${esc(t.sheetName)})</label>
+        <select id="relFrom">${factOpts}</select></div>
+      <div class="ctl" style="flex:0 0 auto;align-self:end;padding-bottom:.55rem" aria-hidden="true">→</div>
+      <div class="ctl"><label for="relTo">Boyut kolonu</label>
+        <select id="relTo">${dimOpts}</select></div>
+      <div class="ctl" style="align-self:end"><label>&nbsp;</label>
+        <button class="btn btn-ghost btn-sm" id="relAdd" type="button">İlişki ekle</button></div>
+    </div>
+    <div id="relAddMsg"></div>`}
+
+    <div class="chart-card" style="margin-top:1.5rem">
+      <div class="chart-head"><h3>Model diyagramı</h3>
+        <span class="hint">${on.length ? 'kurulu ilişkiler' : 'ilişki yok'}</span></div>
+      <div id="mStar"></div>
+      <p style="font-size:.8125rem;color:var(--ink-2);margin-top:.85rem;max-width:76ch">
+        ${on.length
+          ? 'Oklar gerçek ilişkileri gösterir. Power BI\'da Model görünümünde aynı ilişkileri kurmanız için gereken talimat, <b>Power BI Paketi</b> adımında yazılıdır.'
+          : 'İlişki kurulmadığı için model tek tablodan ibaret. Tarih tablosu yine de önerilir — zaman fonksiyonlarının ön koşuludur.'}
+      </p>
+    </div>`;
+
+  starSchema($('#mStar'), modelShape());
+
+  $$('#modelBox .rel-sw input').forEach(cb => cb.addEventListener('change', () => {
+    const r = S.relations.find(x => x.id === cb.dataset.rel);
+    if (!r) return;
+    // Aynı boyut tablosuna ikinci etkin ilişki kurulamaz.
+    if (cb.checked && S.relations.some(x => x !== r && x.enabled && x.to.ti === r.to.ti)) {
+      cb.checked = false;
+      relMsg('critical', `“${r.to.table}” zaten başka bir kolonla bağlı. Önce mevcut ilişkiyi kapatın — Power BI'da da tablo çifti başına tek etkin ilişki olur.`);
+      return;
+    }
+    r.enabled = cb.checked;
+    relink();
+  }));
+
+  const addBtn = $('#relAdd');
+  if (addBtn) addBtn.addEventListener('click', () => {
+    const from = +$('#relFrom').value;
+    const [ti, idx] = String($('#relTo').value).split(':').map(Number);
+    if (S.relations.some(x => x.enabled && x.to.ti === ti)) {
+      return relMsg('critical', `“${S.tables[ti].sheetName}” zaten bağlı. Önce mevcut ilişkiyi kapatın.`);
+    }
+    const r = evaluateRelation(S.tables, S.sheetIdx, from, ti, idx);
+    if (!r.ok) {
+      return relMsg('critical', `Bu ilişki kurulamaz — <b>${esc(r.reason)}</b>. ${esc(REL_REASON[r.reason] || '')}` +
+        (r.overlap !== undefined ? ` (örtüşme ${pct(r.overlap)})` : ''));
+    }
+    const dup = S.relations.findIndex(x => x.id === r.id);
+    if (dup >= 0) S.relations[dup] = r; else S.relations.push(r);
+    relink();
+    relMsg('good', `İlişki kuruldu: <b>${esc(r.from.col)} → ${esc(r.to.table)}[${esc(r.to.col)}]</b> · ${pct(r.overlap)} eşleşme.`);
+  });
+}
+
+function relMsg(sev, html) {
+  const box = $('#relAddMsg'); if (!box) return;
+  box.innerHTML = `<div class="issues" style="margin-top:.75rem"><div class="issue" data-sev="${sev}">
+    <span class="sev-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 16.5v.1"/><circle cx="12" cy="12" r="9"/></svg></span>
+    <span>${html}</span></div></div>`;
+}
+
+/* ---------- 4. özet rapor ---------- */
 /** Rapor bağlamı. Durum nesnesi dışarıdan verilebilir; stüdyo `S`,
     örnek rapor kendi durumunu geçirir. */
 function reportContext(st) {
@@ -3379,7 +4198,7 @@ function renderReport() {
   const chg = last && prev && prev.value ? (last.value - prev.value) / Math.abs(prev.value) : null;
   const tone = chg === null ? 'flat' : chg > 0.005 ? 'up' : chg < -0.005 ? 'down' : 'flat';
   const best = series.length ? series.reduce((a, b) => (b.value > a.value ? b : a)) : null;
-  const dimCount = S.dimField ? new Set(rowIdx.map(i => cellKey(t.data[i][S.dimField.idx]))).size : 0;
+  const dimCount = S.dimField ? new Set(rowIdx.map(i => cellKey(S.dimField.get(t, i)))).size : 0;
   const perRec = rowIdx.length && S.measure ? aggregate(t, rowIdx, S.measure, 'sum') / rowIdx.length : null;
 
   const activeFilters = Object.keys(S.filters).filter(k => S.filters[k] && S.filters[k].size);
@@ -3387,7 +4206,7 @@ function renderReport() {
   $('#reportBox').innerHTML = `
     <div class="ctl-rail">
       <div class="ctl"><label for="mSel">Ölçü</label>
-        <select id="mSel">${S.roles.measures.map(f => `<option value="${f.idx}"${S.measure && f.idx === S.measure.idx ? ' selected' : ''}>${esc(f.name)}</option>`).join('') || '<option>—</option>'}</select></div>
+        <select id="mSel">${S.roles.measures.map(f => `<option value="${f.idx}"${S.measure && f.idx === S.measure.idx ? ' selected' : ''}>${esc(fieldLabel(f))}</option>`).join('') || '<option>—</option>'}</select></div>
       <div class="ctl"><label for="aSel">Hesaplama</label>
         <select id="aSel">
           <option value="sum"${S.agg === 'sum' ? ' selected' : ''}>Toplam</option>
@@ -3395,7 +4214,7 @@ function renderReport() {
           <option value="count"${S.agg === 'count' ? ' selected' : ''}>Kayıt sayısı</option>
         </select></div>
       <div class="ctl"><label for="dSel">Kırılım</label>
-        <select id="dSel">${S.roles.dims.map(f => `<option value="${f.idx}"${S.dimField && f.idx === S.dimField.idx ? ' selected' : ''}>${esc(f.name)}</option>`).join('') || '<option>—</option>'}</select></div>
+        <select id="dSel">${S.roles.dims.map(f => `<option value="${f.idx}"${S.dimField && f.idx === S.dimField.idx ? ' selected' : ''}>${esc(fieldLabel(f))}</option>`).join('') || '<option>—</option>'}</select></div>
       ${S.dateField ? `
       <div class="ctl"><label for="fSel">Başlangıç</label><select id="fSel">${monthOpts(S.from)}</select></div>
       <div class="ctl"><label for="tSel">Bitiş</label><select id="tSel">${monthOpts(S.to)}</select></div>` : ''}
@@ -3405,7 +4224,7 @@ function renderReport() {
 
     <div class="filter-note ${activeFilters.length ? 'on' : ''}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg>
-      <span>Çapraz filtre etkin: ${activeFilters.map(k => `<b>${esc(t.fields[+k].name)} = ${[...S.filters[k]].map(esc).join(', ')}</b>`).join(' · ')}
+      <span>Çapraz filtre etkin: ${activeFilters.map(k => `<b>${esc(fieldAt(t, k).name)} = ${[...S.filters[k]].map(esc).join(', ')}</b>`).join(' · ')}
       — ${nf(rowIdx.length)} / ${nf(t.rowCount)} satır gösteriliyor.</span>
       <button class="link-btn" id="clearX" type="button">kaldır</button>
     </div>
@@ -3444,7 +4263,7 @@ function renderReport() {
         <div id="cTrend"></div>
       </div>
       <div class="chart-card c5">
-        <div class="chart-head"><h3>${esc(S.dimField ? S.dimField.name : 'Kırılım')} kırılımı</h3><span class="hint">filtrelemek için tıklayın</span></div>
+        <div class="chart-head"><h3>${esc(S.dimField ? fieldLabel(S.dimField) : 'Kırılım')} kırılımı</h3><span class="hint">filtrelemek için tıklayın</span></div>
         <div id="cBars"></div>
       </div>
       <div class="chart-card c5">
@@ -3465,9 +4284,9 @@ function renderReport() {
       </div>
     </div>`;
 
-  $('#mSel') && $('#mSel').addEventListener('change', e => { S.measure = t.fields[+e.target.value]; renderReport(); renderInsights(); renderPBI(); });
+  $('#mSel') && $('#mSel').addEventListener('change', e => { S.measure = fieldAt(t, e.target.value); renderReport(); renderInsights(); renderPBI(); });
   $('#aSel').addEventListener('change', e => { S.agg = e.target.value; renderReport(); renderInsights(); });
-  $('#dSel') && $('#dSel').addEventListener('change', e => { S.dimField = t.fields[+e.target.value]; S.filters = {}; renderReport(); renderInsights(); renderPBI(); });
+  $('#dSel') && $('#dSel').addEventListener('change', e => { S.dimField = fieldAt(t, e.target.value); S.filters = {}; renderReport(); renderInsights(); renderPBI(); });
   $('#fSel') && $('#fSel').addEventListener('change', e => { S.from = +e.target.value; if (S.to < S.from) S.to = S.from; renderReport(); renderInsights(); });
   $('#tSel') && $('#tSel').addEventListener('change', e => { S.to = +e.target.value; if (S.from > S.to) S.from = S.to; renderReport(); renderInsights(); });
   const clearAll = () => { S.filters = {}; const r = monthRange(t, S.dateField || {}); if (S.dateField && r) { S.from = r[0]; S.to = r[1]; } renderReport(); renderInsights(); };
@@ -3510,15 +4329,15 @@ function heatGrid(t, rowIdx, dimTop, st) {
   const cols = months.map(m => m.label);
   const idxOf = new Map(months.map((m, i) => [m.k, i]));
   const values = cats.map(() => new Array(cols.length).fill(0));
-  const gi = st.dimField.idx, di = st.dateField.idx, mi = st.measure ? st.measure.idx : -1;
+  const gf = st.dimField, df = st.dateField, mf = st.measure || null;
   const catRow = new Map(cats.map((c, i) => [c, i]));
   const counts = cats.map(() => new Array(cols.length).fill(0));
   for (const i of rowIdx) {
-    const c = catRow.get(cellKey(t.data[i][gi])); if (c === undefined) continue;
-    const d = toDate(t.data[i][di]); if (!d) continue;
+    const c = catRow.get(cellKey(gf.get(t, i))); if (c === undefined) continue;
+    const d = toDate(df.get(t, i)); if (!d) continue;
     const j = idxOf.get(monthKey(d)); if (j === undefined) continue;
     counts[c][j]++;
-    if (mi >= 0) { const x = toNum(t.data[i][mi]); if (x !== null) values[c][j] += x; }
+    if (mf) { const x = toNum(mf.get(t, i)); if (x !== null) values[c][j] += x; }
   }
   if (st.agg === 'count') return { rows: cats, cols, values: counts };
   if (st.agg === 'avg') return { rows: cats, cols, values: values.map((row, c) => row.map((v, j) => counts[c][j] ? v / counts[c][j] : 0)) };
@@ -3532,7 +4351,7 @@ function renderDetailTable(ctx) {
   const mName = S.measure ? S.measure.name : 'Kayıt';
   $('#cTable').innerHTML = `<div class="tbl-wrap"><table class="dt">
     <thead><tr>
-      <th>${esc(S.dimField ? S.dimField.name : 'Kategori')}</th>
+      <th>${esc(S.dimField ? fieldLabel(S.dimField) : 'Kategori')}</th>
       <th style="text-align:right">${esc(mName)}</th>
       <th style="text-align:right">Pay</th>
       <th style="text-align:right">Kümülatif</th>
@@ -3597,9 +4416,12 @@ function renderPBI() {
   if (!S.table) return;
   const t = S.table, roles = S.roles;
   const factName = safeName(t.sheetName).replace(/\s+/g, '') || 'Fact';
-  const m = S.measure, dims = roles.dims.slice(0, 4);
+  const m = S.measure, dims = roles.dims.filter(d => !d.virtual).slice(0, 4);
+  const rels = (S.relations || []).filter(r => r.enabled);
 
-  const model = {
+  // İlişki kurulmuşsa diyagram GERÇEK tabloları gösterir; yoksa tek geniş
+  // tablodan ayrılması önerilen Dim* tabloları çizilir.
+  const model = rels.length ? modelShape() : {
     fact: { name: 'Fact' + factName, cols: `${roles.measures.length} ölçü + ${dims.length + (roles.dateField ? 1 : 0)} anahtar`, rows: nf(t.rowCount) + ' satır' },
     dims: [
       ...(roles.dateField ? [{ name: 'Tarih', cols: 'Yıl · Çeyrek · Ay · Gün', tone: 's7' }] : []),
@@ -3612,17 +4434,24 @@ function renderPBI() {
       <p class="eyebrow">Power BI paketi</p>
       <h2 style="font-size:1.375rem">Bu Excel'i otomatik yenilenen bir modele çevirmek için gereken her şey</h2>
       <p style="font-size:.9375rem">Aşağıdaki kod bu dosyanın kendi kolon adlarına göre üretildi.
-      Power BI Desktop'ta <b>Boş Sorgu → Gelişmiş Düzenleyici</b>'ye yapıştırıp kaynak yolunu değiştirmeniz yeterli.</p>
+      Power BI Desktop'ta <b>Boş Sorgu → Gelişmiş Düzenleyici</b>'ye yapıştırıp kaynak yolunu değiştirmeniz yeterli.
+      ${rels.length ? `<b>${rels.length} tablo ilişkisi</b> tespit edildiği için her tablo ayrı sorgu olarak üretildi.` : ''}</p>
     </div>
 
     <div class="chart-card" style="margin-bottom:1rem">
-      <div class="chart-head"><h3>Önerilen veri modeli — yıldız şeması</h3><span class="hint">tek yönlü ilişkiler, işaretli tarih tablosu</span></div>
+      <div class="chart-head"><h3>${rels.length ? 'Veri modeli — kurulan ilişkiler' : 'Önerilen veri modeli — yıldız şeması'}</h3>
+        <span class="hint">tek yönlü ilişkiler, işaretli tarih tablosu</span></div>
       <div id="cStar"></div>
       <p style="font-size:.8125rem;color:var(--ink-2);margin-top:.85rem;max-width:76ch">
-        Tek geniş tablo yerine boyutların ayrılması; dilimleyicilerin hızlanmasını, ölçülerin
-        tekrar kullanılabilmesini ve <span class="mono">${esc(roles.dateField ? roles.dateField.name : 'tarih')}</span>
-        üzerinden zaman fonksiyonlarının çalışmasını sağlar.
+        ${rels.length
+          ? 'Bu ilişkiler dosyadaki sayfalardan tespit edildi. Model görünümünde kurmanız gereken bağlantılar:'
+          : 'Tek geniş tablo yerine boyutların ayrılması; dilimleyicilerin hızlanmasını, ölçülerin tekrar kullanılabilmesini ve <span class="mono">' + esc(roles.dateField ? roles.dateField.name : 'tarih') + '</span> üzerinden zaman fonksiyonlarının çalışmasını sağlar.'}
       </p>
+      ${rels.length ? `<ul class="rel-todo">${rels.map(r =>
+        `<li><span class="mono">${esc(r.from.table)}[${esc(r.from.col)}] → ${esc(r.to.table)}[${esc(r.to.col)}]</span>
+         <em>çoktan bire, tek yön</em></li>`).join('')}
+        ${roles.dateField ? `<li><span class="mono">${esc(t.sheetName)}[${esc(roles.dateField.name)}] → Tarih[Tarih]</span> <em>çoktan bire, tek yön · tarihe göre işaretle</em></li>` : ''}
+      </ul>` : ''}
     </div>
 
     <div class="pbi-grid" style="margin-bottom:1rem">
@@ -3681,24 +4510,59 @@ function hl(code, lang) {
   return s;
 }
 
+/** Her tablo için ayrı bir Power Query. Çok sayfalı dosyada olgu tablosunun
+    yanına her boyut tablosu kendi sorgusuyla gelir — modelde ilişki
+    kurulabilmesi için tabloların ayrı ayrı yüklenmesi gerekir. */
 function genM(t, roles) {
+  const rels = (S.relations || []).filter(r => r.enabled);
+  if (!rels.length) return genTableM(t, roles, {});
+
+  const blocks = [
+    `/* ${rels.length + 1} AYRI SORGU — her bloğu kendi "Boş Sorgu"suna yapıştırın.
+   Tabloları burada BİRLEŞTİRMEYİN: ilişki Model görünümünde kurulur, böylece
+   dilimleyiciler hızlı kalır ve toplamlar çoğalmaz. */`,
+    `// ═══ 1. OLGU TABLOSU — ${t.sheetName} ═══\n` + genTableM(t, roles, {})
+  ];
+  rels.forEach((r, i) => {
+    const dim = S.tables[r.to.ti];
+    blocks.push(`// ═══ ${i + 2}. BOYUT TABLOSU — ${dim.sheetName} ═══
+// Anahtar: ${r.to.col}. İlişki: ${t.sheetName}[${r.from.col}] → ${dim.sheetName}[${r.to.col}] (çoktan bire, tek yön)`
+      + '\n' + genTableM(dim, pickRoles(dim), { keyCol: r.to.col }));
+  });
+  return blocks.join('\n\n');
+}
+
+/** @param opts.keyCol  boyut tablosunun anahtar kolonu; verilirse anahtarın
+ *                      benzersizliğini garanti eden adımlar eklenir. */
+function genTableM(t, roles, opts) {
+  opts = opts || {};
   const isCsv = /\.(csv|tsv|txt)$/i.test(S.fileName);
-  const types = t.fields.filter(f => f.role !== 'skip').map(f => {
+  const types = ownFields(t).filter(f => f.role !== 'skip').map(f => {
     const ty = f.type === 'date' ? 'type date' : f.type === 'number' ? (f.allInt ? 'Int64.Type' : 'type number') : f.type === 'bool' ? 'type logical' : 'type text';
     return `        {${q(f.name)}, ${ty}}`;
   }).join(',\n');
 
-  const textDims = roles.dims.filter(d => d.type === 'text').slice(0, 3);
+  const textDims = roles.dims.filter(d => d.type === 'text' && !d.virtual).slice(0, 3);
   const trimStep = textDims.length
     ? `    // Kategori yazımını tekilleştir: " ANKARA " ve "Ankara" aynı değer olmalı\n    TemizMetin = Table.TransformColumns(DeğişenTür, {\n${textDims.map(d => `        {${q(d.name)}, each if _ = null then null else Text.Proper(Text.Trim(_)), type text}`).join(',\n')}\n    }),\n`
     : '';
   const prev = textDims.length ? 'TemizMetin' : 'DeğişenTür';
 
-  const nulls = roles.measures.slice(0, 3);
+  const nulls = roles.measures.filter(f => !f.virtual).slice(0, 3);
   const nullStep = nulls.length
     ? `    // Ölçülerdeki boşluğu 0'a çevir — toplamlar sessizce eksik kalmasın\n    BoşluklarDolduruldu = Table.ReplaceValue(${prev}, null, 0, Replacer.ReplaceValue, {${nulls.map(f => q(f.name)).join(', ')}}),\n`
     : '';
-  const prev2 = nulls.length ? 'BoşluklarDolduruldu' : prev;
+  let prev2 = nulls.length ? 'BoşluklarDolduruldu' : prev;
+
+  // Boyut tablosunda anahtar benzersiz OLMAK ZORUNDA: yinelenen bir anahtar
+  // Power BI'da ilişkiyi kurdurmaz, kurulsa da satırları çoğaltır.
+  let keyStep = '';
+  if (opts.keyCol) {
+    keyStep = `    // Anahtar kolonun boş ve yinelenen satırları — ilişkinin ön koşulu
+    AnahtarDolu = Table.SelectRows(${prev2}, each Record.Field(_, ${q(opts.keyCol)}) <> null and Record.Field(_, ${q(opts.keyCol)}) <> ""),
+    AnahtarTekil = Table.Distinct(AnahtarDolu, {${q(opts.keyCol)}}),\n`;
+    prev2 = 'AnahtarTekil';
+  }
 
   return `// ${S.fileName || 'kaynak dosya'} → ${t.sheetName}
 // Bu sorgu, kaynak dosyanın kolon adlarına göre üretildi.
@@ -3728,7 +4592,7 @@ ${t.headerIndex > 0
 ${types}
     }),
 
-${trimStep}${nullStep}${t.dupes > 0
+${trimStep}${nullStep}${keyStep}${t.dupes > 0
   ? `    // ${nf(t.dupes)} birebir yinelenen satır tespit edildi
     YinelenenlerKaldırıldı = Table.Distinct(${prev2}),
     Sonuç = YinelenenlerKaldırıldı`
@@ -3765,17 +4629,37 @@ in
     Bugün`;
 }
 
-function genDax(t, roles, m, factName) {
-  const fact = "'Fact" + factName + "'";
-  const col = m ? `${fact}[${m.name}]` : null;
-  const base = m ? safeName(m.name) : 'Kayıt Sayısı';
-  const dim = roles.dims[0];
-  const dimTbl = dim ? `'Dim${safeName(dim.name).replace(/\s+/g, '')}'[${dim.name}]` : null;
+/** Bir alanın DAX'taki nitelikli adı. İlişkiden gelen alan GERÇEK boyut
+    tablosuna aittir; yerel bir boyut için önerdiğimiz Dim* tablosuna. */
+function daxRef(f) {
+  if (!f) return null;
+  return f.virtual
+    ? `'${f.sourceTable}'[${f.sourceCol}]`
+    : `'Dim${safeName(f.name).replace(/\s+/g, '')}'[${f.name}]`;
+}
 
-  return `// Ölçüler ayrı bir "_Ölçüler" tablosunda toplanır.
+function genDax(t, roles, m, factName) {
+  // İlişkili (sanal) bir alan olgu tablosunun kolonu değildir; ölçü olarak
+  // seçilmişse DAX'ta kaynak tablosundan okunur.
+  const fact = "'Fact" + factName + "'";
+  const rels = (S.relations || []).filter(r => r.enabled);
+  const factTbl = rels.length ? `'${t.sheetName}'` : fact;
+  const col = m ? (m.virtual ? `'${m.sourceTable}'[${m.sourceCol}]` : `${factTbl}[${m.name}]`) : null;
+  const base = m ? safeName(m.name) : 'Kayıt Sayısı';
+  const dim = S.dimField || roles.dims[0];
+  const dimTbl = daxRef(dim);
+
+  const relNote = rels.length
+    ? `// ---- Model görünümünde kurulacak ilişkiler ----
+${rels.map(r => `//   ${r.from.table}[${r.from.col}] → ${r.to.table}[${r.to.col}]  (çoktan bire, tek yön)`).join('\n')}
+${roles.dateField ? `//   ${t.sheetName}[${roles.dateField.name}] → Tarih[Tarih]  (çoktan bire, tek yön · "Tarihe göre işaretle")\n` : ''}// Çift yönlü filtre AÇMAYIN: belirsiz yol üretir, ölçüler sessizce değişir.
+
+` : '';
+
+  return `${relNote}// Ölçüler ayrı bir "_Ölçüler" tablosunda toplanır.
 // Kural: temel ölçü bir kez yazılır, türevler onun üzerine kurulur.
 
-Kayıt Sayısı = COUNTROWS(${fact})
+Kayıt Sayısı = COUNTROWS(${factTbl})
 ${m ? `
 Toplam ${base} = SUM(${col})
 
@@ -3845,18 +4729,30 @@ function genDict(t, roles, m, factName) {
   if (roles.dateField) rows.push([safeName(m ? m.name : 'Kayıt') + ' YoY %', '(Cari − Önceki Yıl) / Önceki Yıl', 'Geçen yılın aynı dönemine göre değişim.', 'Yönetim']);
   if (roles.dims[0]) rows.push([safeName(m ? m.name : 'Kayıt') + ' Pay %', 'Kategori / Seçili toplam', 'Kategorinin toplam içindeki payı.', 'Analiz']);
 
+  const rels = (S.relations || []).filter(r => r.enabled);
+  const virt = t.fields.filter(f => f.virtual);
+  const relSection = rels.length ? `
+## İlişkiler
+| Olgu | Boyut | Eşleşme | Kardinalite |
+|---|---|---|---|
+${rels.map(r => `| ${r.from.table}[${r.from.col}] | ${r.to.table}[${r.to.col}] | ${pct(r.overlap)}${r.missingKeys ? ` (${nf(r.missingKeys)} değer boyutta yok)` : ''} | çoktan bire, tek yön |`).join('\n')}
+
+İlişkiden gelen alanlar: ${virt.map(f => `${f.name} (${f.sourceTable})`).join(', ') || '—'}
+` : '';
+
   return `# Ölçü sözlüğü — ${t.sheetName}
 
 Kaynak dosya : ${S.fileName || '—'}
-Fact tablosu : ${nf(t.rowCount)} satır, ${t.fields.length} kolon
+Fact tablosu : ${nf(t.rowCount)} satır, ${ownFields(t).length} kolon${virt.length ? ` (+ ${virt.length} ilişkili alan)` : ''}
 Tarih kolonu : ${roles.dateField ? roles.dateField.name : '— (bulunamadı)'}
+Tablo sayısı : ${(S.tables || [t]).length} sayfa, ${rels.length} ilişki
 Yenileme     : Günlük 06:30 (gateway üzerinden)
 Sahip        : [Ad Soyad]
 
 | Ölçü | Formül özeti | Ne anlatır | Kime |
 |---|---|---|---|
 ${rows.map(r => `| ${r[0]} | ${r[1]} | ${r[2]} | ${r[3]} |`).join('\n')}
-
+${relSection}
 ## Bilinen sınırlar
 ${S.qual.issues.filter(i => i.sev !== 'good').map(i => `- ${i.title}: ${i.body.replace(/<[^>]+>/g, '')}`).join('\n') || '- Bilinen bir kalite sorunu kaydedilmedi.'}
 
@@ -3920,8 +4816,9 @@ function cleanForReport(t) {
   const proper = s => String(s).trim().replace(/\s+/g, ' ')
     .toLocaleLowerCase(TR)
     .replace(/(^|[\s\-/])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase(TR));
-  const dims = t.fields.filter(f => f.role === 'dim' && f.type === 'text');
-  const nums = t.fields.filter(f => f.type === 'number');
+  // Yalnız fiziksel kolonlar yazılabilir; sanal alanlar boyut tablosundan okunur.
+  const dims = ownFields(t).filter(f => f.role === 'dim' && f.type === 'text');
+  const nums = ownFields(t).filter(f => f.type === 'number');
   const seen = new Set();
   const rows = [];
   let dupes = 0, normalized = 0, coerced = 0;
@@ -3998,10 +4895,12 @@ function renderSample() {
   const cleaned = cleanForReport(raw);
   const t = cleaned.table;
 
-  const dims = q.roles.dims.slice(0, 4);
+  // Dilimleyiciler: az değerli boyutlar çip, çok değerli olanlar arama kutusu
+  const dims = q.roles.slicerDims.slice(0, 4);
+  const searchDims = q.roles.searchDims.slice(0, 3);
   const st = {
     table: t, dateField: q.roles.dateField, measure: q.roles.measures[0],
-    dimField: dims[0], dims, agg: 'sum', gran: 'month',
+    dimField: (dims[0] || q.roles.dims[0]), dims, searchDims, allDims: q.roles.dims, agg: 'sum', gran: 'month',
     from: null, to: null, filters: {}, clean: cleaned.stats,
     asTable: {}
   };
@@ -4104,7 +5003,43 @@ function paintSlicers() {
           ${open && vals.length > SHOW ? `<button class="chip chip-more" type="button" data-exp="${d.idx}">az göster</button>` : ''}
         </div>
       </div>`;
+    }).join('')}
+    ${(st.searchDims || []).map(d => {
+      const q = (st.search && st.search[d.idx]) || '';
+      const sel = st.filters[d.idx];
+      const all = groupBy(st.table, applyFilters(st.table, Object.assign({}, st, { filters: omit(st.filters, d.idx) })), d, st.measure, st.agg);
+      const hit = q ? all.filter(v => v.key.toLocaleLowerCase(TR).includes(q.toLocaleLowerCase(TR))) : all;
+      const shown = hit.slice(0, 5);
+      return `<div class="slicer">
+        <div class="slicer-head">
+          <span class="slicer-name">${esc(d.name)}</span>
+          ${sel ? `<span class="slicer-count">${sel.size}</span>
+                   <button class="slicer-clear" type="button" data-clr="${d.idx}" aria-label="${esc(d.name)} seçimini temizle">temizle</button>`
+                : `<span class="slicer-total">${nf(all.length)}</span>`}
+        </div>
+        <input class="slicer-search" type="text" data-sf="${d.idx}" value="${esc(q)}"
+               placeholder="${esc(d.name)} ara…" aria-label="${esc(d.name)} içinde ara">
+        <div class="chip-row" style="margin-top:.4rem">
+          ${sel ? [...sel].map(v => `<button class="chip" type="button" data-f="${d.idx}" data-v="${esc(v)}" aria-pressed="true">
+             <span class="chip-tick" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>${esc(v)}</button>`).join('') : ''}
+          ${shown.filter(v => !(sel && sel.has(v.key))).map(v =>
+            `<button class="chip" type="button" data-f="${d.idx}" data-v="${esc(v.key)}" aria-pressed="false">${esc(v.key)}</button>`).join('')}
+          ${!q && !sel ? `<span class="slicer-hint">en yüksek ${shown.length}, aramak için yazın</span>` : ''}
+          ${q && !hit.length ? `<span class="slicer-hint">eşleşme yok</span>` : ''}
+        </div>
+      </div>`;
     }).join('')}`;
+
+  $$('#sSlicers .slicer-search').forEach(inp => {
+    inp.addEventListener('input', () => {
+      st.search = st.search || {};
+      st.search[inp.dataset.sf] = inp.value;
+      const at = inp.selectionStart;
+      paintSample();
+      const again = document.querySelector(`.slicer-search[data-sf="${inp.dataset.sf}"]`);
+      if (again) { again.focus(); again.setSelectionRange(at, at); }
+    });
+  });
 
   $('#sFrom').addEventListener('change', e => { st.from = +e.target.value; if (st.to < st.from) st.to = st.from; paintSample(); });
   $('#sTo').addEventListener('change', e => { st.to = +e.target.value; if (st.from > st.to) st.from = st.to; paintSample(); });
@@ -4133,7 +5068,7 @@ function paintFilterBar(rowIdx) {
       <div class="fp-chips">
         ${dateNarrowed ? `<button class="fp-chip" type="button" data-clear="date">${esc(keyLabelLong(st.from))} – ${esc(keyLabelLong(st.to))} <span aria-hidden="true">×</span><span class="sr-only">dönem filtresini kaldır</span></button>` : ''}
         ${keys.map(k => [...st.filters[k]].map(v =>
-          `<button class="fp-chip" type="button" data-f="${k}" data-v="${esc(v)}">${esc(st.table.fields[+k].name)}: <b>${esc(v)}</b> <span aria-hidden="true">×</span><span class="sr-only">filtreyi kaldır</span></button>`
+          `<button class="fp-chip" type="button" data-f="${k}" data-v="${esc(v)}">${esc(fieldAt(st.table, k).name)}: <b>${esc(v)}</b> <span aria-hidden="true">×</span><span class="sr-only">filtreyi kaldır</span></button>`
         ).join('')).join('')}
       </div>
       <span class="fp-count">${nf(rowIdx.length)} / ${nf(st.table.rowCount)} satır</span>
@@ -4365,7 +5300,7 @@ function pageKirilim(ctx) {
   $('#sBody').innerHTML = `
     <div class="ctl-rail" style="margin-bottom:1rem">
       <div class="ctl"><label for="sDim">Kırılım alanı</label>
-        <select id="sDim">${st.dims.map(d => `<option value="${d.idx}"${d.idx === st.dimField.idx ? ' selected' : ''}>${esc(d.name)}</option>`).join('')}</select>
+        <select id="sDim">${(st.allDims || st.dims).map(d => `<option value="${d.idx}"${d.idx === st.dimField.idx ? ' selected' : ''}>${esc(fieldLabel(d))}</option>`).join('')}</select>
       </div>
       <div class="ctl" style="margin-left:auto"><label>&nbsp;</label>
         <button class="btn btn-ghost btn-sm" id="sDrill" type="button">
@@ -4408,7 +5343,7 @@ function pageKirilim(ctx) {
     [st.dimField.name, st.measure.name, 'Pay', 'Kümülatif', 'Kayıt', 'Ortalama'], detail);
 
   $('#sDim').addEventListener('change', e => {
-    st.dimField = st.table.fields[+e.target.value];
+    st.dimField = fieldAt(st.table, e.target.value);
     paintSample();
   });
   $('#sDrill').addEventListener('click', () => goPage('detay'));
@@ -4423,9 +5358,10 @@ function pageDetay(ctx) {
   const sortF = st.sort || { i: st.dateField.idx, dir: -1 };
   st.sort = sortF;
 
+  const sortField = fieldAt(st.table, sortF.i) || st.dateField;
   const rows = ctx.rowIdx.slice();
   rows.sort((a, b) => {
-    const va = st.table.data[a][sortF.i], vb = st.table.data[b][sortF.i];
+    const va = sortField.get(st.table, a), vb = sortField.get(st.table, b);
     const na = va instanceof Date ? va.getTime() : toNum(va);
     const nb = vb instanceof Date ? vb.getTime() : toNum(vb);
     if (na !== null && nb !== null && na !== undefined && nb !== undefined) return (na - nb) * sortF.dir;
@@ -4446,7 +5382,7 @@ function pageDetay(ctx) {
           ${cols.map(f => `<th class="sortable" data-i="${f.idx}" aria-sort="${sortF.i === f.idx ? (sortF.dir === 1 ? 'ascending' : 'descending') : 'none'}">${esc(f.name)}${sortF.i === f.idx ? (sortF.dir === 1 ? ' ▲' : ' ▼') : ''}</th>`).join('')}
         </tr></thead>
         <tbody>
-          ${shown.map((ri, n) => `<tr><td class="rowno">${n + 1}</td>${cols.map(f => cellHtml(st.table.data[ri][f.idx], f)).join('')}</tr>`).join('')}
+          ${shown.map((ri, n) => `<tr><td class="rowno">${n + 1}</td>${cols.map(f => cellHtml(f.get(st.table, ri), f)).join('')}</tr>`).join('')}
         </tbody>
       </table>
     </div>`;
@@ -4459,7 +5395,7 @@ function pageDetay(ctx) {
   $('#sCopy').addEventListener('click', () => {
     const head = cols.map(f => f.name).join('\t');
     const body = shown.map(ri => cols.map(f => {
-      const v = st.table.data[ri][f.idx];
+      const v = f.get(st.table, ri);
       return v instanceof Date ? v.toLocaleDateString(TR) : (v ?? '');
     }).join('\t')).join('\n');
     copyPlain(head + '\n' + body, $('#sCopy'));
@@ -4521,13 +5457,13 @@ function sampleHeat(ctx) {
   const values = cats.map(() => new Array(cols.length).fill(0));
   const counts = cats.map(() => new Array(cols.length).fill(0));
   const catRow = new Map(cats.map((c, i) => [c, i]));
-  const gi = st.dimField.idx, di = st.dateField.idx, mi = st.measure.idx;
+  const t = st.table, gf = st.dimField, df = st.dateField, mf = st.measure;
   for (const i of ctx.rowIdx) {
-    const c = catRow.get(cellKey(st.table.data[i][gi])); if (c === undefined) continue;
-    const d = toDate(st.table.data[i][di]); if (!d) continue;
+    const c = catRow.get(cellKey(gf.get(t, i))); if (c === undefined) continue;
+    const d = toDate(df.get(t, i)); if (!d) continue;
     const j = idxOf.get(G.key(d)); if (j === undefined) continue;
     counts[c][j]++;
-    const x = toNum(st.table.data[i][mi]); if (x !== null) values[c][j] += x;
+    const x = toNum(mf.get(t, i)); if (x !== null) values[c][j] += x;
   }
   if (st.agg === 'count') return { rows: cats, cols, values: counts };
   return { rows: cats, cols, values };
@@ -4557,7 +5493,7 @@ let rt;
 addEventListener('resize', () => {
   clearTimeout(rt);
   rt = setTimeout(() => {
-    if (S.table && curStep === 2 && $('#v-studio').classList.contains('on')) renderReport();
+    if (S.table && curStep === STEP_REPORT && $('#v-studio').classList.contains('on')) renderReport();
     if (sampleState && $('#v-report').classList.contains('on')) drawSampleCharts();
   }, 220);
 });
