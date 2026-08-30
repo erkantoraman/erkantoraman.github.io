@@ -1480,9 +1480,9 @@ pre.code .f { color: var(--s7); font-weight: 500; }
           <a class="btn btn-ghost" href="#/studyo">Kendi Excel'inle dene</a>
         </div>
         <div class="stats">
-          <div class="reveal" style="--i:8"><b><span data-count="8" data-suffix="+">0</span><i>yıl</i></b><span class="cap">Raporlama ve analiz deneyimi</span></div>
-          <div class="reveal" style="--i:9"><b><span data-count="5">0</span><i>sektör</i></b><span class="cap">Asansör, kimya, elektronik, saha, bankacılık</span></div>
-          <div class="reveal" style="--i:10"><b><span data-count="12">0</span><i>araç</i></b><span class="cap">Excel VBA, Power BI, SQL, SAP ve dahası — ikisinde şirket içi eğitmen</span></div>
+          <div class="reveal" style="--i:8"><b><span data-count="8" data-suffix="+">8+</span><i>yıl</i></b><span class="cap">Raporlama ve analiz deneyimi</span></div>
+          <div class="reveal" style="--i:9"><b><span data-count="5">5</span><i>sektör</i></b><span class="cap">Asansör, kimya, elektronik, saha, bankacılık</span></div>
+          <div class="reveal" style="--i:10"><b><span data-count="12">12</span><i>araç</i></b><span class="cap">Excel VBA, Power BI, SQL, SAP ve dahası — ikisinde şirket içi eğitmen</span></div>
         </div>
       </div>
 
@@ -3464,12 +3464,13 @@ function countUp(el) {
   const suffix = el.dataset.suffix || '';
   const prefix = el.dataset.prefix || '';
   const dec = +(el.dataset.dec || 0);
-  if (!isFinite(target) || REDUCED) { el.textContent = prefix + target.toLocaleString('tr-TR') + suffix; return; }
+  const yaz = v => prefix + v.toLocaleString('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + suffix;
+  if (!isFinite(target) || REDUCED) { if (isFinite(target)) el.textContent = yaz(target); return; }
   const dur = 1100, t0 = performance.now();
   const tick = (now) => {
     const p = Math.min(1, (now - t0) / dur);
     const e = 1 - Math.pow(1 - p, 3);
-    el.textContent = prefix + (target * e).toLocaleString('tr-TR', { minimumFractionDigits: dec, maximumFractionDigits: dec }) + suffix;
+    el.textContent = yaz(target * e);
     if (p < 1) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
@@ -5110,9 +5111,14 @@ function splitCompact(v) {
   if (a >= 100) return { n: Math.round(v), dec: 0, suffix: '' };
   return { n: v, dec: 1, suffix: '' };
 }
+/* Başlangıç metni GERÇEK değerdir, 0 değil. countUp() ilk animasyon karesine
+   kadar hiçbir şey yazmaz; böylece JavaScript çalışmadan okunduğunda
+   (arama motoru, JS kapalı tarayıcı, arka plan sekmesi) doğru sayı görünür.
+   Eskiden burada 0 yazıyordu ve site "0 yıl deneyim" diye okunuyordu. */
 const counter = (v, extraCls) => {
   const c = splitCompact(v);
-  return `<span class="${extraCls || ''}" data-count="${c.n}" data-dec="${c.dec}" data-suffix="${c.suffix}">0</span>`;
+  const ilk = c.n.toLocaleString('tr-TR', { minimumFractionDigits: c.dec, maximumFractionDigits: c.dec }) + c.suffix;
+  return `<span class="${extraCls || ''}" data-count="${c.n}" data-dec="${c.dec}" data-suffix="${c.suffix}">${esc(ilk)}</span>`;
 };
 
 /** Örnek rapor "bitmiş iş"tir; ham veriyle değil temizlenmiş veriyle sunulur.
