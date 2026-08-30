@@ -259,10 +259,11 @@ button { font: inherit; color: inherit; }
 .brand-role { font-size: .6875rem; padding: .3rem .7rem .3rem .6rem; margin-left: .35rem; }
 /* Kahraman bölümünde: yalnız başlıktakine yer kalmadığında görünür */
 .role-badge { font-size: .8125rem; padding: .48rem 1.05rem .48rem .85rem; display: none; }
-/* Ünvan uzun (37 karakter). 1160px'te marka ile menü arasında hâlâ 91px
-   boşluk kalıyor; eşik ölçülerek 1120px'e çekildi. Altında başlıktan
-   çekilip kahraman bölümündeki rozete devrediyor. */
-@media (max-width: 1120px) {
+/* Menü 6 maddeye çıkıp yanına CV düğmesi gelince 1200px'te 11px yatay taşma
+   oluştu. Ölçümle güvenli eşik 1240px: bu genişlikte marka ile menü arasında
+   28px boşluk kalıyor ve taşma yok. Altında ünvan başlıktan çekilip
+   kahraman bölümündeki rozete devrediyor. */
+@media (max-width: 1240px) {
   .brand-role { display: none; }
   .role-badge { display: inline-flex; }
 }
@@ -610,6 +611,205 @@ button { font: inherit; color: inherit; }
 .avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; box-shadow: 0 0 0 0 rgba(12,163,12,.6); animation: pulse 2.4s var(--ease) infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(12,163,12,.5); } 70% { box-shadow: 0 0 0 9px rgba(12,163,12,0); } 100% { box-shadow: 0 0 0 0 rgba(12,163,12,0); } }
 .foot-bar { border-top: 1px solid var(--rule); padding-block: 1rem; font-size: .78rem; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: .75rem; justify-content: space-between; }
+
+/* ============================================================
+   PROJELER
+   ============================================================ */
+.taslak-rozet {
+  font-family: var(--f-mono); font-size: .6rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+  border: 1px dashed var(--rule-2); border-radius: 999px;
+  padding: .12rem .45rem; margin-left: .6rem; vertical-align: .22em;
+}
+.proje-taslak { border-style: dashed; }
+.proje-taslak .case-head h3, .proje-taslak .case-cell { opacity: .72; }
+
+/* ============================================================
+   ÖZGEÇMİŞ — ekranda A4 sayfası gibi, yazdırınca gerçekten A4
+   ============================================================ */
+.cv-bar {
+  display: flex; align-items: flex-end; gap: 1rem 2rem; flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.cv-bar-note { font-size: .875rem; color: var(--ink-2); max-width: 52ch; line-height: 1.55; }
+.cv-bar-note b { color: var(--ink); font-weight: 600; }
+.cv-bar .btn { margin-left: auto; }
+
+/* başlıktaki CV düğmesi */
+.cv-btn {
+  display: inline-flex; align-items: center; gap: .38rem; text-decoration: none;
+  font-size: .8125rem; font-weight: 600; color: var(--ink-2);
+  border: 1px solid var(--control); border-radius: 6px; padding: .38rem .65rem;
+  transition: color .18s var(--ease), border-color .18s var(--ease), transform .35s var(--spring);
+}
+.cv-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
+.cv-btn[aria-current="page"] { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+@media (max-width: 900px) { .cv-btn span { display: none; } .cv-btn { padding: .38rem .5rem; } }
+
+/* ============================================================
+   YAZDIRMA — yalnız CV sayfası kâğıda çıkar
+   ============================================================ */
+@media print {
+  @page { size: A4; margin: 14mm 13mm; }
+  html, body { background: #fff !important; }
+  /* Sayfa kromu gizlenir; açık olan görünüm basılır.
+     Sabit "#v-cv göster" demek, kullanıcı hangi sayfadaysa oradan Ctrl+P
+     yapınca beklenmedik şekilde CV bastırıyordu. */
+  .mast, .foot, .cv-bar, .tip, .progress { display: none !important; }
+  .view { display: none !important; }
+  .view.on { display: block !important; }
+  .wrap { width: 100% !important; padding: 0 !important; }
+  #v-cv .wrap { padding: 0 !important; }
+  .cv-sheet {
+    border: 0 !important; box-shadow: none !important; border-radius: 0 !important;
+    padding: 0 !important; max-width: none !important; background: #fff !important;
+  }
+  .cv-frame { border-color: #bbb !important; padding: 10mm 9mm !important; }
+  .cv-frame::before, .cv-frame::after { border-color: #0A5A3E !important; }
+  .cv-side { border-right-color: #ddd !important; }
+  .cv-photo { border-color: #bbb !important; background: #f4f6f3 !important; }
+  .cv-badge { border-color: #0A5A3E !important; background: #eaf3ee !important; }
+  .cv-skill-track { background: #e2e6e0 !important; }
+  .cv-skill-track i, .cv-band-orn::after { background: #0A5A3E !important; }
+  .cv-tool-ico { border-color: #bbb !important; background: #f4f6f3 !important; color: #0A5A3E !important; }
+  .cv-h, .cv-band h1, .cv-name p, .cv-exp-org, .cv-photo-mono, .cv-badge b { color: #0A5A3E !important; }
+  .cv-name { border-bottom-color: #0A5A3E !important; }
+  .cv-h, .cv-foot, .cv-side, .cv-band-orn { border-color: #ddd !important; }
+  .cv-exp, .cv-mini, .cv-skill, .cv-tool { break-inside: avoid; page-break-inside: avoid; }
+  /* renkler kâğıda da bassın */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .cv-sheet, .cv-sheet * { color: #111 !important; }
+  .cv-side-p, .cv-exp-body, .cv-mini span, .cv-ileri, .cv-contact-list li { color: #333 !important; }
+  .cv-exp-when, .cv-mini em, .cv-foot, .cv-skill-val, .cv-tool span:last-child { color: #666 !important; }
+  /* bölümler sayfa ortasından bölünmesin */
+  /* animasyon kalıntısı kalmasın */
+  .reveal, .reveal-s, .grow { opacity: 1 !important; transform: none !important; }
+}
+
+/* ============================================================
+   ÖZGEÇMİŞ — iki sütunlu klasik CV düzeni
+   Referans düzen mavi/kurumsaldı; palet defter yeşiline uyarlandı.
+   ============================================================ */
+.cv-bar { display: flex; align-items: flex-end; gap: 1rem 2rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.cv-bar-left { flex: 1 1 300px; }
+.cv-bar-note { font-size: .875rem; color: var(--ink-2); max-width: 52ch; line-height: 1.55; }
+.cv-bar-note b { color: var(--ink); font-weight: 600; }
+.cv-bar-tools { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-left: auto; }
+
+.cv-sheet {
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 10px;
+  box-shadow: var(--shadow-up); max-width: 900px; margin-inline: auto;
+  padding: clamp(.9rem, 2vw, 1.4rem);
+}
+/* ince çerçeve + köşe işaretleri */
+.cv-frame { position: relative; border: 1px solid var(--rule-2); padding: clamp(1.1rem, 2.4vw, 1.9rem); }
+.cv-frame::before, .cv-frame::after {
+  content: ""; position: absolute; width: 16px; height: 16px; pointer-events: none;
+  border-color: var(--accent); border-style: solid;
+}
+.cv-frame::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.cv-frame::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.cv-band { display: flex; align-items: center; gap: 1rem; padding-bottom: 1rem; }
+.cv-band h1 {
+  font-family: var(--f-mono); font-size: clamp(.78rem, .7rem + .35vw, .95rem);
+  font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); text-align: center; flex: none;
+}
+.cv-band-orn { flex: 1; height: 1px; background: var(--rule-2); position: relative; }
+.cv-band-orn::after {
+  content: ""; position: absolute; top: -2px; width: 5px; height: 5px;
+  background: var(--accent); transform: rotate(45deg);
+}
+.cv-band-orn:first-child::after { right: 0; }
+.cv-band-orn:last-child::after { left: 0; }
+
+.cv-grid { display: grid; grid-template-columns: 30% minmax(0, 1fr); gap: 0 1.6rem; }
+.cv-side { border-right: 1px solid var(--rule); padding-right: 1.4rem; }
+@media (max-width: 720px) {
+  .cv-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+  .cv-side { border-right: 0; border-bottom: 1px solid var(--rule); padding-right: 0; padding-bottom: 1rem; }
+}
+
+/* Kaynak fotoğraf 170x170. Kutu 190px'te sınırlandı: daha büyüğünde
+   yukarı ölçeklenip özellikle baskıda bulanıklaşıyor. */
+.cv-photo {
+  aspect-ratio: 1 / 1.12; max-width: 190px; width: 100%;
+  border: 1px solid var(--rule-2); border-radius: 4px;
+  background: var(--surface-2); display: grid; place-items: center;
+  overflow: hidden; margin: 0 auto 1.1rem;
+}
+/* Kaynak fotoğraf kare; portre kutuda yüz üstte kalsın diye konumlandırıldı */
+.cv-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 32%; display: block; }
+.cv-photo-mono {
+  font-family: var(--f-mono); font-size: 2.4rem; font-weight: 600;
+  letter-spacing: -.04em; color: var(--accent); opacity: .55;
+}
+
+.cv-h {
+  font-family: var(--f-mono); font-size: .66rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--accent); font-weight: 600;
+  padding-bottom: .3rem; margin: 1.1rem 0 .6rem; border-bottom: 1px solid var(--rule);
+}
+.cv-h:first-of-type { margin-top: 0; }
+.cv-h-main { margin-top: 1.4rem; }
+
+.cv-contact-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .22rem; }
+.cv-contact-list li { font-family: var(--f-mono); font-size: .72rem; color: var(--ink-2); word-break: break-word; }
+.cv-side-p { font-size: .78rem; line-height: 1.6; color: var(--ink-2); }
+
+.cv-mini { margin-bottom: .6rem; }
+.cv-mini b { display: block; font-size: .78rem; font-weight: 600; line-height: 1.35; }
+.cv-mini span { display: block; font-size: .73rem; color: var(--ink-2); line-height: 1.4; }
+.cv-mini em { font-style: normal; display: block; font-family: var(--f-mono); font-size: .66rem; color: var(--ink-3); margin-top: .1rem; }
+
+.cv-name { display: flex; align-items: flex-start; gap: 1rem; padding-bottom: .9rem; border-bottom: 2px solid var(--accent); }
+.cv-name h2 { font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.1rem); letter-spacing: -.035em; line-height: 1.05; }
+.cv-name p { font-size: .85rem; color: var(--accent); font-weight: 600; margin-top: .25rem; }
+.cv-badge {
+  margin-left: auto; flex: none; width: 68px; height: 68px; border-radius: 50%;
+  border: 2px solid var(--accent); display: grid; place-content: center; text-align: center;
+  background: var(--accent-soft);
+}
+.cv-badge b { display: block; font-size: 1.35rem; font-weight: 900; letter-spacing: -.04em; color: var(--accent); line-height: 1; }
+.cv-badge span { font-family: var(--f-mono); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+
+.cv-exp { margin-bottom: .85rem; }
+.cv-exp:last-of-type { margin-bottom: 0; }
+.cv-exp-head { display: flex; align-items: baseline; gap: .6rem; }
+.cv-exp-head h3 { font-size: .875rem; letter-spacing: -.015em; }
+.cv-exp-when { margin-left: auto; font-family: var(--f-mono); font-size: .68rem; color: var(--ink-3); white-space: nowrap; }
+.cv-exp-org { font-size: .78rem; color: var(--accent); font-weight: 600; margin-top: .1rem; }
+.cv-exp-org span { color: var(--ink-3); font-weight: 400; }
+.cv-exp-body { font-size: .765rem; line-height: 1.55; color: var(--ink-2); margin-top: .25rem; }
+
+.cv-skills { display: grid; gap: .38rem; }
+.cv-skill { display: grid; grid-template-columns: minmax(0, 8.5rem) 1fr 1.7rem; gap: .6rem; align-items: center; }
+.cv-skill-ad { font-size: .765rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cv-skill-track { height: 5px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.cv-skill-track i { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+.cv-skill-val { font-family: var(--f-mono); font-size: .66rem; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.cv-ileri { font-size: .765rem; line-height: 1.6; color: var(--ink-2); margin-top: .55rem; }
+.cv-ileri b { color: var(--ink); font-weight: 600; }
+
+/* Sabit genişlikli flex öğeler 7. ikonu alt satıra atıp yanında büyük bir
+   boşluk bırakıyordu. Izgara 1fr sütunlarla satırı tam doldurur; öğe sayısı
+   değişse de boşluk kalmaz. */
+.cv-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(66px, 1fr)); gap: .7rem .5rem; }
+.cv-tool { display: flex; flex-direction: column; align-items: center; gap: .3rem; min-width: 0; }
+/* Dar ekranda satır başına 3 öğe düşüyor ve 7. tek başına kalıyor; ızgara
+   yerine ortalanmış esnek düzen, yetim öğeyi kenarda bırakmıyor. */
+@media (max-width: 720px) {
+  .cv-tools { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem 1rem; }
+  .cv-tool { width: 66px; }
+}
+.cv-tool-ico {
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  border: 1px solid var(--rule-2); color: var(--accent); background: var(--surface-2);
+}
+.cv-tool span:last-child { font-family: var(--f-mono); font-size: .6rem; color: var(--ink-2); text-align: center; line-height: 1.25; }
+
+.cv-foot { margin-top: 1.1rem; padding-top: .6rem; border-top: 1px solid var(--rule); font-size: .68rem; color: var(--ink-3); text-align: center; }
 /* ============================================================
    Rapor Stüdyosu — the application
    ============================================================ */
@@ -1235,9 +1435,14 @@ pre.code .f { color: var(--s7); font-weight: 500; }
       <a href="#/">Ana Sayfa</a>
       <a href="#/rapor">Örnek Rapor</a>
       <a href="#/studyo">Rapor Stüdyosu</a>
+      <a href="#/projeler">Projeler</a>
       <a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
     </nav>
+    <a class="cv-btn" href="#/cv" title="Özgeçmiş">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+      <span>CV</span>
+    </a>
     <button class="icon-btn" id="themeBtn" type="button" aria-label="Temayı değiştir" title="Temayı değiştir">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
     </button>
@@ -1371,6 +1576,44 @@ pre.code .f { color: var(--s7); font-weight: 500; }
   <div class="wrap" style="padding-block:2rem 4rem" id="sampleBox"></div>
 </section>
 
+<!-- ============================ PROJELER ============================ -->
+<section class="view" id="v-projects">
+  <div class="wrap section">
+    <div class="section-head reveal">
+      <span class="eyebrow">Projeler</span>
+      <h2>Kendi geliştirdiğim araçlar.</h2>
+      <p>İş yerindeki vakalardan farklı olarak bunlar sıfırdan kurduğum,
+         kodunu yazdığım ve sürdürdüğüm işler.</p>
+    </div>
+    <div style="display:grid;gap:1.25rem" id="projectsGrid"></div>
+  </div>
+</section>
+
+<!-- ============================ ÖZGEÇMİŞ ============================ -->
+<section class="view" id="v-cv">
+  <div class="wrap" style="padding-block:2rem 3.5rem">
+    <div class="cv-bar reveal" id="cvBar">
+      <div class="cv-bar-left">
+        <span class="eyebrow" style="display:block;margin-bottom:.5rem">Özgeçmiş</span>
+        <p class="cv-bar-note">Yazdırılmak üzere biçimlendirildi: menü, alt bilgi ve
+           renkli zeminler kâğıda çıkmaz. Açılan pencerede hedef olarak
+           <b>“PDF olarak kaydet”</b> seçin.</p>
+      </div>
+      <div class="cv-bar-tools">
+        <div class="seg" role="group" aria-label="Özgeçmiş dili">
+          <button class="seg-btn cv-lang-btn" type="button" data-lang="tr" aria-pressed="true">Türkçe</button>
+          <button class="seg-btn cv-lang-btn" type="button" data-lang="en" aria-pressed="false">English</button>
+        </div>
+        <button class="btn btn-primary" id="cvPrint" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+          PDF olarak indir
+        </button>
+      </div>
+    </div>
+    <div class="cv-sheet" id="cvSheet"></div>
+  </div>
+</section>
+
 <!-- ============================ VAKALAR ============================ -->
 <section class="view" id="v-cases">
   <div class="wrap section">
@@ -1481,7 +1724,7 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     <div>
       <h4>Sayfalar</h4>
       <a href="#/">Ana Sayfa</a><a href="#/rapor">Örnek Rapor</a>
-      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/vakalar">Vakalar</a>
+      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/projeler">Projeler</a><a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
     </div>
     <div>
@@ -3533,7 +3776,9 @@ let hero = null;
 })();
 
 /* ---------- yönlendirme ---------- */
-const ROUTES = { '#/': 'v-home', '#/rapor': 'v-report', '#/hakkimda': 'v-about', '#/vakalar': 'v-cases', '#/studyo': 'v-studio' };
+const ROUTES = { '#/': 'v-home', '#/rapor': 'v-report', '#/hakkimda': 'v-about',
+                 '#/vakalar': 'v-cases', '#/projeler': 'v-projects', '#/cv': 'v-cv',
+                 '#/studyo': 'v-studio' };
 function route() {
   const h = ROUTES[location.hash] ? location.hash : '#/';
   $$('.view').forEach(v => v.classList.toggle('on', v.id === ROUTES[h]));
@@ -3542,6 +3787,7 @@ function route() {
   $('#burger').setAttribute('aria-expanded', 'false');
   window.scrollTo({ top: 0, behavior: 'auto' });
   if (h === '#/rapor') renderSample();
+  if (h === '#/cv') { renderCV(); initCVControls(); }
   if (h === '#/studyo' && S.table && curStep === 2) renderReport();
   observeAll(document.getElementById(ROUTES[h]));
 }
@@ -3622,6 +3868,42 @@ const CERTS = [
   ['İngilizce', 'Orta seviye — yabancı yöneticiye rapor sunumu yapacak düzeyde', 'Dil']
 ];
 
+/* Projeler: iş yerindeki vakalardan farklı olarak sıfırdan geliştirilen işler.
+   İlk kayıt bu sitenin kendisi — teknik ayrıntıları ölçülmüş gerçek değerler. */
+const PROJECTS = [
+  {
+    ad: 'Rapor Stüdyosu',
+    tur: 'Web uygulaması · sürüyor',
+    ozet: "Excel dosyasını tarayıcıda okuyup veri kalitesini denetleyen, otomatik rapor üreten ve Power BI'a taşımak için gereken kodu yazan araç. Bu sitenin içinde çalışıyor.",
+    neden: 'Her yeni raporlama işinde aynı üç şeyi elle yapıyordum: kolonları profillemek, veri kalitesini denetlemek, Power Query ve DAX iskeletini yazmak. Bunu bir kez otomatikleştirdim.',
+    yapilanlar: [
+      'Tarayıcıda .xlsx okuma — ZIP arşivi ve SpreadsheetML elle çözülüyor, hiçbir kütüphane kullanılmıyor',
+      'Otomatik veri kalitesi denetimi: ara toplam satırları, yinelenen kayıt, metin olarak saklanan sayı, çoklu para birimi, yazım tutarsızlığı',
+      'Çok tablolu model: sayfalar arası ilişki tespiti ve sanal alanlarla birleştirme',
+      'Power Query (M) ve DAX kod üretimi — dosyanın kendi kolon adlarına göre',
+      'Power BI mantığında 4 sayfalı etkileşimli rapor: dilimleyici, çapraz filtreleme, detaya inme'
+    ],
+    teknik: ['JavaScript (bağımlılıksız)', 'DecompressionStream', 'SpreadsheetML', 'Canvas 2D', 'El yazımı SVG'],
+    olcum: [
+      ['40.000 satır', '859 ms işleme süresi'],
+      ['41 test', 'otomatik motor denetimi'],
+      ['26/26', 'WCAG kontrast kontrolü'],
+      ['0', 'dış bağımlılık']
+    ],
+    link: { yazi: 'Canlı olarak dene', href: '#/studyo' }
+  },
+  {
+    ad: 'Proje adı',
+    tur: 'Tür · yıl',
+    taslak: true,
+    ozet: 'Bu kartı kendi projenizle değiştirin: ne yaptığını bir cümlede anlatın.',
+    neden: 'Bu projeyi neden yaptınız? Hangi sorun sizi buna itti?',
+    yapilanlar: ['Yaptığınız işi maddeler hâlinde yazın', 'Teknik kararlarınızı belirtin', 'Neyin zor olduğunu anlatın'],
+    teknik: ['Kullandığınız araçlar'],
+    olcum: [['Rakam', 'neyi ölçtüğü'], ['Rakam', 'neyi ölçtüğü']]
+  }
+];
+
 const CASES = [
   { sector: 'Hyundai Asansör · 2018–2023', title: 'Dağınık operasyon takibini tek raporlama çatısı altında topladım',
     lede: 'Teklif, faturalandırma, mutabakat, tahsilat ve dava süreçleri ayrı ayrı takip ediliyordu; kimse bütünü tek yerden göremiyordu.',
@@ -3647,6 +3929,28 @@ const CASES = [
     kpis: [['Tek şablon', 'tüm müşterilerde ortak'], ['Otomatik', 'saha KPI rapor üretimi'], ['SQL', 'sorgular kaynakta iyileştirildi']],
     todo: 'Devreye alma süresini ne kadar kısalttığınızı biliyorsanız burası tam yeri.' }
 ];
+
+/* ---------- Projeler ---------- */
+function renderProjects() {
+  $('#projectsGrid').innerHTML = PROJECTS.map(pr => `
+    <article class="case reveal-s${pr.taslak ? ' proje-taslak' : ''}">
+      <div class="case-head">
+        <p class="eyebrow">${esc(pr.tur)}</p>
+        <h3>${esc(pr.ad)}${pr.taslak ? '<span class="taslak-rozet">şablon</span>' : ''}</h3>
+        <p>${esc(pr.ozet)}</p>
+        ${pr.link ? `<a class="btn btn-ghost btn-sm" href="${esc(pr.link.href)}" style="margin-top:.9rem">
+          ${esc(pr.link.yazi)}
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>` : ''}
+      </div>
+      <div class="case-body">
+        <div class="case-cell"><h4>Neden yaptım</h4><p>${esc(pr.neden)}</p></div>
+        <div class="case-cell"><h4>Ne yaptım</h4><ul>${pr.yapilanlar.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+        <div class="case-cell"><h4>Teknik</h4><div class="tags" style="margin-top:0">${pr.teknik.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div></div>
+        <div class="case-cell case-res"><h4>Ölçüm</h4>${pr.olcum.map(([a, b]) => `<div class="kpi"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}</div>
+      </div>
+    </article>`).join('');
+}
 
 function renderStatic() {
   $('#skillsGrid').innerHTML = SKILLS.map(g => `
@@ -3694,6 +3998,8 @@ function renderStatic() {
   $('#certList').innerHTML = CERTS.map(([a, b, c]) =>
     `<div class="mini-row"><b>${esc(a)}</b><span>${esc(b)}</span><em>${esc(c)}</em></div>`).join('');
 }
+  renderProjects();
+
 renderStatic();
 
 /* ============================================================
@@ -5498,10 +5804,220 @@ addEventListener('resize', () => {
   }, 220);
 });
 
-/* ---------- başlat ---------- */
+/* ---------- başlat ----------
+   Tüm dosyalar tek <script> içinde birleştiği için burada doğrudan route()
+   çağırmak, sonraki dosyalarda (57-cv.js) tanımlı const'lara ölü bölgede
+   erişmek demek. Betiğin tamamı çalıştıktan sonra başlatılır. */
 const heroCanvas = $('#heroCanvas');
 if (heroCanvas) hero = heroViz(heroCanvas, $('#heroPhase'));
 initProgress();
-route();
-observeAll();
+queueMicrotask(() => { route(); observeAll(); });
+/* ============================================================
+   ÖZGEÇMİŞ — iki dilli (TR/EN), yazdırılabilir
+   İçerik TIMELINE / SKILLS / EDU / CERTS dizilerinden üretilir; İngilizce
+   karşılıklar burada, çeviri sözlüklerinde durur. Ayrı bir CV belgesi
+   tutulmadığı için site güncellenince CV de güncellenir.
+   ============================================================ */
+
+const CV_UI = {
+  tr: {
+    unvan: 'Kıdemli İş Zekâsı ve Raporlama Uzmanı',
+    iletisim: 'İletişim', ozet: 'Özet', deneyim: 'Deneyim', egitim: 'Eğitim',
+    sertifika: 'Sertifikalar', yetenek: 'Yetenekler', araclar: 'Araçlar',
+    diller: 'Diller', referans: 'Referanslar istek üzerine paylaşılır.',
+    yil: 'yıl', deneyimEtiket: 'deneyim', konum: 'İstanbul (Anadolu Yakası), Maltepe',
+    dilList: 'Türkçe (ana dil) · İngilizce (orta)',
+    ozetMetin: 'Sekiz yıldır asansör, kimya, elektronik ve saha hizmetleri sektörlerinde raporlama süreçleri kuruyorum. İşim elle hazırlanan tabloları kendi kendini üreten raporlara çevirmek: dönüşümü Power Query adımlarına, hesabı DAX ölçülerine, dosya yığınını yıldız şemasına taşımak. Hyundai Asansör\'de şirket içi Excel ve SAP eğitimleri verdim.',
+    uzmanEt: 'Uzman', ileriEt: 'İleri'
+  },
+  en: {
+    unvan: 'Senior Business Intelligence & Reporting Specialist',
+    iletisim: 'Contact', ozet: 'Profile', deneyim: 'Experience', egitim: 'Education',
+    sertifika: 'Certifications', yetenek: 'Skills', araclar: 'Tools',
+    diller: 'Languages', referans: 'References available on request.',
+    yil: 'years', deneyimEtiket: 'experience', konum: 'Istanbul (Anatolian Side), Maltepe',
+    dilList: 'Turkish (native) · English (intermediate)',
+    ozetMetin: 'For eight years I have been building reporting processes in the elevator, chemical, electronics and field-services sectors. My work is turning hand-built spreadsheets into reports that produce themselves: moving transformations into Power Query steps, calculations into DAX measures, and file piles into a star schema. At Hyundai Elevator I ran in-house Excel and SAP training.',
+    uzmanEt: 'Expert', ileriEt: 'Advanced'
+  }
+};
+
+/* Ay kısaltmaları — tarih aralıkları İngilizce'de de doğru okunsun */
+const CV_AY = { 'Oca': 'Jan', 'Şub': 'Feb', 'Mar': 'Mar', 'Nis': 'Apr', 'May': 'May', 'Haz': 'Jun',
+                'Tem': 'Jul', 'Ağu': 'Aug', 'Eyl': 'Sep', 'Eki': 'Oct', 'Kas': 'Nov', 'Ara': 'Dec' };
+const cvTarih = (s, lang) => lang === 'en' ? s.replace(/^(\p{L}{3})/u, m => CV_AY[m] || m) : s;
+
+/* Deneyim çevirileri — sıra TIMELINE ile birebir aynı */
+const CV_TIMELINE_EN = [
+  { role: 'Reporting Specialist', meta: 'Istanbul · Full-time · Advertising / field services',
+    body: 'Produced KPI reports for field staff on behalf of contracted clients. Improved system and reporting processes through SQL. Using Power BI and Excel automation, shortened the time needed to bring standardised reports live for new clients.' },
+  { role: 'Reporting Specialist', meta: 'Electrical / electronics',
+    body: 'Worked in the company\'s reporting processes.' },
+  { role: 'Reporting Specialist', meta: 'Full-time · Chemicals / healthcare',
+    body: 'Managed cost reporting; prepared daily, weekly and monthly reports and presented them to management. Reviewed possible cost revisions to improve cost efficiency. Researched new reporting standards and continuously improved the process.' },
+  { role: 'Senior Analysis & Reporting Specialist', meta: '5 yrs 6 mo · Full-time · Elevators',
+    body: 'Started as a customer representative and became a senior specialist within three years. Ensured quotation and approval processes ran effectively; tracked warehouse consumption, invoicing, reconciliation and collection. Took part in initiating and following legal cases. Analysed and monitored KPI targets. Brought auditing of all transactions under one roof and produced daily, weekly and monthly reports, making the processes transparent and controllable. Delivered in-house Excel and SAP training.' },
+  { role: 'Retail Banking Portfolio Representative', meta: 'Finance · Customer service',
+    body: 'Handled incoming requests, presented products matching customer needs and ran the sales process. Carried out wire transfers, fund and deposit account transactions within my authority. Obtained the CMB Level 1 licence during this period.' },
+  { role: 'Technical Draftsman', meta: 'Istanbul · Aluminium · Technical department',
+    body: 'Handled the quotation process. Prepared technical drawings of profiles in AutoCAD, followed extrusion production and reported manufacturing results to management.' }
+];
+
+const CV_EDU_EN = [
+  ['Anadolu University', 'Faculty of Economics — Economics (BA, Open Education)', 'Sep 2011 – Jan 2016 · GPA 2.52/5'],
+  ['Selçuk University', 'Technical Sciences Vocational School — Machinery (Associate)', 'Sep 2009 – Jun 2011 · GPA 2.66/4'],
+  ['Hasan Şadoğlu High School', 'High School', '2008']
+];
+
+const CV_CERTS_EN = [
+  ['CMB Capital Market Activities Level 1 Licence', 'Capital Markets Board of Türkiye', 'June 2016'],
+  ['Visual Basic Macro Programming with Excel', 'Vidobu — certificate of attendance', 'January 2016'],
+  ['Advanced Excel 2010', 'Vidobu — certificate of attendance', 'January 2016'],
+  ['Leadership Skills', 'Vidobu — professional development', 'January 2016']
+];
+
+const SKILL_EN = {
+  'İleri Excel': 'Advanced Excel', 'Excel VBA / Makro': 'Excel VBA / Macros',
+  'Excel eğitmenliği': 'Excel training delivery', 'Power Query': 'Power Query',
+  'Power Pivot & veri modeli': 'Power Pivot & data model',
+  'Power BI rapor geliştirme': 'Power BI report development', 'SQL sorgulama': 'SQL querying',
+  'Veri modelleme': 'Data modelling', 'DAX ölçüleri': 'DAX measures',
+  'Rapor otomasyonu': 'Report automation', 'SAP ERP': 'SAP ERP',
+  'SAP eğitmenliği': 'SAP training delivery', 'Maliyet raporlaması': 'Cost reporting',
+  'Mutabakat & tahsilat takibi': 'Reconciliation & collections tracking',
+  'CRM (teklif & satın alma)': 'CRM (quotation & purchasing)',
+  'KPI tasarımı ve takibi': 'KPI design and tracking',
+  'Düzenli raporlama döngüsü': 'Regular reporting cycle', 'Yönetim sunumu': 'Management reporting',
+  'İş analizi, planlama ve izleme': 'Business analysis, planning & monitoring',
+  'Veri analizi': 'Data analysis', 'İngilizce raporlama': 'Reporting in English'
+};
+
+/* Alt sıradaki araç rozetleri — referanstaki ikon şeridinin karşılığı */
+const CV_TOOLS = [
+  { ad: 'Excel', d: 'M4 4h16v16H4z M4 10h16 M10 4v16' },
+  { ad: 'VBA', d: 'M8 8l-4 4 4 4 M16 8l4 4-4 4' },
+  { ad: 'Power BI', d: 'M4 20V9 M10 20V4 M16 20v-8 M20 20h-18' },
+  { ad: 'Power Query', d: 'M4 6h16 M7 12h10 M10 18h4' },
+  { ad: 'DAX', d: 'M5 5h6v6H5z M13 13h6v6h-6z M11 8h2M8 11v2' },
+  { ad: 'SQL', d: 'M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3z M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6' },
+  { ad: 'SAP', d: 'M3 7h18v10H3z M7 11h4 M13 11h4' }
+];
+
+/* Profil fotoğrafı — kaynağa gömülü (data URI), böylece siteyi açan herkes
+   görür. Ziyaretçiye fotoğraf yükletmek yazarlık işidir, arayüzde yeri yok.
+   Değiştirmek için: bu sabiti yeni bir data URI ile güncelleyin. */
+const CV_PHOTO = 'data:image/jpeg;base64,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DAIwiIYySACHI8mBKE9FjP/EAB4QAAAGAgMAAAAAAAAAAAAAAAABETBgYSFBIPDx/9oACAEBAAE/EJkSBAkMCgiYARQDAVkQ2BBAQsRFCLCARgCAMQBsABTQAAsIAAkAEIgtAAAh0BGAC4AMACIBQCAHAjgICmCAIQAIgAACAEQAAQAOgpABSgr4ACUACoAFwACACCIAgrgAV0BCNAkAYEMBEAQABeAADAACBACQAKoARcCoECCEUAJggXAAVAAAATYUZFMACugAoBUAUAWAARAACABQAiAAUUZAgiqKQGQIGEcAAAogHgJARQAApCAAVAVAAlQAICAABBBhYWAIwIggICgAFYAAK4QADQMASACAEUAHAFYAEUEAiogAFCFBBAUJB4AIAANsiAAQaAC2AL4MAgBUAgBXgAAvEAAdYiQAkAgUFMKQIFAEAgIQABZABWAATCAOAVgAAbAAogAIVKDFAEAijKKFRUAACwACPgAEMAABUCAFoGQBQAQACqIFCJUoQCgUAgAgCAECQIrgAArwAggCsABHAAQALABAQEKAIAEBAuAUJBAUBQI2AFeAAALACCgIiBwCIACgAAAAAXAAQIDCIEQhwMARCAFiBTwgRgAKghYAoAAAMwABTBAAEVAAAiwQEKBAABYAAoAAC+IMACwAAIAACCgAA/BIAjAACjCBQJATFAEAIBAqgCwNAA/0AAEGAggBFQBWAKASGAAKMBIgACAACAwAAIIEUAAFKAgAIgQAJACgAAwPGAAQAAKcCABAQQAVgFfGABcEAEEEAEB0QAFEAAAEQAEUBARIBEABECCIFAAAAKAqAoAAMArAALwQApAAgQCBAALwABAAAACwEAEAQUAAIAABYPgA4KAHAARhIAK4MACxAQAcIAhQ4gAoVAAKAATB0AwAAUACKEAEBAAREBAACeEQFDSQFWSARBwCvEo1bAggCFFsDYsDzsux/9k=';
+
+let cvLang = 'tr';
+
+function renderCV() {
+  const L = CV_UI[cvLang], en = cvLang === 'en';
+  const items = SKILLS.flatMap(g => g.items);
+  const ad = n => (en && SKILL_EN[n]) ? SKILL_EN[n] : n;
+  const bars = items.filter(([, , , lvl]) => lvl === 'uzman')
+    .sort((a, b) => b[2] - a[2]).slice(0, 6);
+  const ileri = items.filter(([, , , lvl]) => lvl === 'ileri').slice(0, 8).map(([n]) => ad(n));
+  const edu = en ? CV_EDU_EN : EDU;
+  const certs = en ? CV_CERTS_EN : CERTS.filter(c => c[2] !== 'Dil');
+  const photo = CV_PHOTO;
+
+  $('#cvSheet').innerHTML = `
+    <div class="cv-frame">
+      <header class="cv-band">
+        <span class="cv-band-orn" aria-hidden="true"></span>
+        <h1>${esc(L.unvan)}</h1>
+        <span class="cv-band-orn" aria-hidden="true"></span>
+      </header>
+
+      <div class="cv-grid">
+        <aside class="cv-side">
+          <div class="cv-photo">
+            ${photo ? `<img src="${esc(photo)}" alt="Erkan Toraman">`
+                    : `<span class="cv-photo-mono">ET</span>`}
+          </div>
+
+          <h2 class="cv-h">${esc(L.iletisim)}</h2>
+          <ul class="cv-contact-list">
+            <li>erkantoraman@outlook.com</li>
+            <li>+90 501 662 63 67</li>
+            <li>${esc(L.konum)}</li>
+            <li>erkantoraman.github.io</li>
+          </ul>
+
+          <h2 class="cv-h">${esc(L.ozet)}</h2>
+          <p class="cv-side-p">${esc(L.ozetMetin)}</p>
+
+          <h2 class="cv-h">${esc(L.egitim)}</h2>
+          ${edu.map(([a, b, c]) => `<div class="cv-mini"><b>${esc(a)}</b><span>${esc(b)}</span><em>${esc(c)}</em></div>`).join('')}
+
+          <h2 class="cv-h">${esc(L.sertifika)}</h2>
+          ${certs.map(([a, b, c]) => `<div class="cv-mini"><b>${esc(a)}</b><em>${esc(b)} · ${esc(c)}</em></div>`).join('')}
+
+          <h2 class="cv-h">${esc(L.diller)}</h2>
+          <p class="cv-side-p">${esc(L.dilList)}</p>
+        </aside>
+
+        <main class="cv-main">
+          <div class="cv-name">
+            <div>
+              <h2>ERKAN TORAMAN</h2>
+              <p>${esc(L.unvan)}</p>
+            </div>
+            <div class="cv-badge">
+              <b>8+</b><span>${esc(L.yil)}</span>
+            </div>
+          </div>
+
+          <h2 class="cv-h cv-h-main">${esc(L.deneyim)}</h2>
+          ${TIMELINE.map((t, i) => {
+            const e = CV_TIMELINE_EN[i] || {};
+            return `<div class="cv-exp">
+              <div class="cv-exp-head">
+                <h3>${esc(en ? (e.role || t.role) : t.role)}</h3>
+                <span class="cv-exp-when">${esc(cvTarih(t.from, cvLang))} – ${esc(cvTarih(t.to, cvLang))}</span>
+              </div>
+              <p class="cv-exp-org">${esc(t.org)} <span>· ${esc(en ? (e.meta || t.meta) : t.meta)}</span></p>
+              <p class="cv-exp-body">${esc(en ? (e.body || t.body) : t.body)}</p>
+            </div>`;
+          }).join('')}
+
+          <h2 class="cv-h cv-h-main">${esc(L.yetenek)}</h2>
+          <div class="cv-skills">
+            ${bars.map(([n, , v]) => `<div class="cv-skill">
+              <span class="cv-skill-ad">${esc(ad(n))}</span>
+              <span class="cv-skill-track"><i style="width:${v}%"></i></span>
+              <span class="cv-skill-val">${v}</span>
+            </div>`).join('')}
+          </div>
+          <p class="cv-ileri"><b>${esc(L.ileriEt)}:</b> ${ileri.map(esc).join(' · ')}</p>
+
+          <h2 class="cv-h cv-h-main">${esc(L.araclar)}</h2>
+          <div class="cv-tools">
+            ${CV_TOOLS.map(t => `<div class="cv-tool">
+              <span class="cv-tool-ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="${t.d}"/></svg></span>
+              <span>${esc(t.ad)}</span>
+            </div>`).join('')}
+          </div>
+        </main>
+      </div>
+
+      <footer class="cv-foot">${esc(L.referans)}</footer>
+    </div>`;
+}
+
+/* ---------- dil ve fotoğraf denetimleri ---------- */
+function initCVControls() {
+  const bar = $('#cvBar');
+  if (!bar || bar.dataset.on) return;
+  bar.dataset.on = '1';
+
+  $$('#cvBar .cv-lang-btn').forEach(b => b.addEventListener('click', () => {
+    cvLang = b.dataset.lang;
+    $$('#cvBar .cv-lang-btn').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.lang === cvLang)));
+    renderCV();
+  }));
+
+  $('#cvPrint').addEventListener('click', () => window.print());
+
+}
 </script>
