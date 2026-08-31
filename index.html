@@ -259,11 +259,12 @@ button { font: inherit; color: inherit; }
 .brand-role { font-size: .6875rem; padding: .3rem .7rem .3rem .6rem; margin-left: .35rem; }
 /* Kahraman bölümünde: yalnız başlıktakine yer kalmadığında görünür */
 .role-badge { font-size: .8125rem; padding: .48rem 1.05rem .48rem .85rem; display: none; }
-/* Menü 6 maddeye çıkıp yanına CV düğmesi gelince 1200px'te 11px yatay taşma
-   oluştu. Ölçümle güvenli eşik 1240px: bu genişlikte marka ile menü arasında
-   28px boşluk kalıyor ve taşma yok. Altında ünvan başlıktan çekilip
-   kahraman bölümündeki rozete devrediyor. */
-@media (max-width: 1240px) {
+/* Ünvan rozeti başlıkta yer bulamayınca kahraman bölümündeki rozete devreder.
+   Eşik ÖLÇÜMLE bulunur, tahminle değil — her yeni başlık öğesinde yeniden
+   ölçün. Geçmiş: menü 6 maddeyken 1200px'te 11px taşma → eşik 1240px.
+   "Premium Ol" rozeti (108px) eklenince 1280px'te 18px taşma oluştu; ölçüm:
+   ünvanlı başlık 1331px viewport istiyor, ünvansız 1003px. Eşik 1360px. */
+@media (max-width: 1360px) {
   .brand-role { display: none; }
   .role-badge { display: inline-flex; }
 }
@@ -374,6 +375,13 @@ button { font: inherit; color: inherit; }
 }
 
 /* ---------- düğmeler ---------- */
+/* `hidden` niteliği HER ZAMAN kazanmalı. Tarayıcının varsayılanı
+   `[hidden] { display: none }` ama bir sınıf `display` verirse onu eziyor —
+   ölçüldü: `.btn` yüzünden `hidden` konmuş "Premium'dan çık" düğmesi
+   ücretsiz kullanıcıya görünüyordu. Sınıfa `display` verirken bunu
+   hatırlayın; kural burada tek yerde. */
+[hidden] { display: none !important; }
+
 .btn {
   display: inline-flex; align-items: center; gap: .5rem; cursor: pointer;
   padding: .8rem 1.3rem; border-radius: 7px; font-size: .9375rem; font-weight: 600;
@@ -611,18 +619,6 @@ button { font: inherit; color: inherit; }
 .avail-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; box-shadow: 0 0 0 0 rgba(12,163,12,.6); animation: pulse 2.4s var(--ease) infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(12,163,12,.5); } 70% { box-shadow: 0 0 0 9px rgba(12,163,12,0); } 100% { box-shadow: 0 0 0 0 rgba(12,163,12,0); } }
 .foot-bar { border-top: 1px solid var(--rule); padding-block: 1rem; font-size: .78rem; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: .75rem; justify-content: space-between; }
-
-/* ============================================================
-   PROJELER
-   ============================================================ */
-.taslak-rozet {
-  font-family: var(--f-mono); font-size: .6rem; font-weight: 500;
-  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
-  border: 1px dashed var(--rule-2); border-radius: 999px;
-  padding: .12rem .45rem; margin-left: .6rem; vertical-align: .22em;
-}
-.proje-taslak { border-style: dashed; }
-.proje-taslak .case-head h3, .proje-taslak .case-cell { opacity: .72; }
 
 /* ============================================================
    ÖZGEÇMİŞ — ekranda A4 sayfası gibi, yazdırınca gerçekten A4
@@ -1084,6 +1080,225 @@ table.dt th.sortable:hover { color: var(--accent); }
 .drop-actions { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
 .drop-formats { font-family: var(--f-mono); font-size: .7rem; color: var(--ink-3); margin-top: 1.1rem; }
 
+/* Gizlilik güvencesi. Yükleme kutusunun hemen altında durur ve bilinçli olarak
+   ince yazı DEĞİLDİR: kullanıcı dosyayı bırakmadan önce okuması gereken tek şey.
+   Sol şerit + kendi zemini; kutunun hover durumuyla (kenarlık + accent-soft)
+   karışmasın diye kenarlık yerine şerit kullanıldı. */
+.priv-note {
+  display: flex; gap: .7rem; align-items: center;
+  margin-top: 1rem; padding: .9rem 1.15rem;
+  border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: .875rem; font-weight: 500; line-height: 1.45;
+}
+.priv-note svg { flex: none; }
+
+/* Rapor denetim şeridinin sağ ucundaki eylem butonları tek grupta durur;
+   ayrı .ctl olarak konulduklarında ikincisi alt satıra sarkıyordu. */
+.ctl-acts-row { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+/* Power BI paketi indirme */
+.pbi-indir { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+.pbi-icerik { font-family: var(--f-mono); font-size: .7rem; color: var(--ink-3); }
+
+/* Premium durum rozeti — stüdyo başlığında, "Yeni dosya"nın yanında. */
+.prem-chip {
+  font-family: var(--f-mono); font-size: .68rem; letter-spacing: .06em;
+  text-transform: uppercase; padding: .3rem .6rem; border-radius: 999px;
+  border: 1px solid var(--rule-2); background: var(--surface); color: var(--ink-3);
+  cursor: pointer; transition: border-color 200ms cubic-bezier(.4,0,.2,1), color 200ms cubic-bezier(.4,0,.2,1);
+}
+/* flex: none ŞART. Başlık dar olduğunda flex rozeti sıkıştırıyor, .plat'ın
+   parlama için koyduğu overflow:hidden de metni kırpıyordu — ölçüldü: içerik
+   178px, görünen 58px ("PREMI…"). */
+.prem-chip { flex: none; }
+.prem-chip:hover { border-color: var(--accent); color: var(--accent); }
+.prem-chip[data-on="1"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+/* Dar ekranda rozet başlığı taşırıyordu (ölçüldü: 50px; metni kısaltmak
+   yetmedi, 47px kaldı — başlık zaten logo+CV+tema+menü ile dolu).
+   Rozet gizlenir; premium altbilgideki bağlantıdan erişilir. */
+@media (max-width: 560px) { .prem-chip { display: none; } }
+/* Hazır ürün şeridi — "size özel işler" kartlarından görsel olarak AYRI
+   durmalı, yoksa aynı şeymiş gibi okunuyor. */
+.urun-serit {
+  display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+  margin-top: 1.25rem; padding: 1.25rem 1.4rem;
+  border: 1px solid var(--accent); border-radius: 12px;
+  background: var(--accent-soft);
+}
+.urun-serit > div:first-child { flex: 1 1 24ch; }
+.urun-serit h3 { font-size: 1.125rem; margin: .2rem 0 .4rem; }
+.urun-serit p { font-size: .875rem; color: var(--ink-2); line-height: 1.55; }
+.urun-serit-acts { display: flex; gap: .55rem; flex-wrap: wrap; }
+
+.foot-link {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: inherit; text-align: left;
+}
+.foot-link:hover { color: var(--accent); }
+
+/* Premium paneli */
+.prem-modal {
+  position: fixed; inset: 0; z-index: 60; display: grid; place-items: center;
+  padding: 1.25rem; background: color-mix(in srgb, var(--paper) 82%, transparent);
+}
+.prem-modal[hidden] { display: none; }
+.prem-kutu {
+  position: relative; width: min(38rem, 100%); max-height: 90vh; overflow-y: auto;
+  border: 1px solid var(--rule); border-radius: 12px; background: var(--surface);
+  padding: 1.5rem; box-shadow: 0 18px 50px rgba(0,0,0,.18);
+}
+.prem-kapat {
+  position: absolute; top: .6rem; right: .7rem; width: 1.9rem; height: 1.9rem;
+  border: 0; border-radius: 6px; background: transparent; color: var(--ink-3);
+  font-size: 1.35rem; line-height: 1; cursor: pointer;
+}
+.prem-kapat:hover { background: var(--paper); color: var(--ink); }
+.prem-kutu h3 { font-size: 1.375rem; margin: .15rem 0 .5rem; }
+.prem-ozet { font-size: .875rem; color: var(--ink-2); line-height: 1.55; }
+.prem-liste { list-style: none; display: grid; gap: .5rem; margin: 1rem 0; }
+.prem-liste li {
+  font-size: .8125rem; color: var(--ink-2); line-height: 1.5;
+  padding-left: 1.1rem; position: relative;
+}
+.prem-liste li::before {
+  content: ''; position: absolute; left: 0; top: .48em;
+  width: .35rem; height: .35rem; border-radius: 50%; background: var(--accent);
+}
+/* Plan kartları — HER ZAMAN yan yana (dar ekranda bile), seçmeli.
+   auto-fit kullanılmıyor: dar panelde alt alta düşüp karşılaştırma
+   hissini kaybediyordu. */
+.plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin: 1rem 0 .8rem; }
+.plan {
+  position: relative; border: 1.5px solid var(--rule); border-radius: 10px;
+  background: var(--paper); padding: .9rem; cursor: pointer;
+  transition: border-color 180ms cubic-bezier(.4,0,.2,1), background 180ms cubic-bezier(.4,0,.2,1);
+}
+.plan:hover { border-color: var(--accent); }
+.plan:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Seçili kart: kalın kenarlık + tik. Sadece renk değil, işaret de var. */
+.plan[aria-checked="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.plan-tik {
+  position: absolute; top: .6rem; left: .6rem; width: 1.1rem; height: 1.1rem;
+  border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+  font-size: .7rem; line-height: 1.1rem; text-align: center; opacity: 0;
+  transition: opacity 180ms cubic-bezier(.4,0,.2,1);
+}
+.plan[aria-checked="true"] .plan-tik { opacity: 1; }
+.plan-ad { margin-top: .35rem; }
+.plan-eylem { display: grid; gap: .4rem; justify-items: start; margin-bottom: .3rem; }
+.plan-rozet {
+  position: absolute; top: .7rem; right: .7rem;
+  font-family: var(--f-mono); font-size: .6rem; letter-spacing: .07em; text-transform: uppercase;
+  padding: .15rem .45rem; border-radius: 999px; background: var(--accent); color: var(--accent-ink);
+}
+.plan-ad { font-size: .8rem; color: var(--ink-2); }
+.plan-fiyat { margin: .1rem 0 .7rem; color: var(--ink); }
+.plan-fiyat b { font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; }
+.plan-fiyat span { font-size: .8rem; color: var(--ink-3); }
+.plan-durum { font-size: .75rem; color: var(--ink-3); min-height: 1.2em; }
+.plan-liste { list-style: none; display: grid; gap: .4rem; margin-top: .8rem; }
+.plan-liste li { font-size: .78rem; color: var(--ink-2); line-height: 1.45; padding-left: .95rem; position: relative; }
+.plan-liste li::before {
+  content: ''; position: absolute; left: 0; top: .45em;
+  width: .3rem; height: .3rem; border-radius: 50%; background: var(--accent);
+}
+
+/* Size özel işler — fiyat listesi */
+.prem-ayrac { border: 0; border-top: 1px solid var(--rule); margin: 1.4rem 0 1rem; }
+.prem-alt-bas { font-size: 1rem; margin: .15rem 0 .8rem; }
+.ozel-liste { display: grid; gap: .5rem; }
+.ozel-sat {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  border: 1px solid var(--rule); border-radius: 9px; background: var(--paper); padding: .8rem .95rem;
+}
+.ozel-sat b { font-size: .875rem; }
+.ozel-sat p { font-size: .78rem; color: var(--ink-2); line-height: 1.5; margin-top: .2rem; }
+.ozel-hediye { color: var(--accent) !important; font-weight: 500; }
+.ozel-fiyat {
+  flex: none; text-align: right; font-size: 1.25rem; font-weight: 700;
+  color: var(--ink); white-space: nowrap; line-height: 1.2;
+}
+.ozel-fiyat small { font-size: .7rem; font-weight: 500; color: var(--ink-3); margin-left: .2rem; }
+.ozel-kez { display: block; margin: 0; }
+.ozel-teklif { font-size: 1rem; color: var(--accent); }
+
+/* İletişim + talep formu */
+.iletisim-kutu {
+  margin-top: .9rem; padding: .9rem 1rem;
+  border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; background: var(--accent-soft);
+}
+.iletisim-bas { font-size: .8125rem; font-weight: 600; color: var(--accent); }
+.iletisim-satir { margin: .35rem 0 .7rem; font-size: .8125rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+.iletisim-satir a { color: var(--accent); font-weight: 600; }
+.iletisim-satir span { color: var(--ink-3); }
+
+.talep-form { display: grid; gap: .7rem; margin-top: 1rem; }
+.talep-form[hidden] { display: none; }
+.tf-satir { display: grid; gap: .25rem; }
+.tf-satir label, .tf-secim legend { font-size: .78rem; color: var(--ink-2); }
+.tf-satir input, .tf-satir textarea {
+  font: inherit; font-size: .85rem; padding: .5rem .7rem;
+  border: 1px solid var(--rule-2); border-radius: 7px;
+  background: var(--paper); color: var(--ink); width: 100%;
+}
+.tf-satir input:focus-visible, .tf-satir textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tf-secim { border: 1px solid var(--rule); border-radius: 8px; padding: .6rem .8rem; }
+.tf-secim label { display: flex; align-items: center; gap: .4rem; font-size: .8125rem; color: var(--ink); }
+.tf-secim input { width: auto; }
+.prem-kucuk { font-size: .72rem; color: var(--ink-3); line-height: 1.5; }
+.prem-durum:empty { display: none; }
+.prem-durum {
+  margin-top: 1rem; padding: .6rem .85rem;
+  border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: .8125rem; line-height: 1.5;
+}
+#premCik { margin-top: .55rem; }
+.prem-anahtar { margin-top: 1.1rem; }
+.prem-anahtar label { display: block; font-size: .78rem; color: var(--ink-2); margin-bottom: .4rem; }
+.prem-anahtar-satir { display: flex; gap: .5rem; flex-wrap: wrap; }
+.prem-anahtar-satir input {
+  flex: 1 1 12rem; min-width: 0; font-family: var(--f-mono); font-size: .82rem;
+  padding: .5rem .7rem; border: 1px solid var(--rule-2); border-radius: 7px;
+  background: var(--paper); color: var(--ink);
+}
+.prem-anahtar-satir input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.prem-not:empty { display: none; }
+.prem-not { margin-top: .5rem; font-size: .78rem; line-height: 1.5; }
+.prem-not.hata { color: var(--crit-ink); }
+.prem-not.iyi  { color: var(--good-ink); }
+
+/* Kilitli filtre şeridi: kontroller devre dışı, ama rapor okunur kalıyor. */
+.ctl-rail[data-kilit="1"] select:disabled,
+.ctl-rail[data-kilit="1"] button:disabled { opacity: .55; cursor: not-allowed; }
+/* Ücret uyarısı filtre notunun içinde, kendi satırında — talep eden kişi
+   fiyatın sabit olmadığını görmeden tıklamasın. */
+.ucret-not { display: block; margin-top: .35rem; font-size: .75rem; color: var(--ink-2); }
+.filtre-not a.link-btn { text-decoration: underline; }
+.prem-ozel {
+  margin-top: 1rem; padding-top: .9rem; border-top: 1px solid var(--rule);
+  font-size: .78rem; color: var(--ink-2); line-height: 1.55;
+}
+.prem-ozel a { color: var(--accent); font-weight: 600; }
+
+.filtre-not:empty { display: none; }
+.filtre-not {
+  margin: -.4rem 0 1rem; padding: .6rem .85rem;
+  border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: .8125rem; line-height: 1.5;
+}
+
+/* Excel dışa aktarma hatası — butonun hemen altında, sessizce yutulmasın. */
+.xlsx-err:empty { display: none; }
+.xlsx-err {
+  margin-top: .6rem; padding: .55rem .8rem;
+  border-left: 3px solid var(--crit-ink); border-radius: 0 6px 6px 0;
+  background: var(--surface); color: var(--crit-ink);
+  font-size: .8125rem; line-height: 1.45;
+}
+
 .sheet-pick { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1.25rem; }
 .sheet-tab {
   cursor: pointer; border: 1px solid var(--control); background: var(--surface); color: var(--ink-2);
@@ -1157,6 +1372,80 @@ table.dt td.empty { color: var(--ink-3); font-style: italic; }
 .issue[data-sev="warning"]  { border-left-color: var(--warning); }
 .issue[data-sev="good"]     { border-left-color: var(--good); }
 .issue .sev-ico { margin-top: .1rem; }
+
+/* Bulgu eylem sütunu: tuşlar + Power Query ipucu alt alta. */
+.issue-act { display: flex; flex-direction: column; align-items: flex-end; gap: .35rem; }
+.issue-btns { display: flex; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
+.issue .fix-btn, .issue .detay-btn { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }
+
+/* Detay bloğu bulguya YAPIŞIK durur: aynı sol şerit rengi, üstü açık.
+   Bulgu ile arasında boşluk olsaydı hangi bulguya ait olduğu kaybolurdu.
+
+   min-width:0 ZORUNLU. Grid öğesinin varsayılanı `min-width:auto`; onunla
+   11 kolonluk detay tablosu bloğu şişirip sayfayı yatay kaydırıyordu
+   (ölçüldü: 139px taşma). Sıfırlanınca .tbl-wrap kendi içinde kayıyor. */
+.issue-grup { display: grid; min-width: 0; }
+.issues > * { min-width: 0; }
+.issue-detay {
+  min-width: 0;
+  border: 1px solid var(--rule); border-top: 0; border-left-width: 3px;
+  border-radius: 0 0 5px 5px; background: var(--surface);
+  padding: .7rem .85rem; margin-top: -1px;
+}
+.issue-detay[data-sev="critical"] { border-left-color: var(--critical); }
+.issue-detay[data-sev="warning"]  { border-left-color: var(--warning); }
+.issue-grup:has(.issue-detay:not([hidden])) .issue { border-radius: 5px 5px 0 0; }
+.detay-bas { font-size: .78rem; color: var(--ink-2); line-height: 1.5; margin-bottom: .55rem; }
+.detay-say { display: block; font-family: var(--f-mono); font-size: .7rem; color: var(--ink-3); margin-top: .15rem; }
+.detay-bos { font-size: .78rem; color: var(--ink-3); }
+.detay-no { font-family: var(--f-mono); color: var(--ink-3); text-align: right; }
+.detay-vurgu { background: color-mix(in srgb, var(--critical) 8%, transparent); font-weight: 600; }
+
+/* Yinelenen detayı çift gösterir: ilk kayıt + tekrarı alt alta. Tekrar satırı
+   soluk, çünkü silinecek olan o; ilk kayıt kalacak. */
+.detay-rol { white-space: nowrap; font-size: .72rem; }
+.rol-ilk    { font-family: var(--f-mono); color: var(--ink-3); }
+.rol-tekrar { font-family: var(--f-mono); color: var(--crit-ink); font-weight: 600; }
+.rol-es     { color: var(--ink-3); }
+tr[data-rol="tekrar"] { background: color-mix(in srgb, var(--critical) 5%, transparent); }
+tr.cift-bas > td { border-top: 2px solid var(--rule-2); }
+
+/* Kilitli ayrıntı. Başlık ve önem rengi görünür kalır — kullanıcı bir sorun
+   olduğunu HER ZAMAN bilir, yalnız ayrıntısı premiuma bağlıdır. */
+.issue .kilit {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .78rem; color: var(--ink-3); font-style: italic; line-height: 1.5;
+}
+.issue .kilit svg { flex: none; }
+.issue[data-kilit="1"] { background: color-mix(in srgb, var(--ink-3) 5%, var(--surface)); }
+
+/* Geri alma şeridi. Veri artık dosyadakinden farklıysa bunu SÖYLEMEK zorunda —
+   kullanıcı düzeltilmiş veriyi ham veri sanmamalı. Uyarı tonunda. */
+.fix-undo {
+  margin: -.9rem 0 1.5rem; padding: .75rem .95rem;
+  border-left: 3px solid var(--warning); border-radius: 0 7px 7px 0;
+  background: color-mix(in srgb, var(--warning) 9%, var(--surface));
+  font-size: .8125rem; line-height: 1.5; color: var(--ink-2);
+}
+.fix-undo-head { margin-bottom: .55rem; }
+.fix-undo-list { list-style: none; display: grid; gap: .4rem; }
+.fix-undo-list li {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  padding-top: .4rem; border-top: 1px solid color-mix(in srgb, var(--warning) 22%, transparent);
+}
+.fix-undo-list li:first-child { border-top: 0; padding-top: 0; }
+.fix-undo-ad { font-weight: 600; color: var(--ink); flex: none; }
+.fix-undo-msg { flex: 1 1 18ch; color: var(--ink-2); }
+.fix-undo-list button { flex: none; }
+
+/* Düzeltme sonucu / premium uyarısı */
+.fix-note:empty { display: none; }
+.fix-note {
+  margin: -.9rem 0 1.5rem; padding: .6rem .85rem;
+  border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: .8125rem; line-height: 1.5;
+}
 .issue[data-sev="critical"] .sev-ico { color: var(--critical); }
 .issue[data-sev="warning"]  .sev-ico { color: var(--serious); }
 .issue[data-sev="good"]     .sev-ico { color: var(--good); }
@@ -1435,7 +1724,6 @@ pre.code .f { color: var(--s7); font-weight: 500; }
       <a href="#/">Ana Sayfa</a>
       <a href="#/rapor">Örnek Rapor</a>
       <a href="#/studyo">Rapor Stüdyosu</a>
-      <a href="#/projeler">Projeler</a>
       <a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
     </nav>
@@ -1443,6 +1731,10 @@ pre.code .f { color: var(--s7); font-weight: 500; }
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
       <span>CV</span>
     </a>
+    <!-- Premium site geneli bir durum; rozet ANA BAŞLIKTA durur. Stüdyo
+         araç şeridindeyken kullanıcı başka sayfadayken durumunu göremiyor
+         ve premium'dan çıkamıyordu. -->
+    <button class="prem-chip plat" id="premChip" type="button" data-on="0" title="Premium durumu">Premium Ol</button>
     <button class="icon-btn" id="themeBtn" type="button" aria-label="Temayı değiştir" title="Temayı değiştir">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
     </button>
@@ -1543,6 +1835,61 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     </div>
   </div>
 
+  <!-- VİTRİN — yukarıdaki "Ne yapıyorum" yöntemi anlatır; burası ne satın
+       alınabileceğini anlatır. Sitenin kendisi ilk iki maddenin kanıtı. -->
+  <div class="wrap section" style="padding-top:0">
+    <div class="section-head reveal">
+      <span class="eyebrow">Hizmetler</span>
+      <h2>Size özel yapılan işler.</h2>
+      <p>Aşağıdakiler hazır ürün değil; sizin işinize göre kurulur. İlk ikisinin örneğini
+         zaten görüyorsunuz: bu sitenin kendisi ve içindeki özgeçmiş.</p>
+    </div>
+    <div class="grid-3">
+      <article class="card card-lift svc reveal-s">
+        <span class="svc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20M6 6.5h.01M9 6.5h.01"/></svg></span>
+        <h3>Kişisel site</h3>
+        <p>Bunun gibi, mesleğinizi kanıtlayan bir site. Şablon değil; işinize göre kurulur.</p>
+        <div class="tags"><span class="tag">Tek dosya</span><span class="tag">Bağımlılıksız</span></div>
+      </article>
+      <article class="card card-lift svc reveal-s">
+        <span class="svc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
+        <h3>Profesyonel özgeçmiş</h3>
+        <p>İki dilli, yazdırılabilir, siteyle birlikte güncellenen özgeçmiş.</p>
+        <div class="tags"><span class="tag">TR / EN</span><span class="tag">Baskıya hazır</span></div>
+      </article>
+      <article class="card card-lift svc reveal-s">
+        <span class="svc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></span>
+        <h3>Özel rapor</h3>
+        <p>Kendi verinizden, sizin istediğiniz kırılım ve görsellerle hazırlanmış rapor.</p>
+        <div class="tags"><span class="tag">Power BI</span><span class="tag">Excel</span></div>
+      </article>
+      <article class="card card-lift svc reveal-s">
+        <span class="svc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3.5-7.1"/><path d="M21 3v6h-6"/><circle cx="12" cy="12" r="3"/></svg></span>
+        <h3>Mesleğe özel otomasyon</h3>
+        <p>Rapor Stüdyosu'nu kendi işim için kurdum. Aynısı sizin mesleğiniz için de kurulabilir —
+           tekrar eden işi bir kez otomatikleştirmek.</p>
+        <div class="tags"><span class="tag">Keşif görüşmesiyle başlar</span></div>
+      </article>
+    </div>
+
+    <!-- Premium yukarıdaki listeye AİT DEĞİL: onlar size özel yapılan işler,
+         bu ise hazır bir aracın aboneliği. Aynı kutuda durunca ikisi de
+         bulanıklaşıyordu; ayrı şerit olarak duruyor. -->
+    <div class="urun-serit reveal">
+      <div>
+        <p class="eyebrow">Hazır ürün</p>
+        <h3>Rapor Stüdyosu</h3>
+        <p>Yukarıdakiler size özel kurulur. Bu ise hazır: Excel'inizi bırakın, veri kalitesi
+           denetlensin, rapor çıksın. <b>Ücretsiz çalışır.</b> Premium; bulgu detayını,
+           rapor filtrelerini ve indirmeyi açar.</p>
+      </div>
+      <div class="urun-serit-acts">
+        <a class="btn btn-primary" href="#/studyo">Stüdyoyu dene</a>
+        <button class="btn btn-ghost" type="button" id="premUrun">Premium'a bak</button>
+      </div>
+    </div>
+  </div>
+
   <div class="wrap section" style="padding-top:0">
     <div class="section-head reveal">
       <span class="eyebrow">Yöntem</span>
@@ -1574,19 +1921,6 @@ pre.code .f { color: var(--s7); font-weight: 500; }
 <!-- ============================ ÖRNEK RAPOR ============================ -->
 <section class="view" id="v-report">
   <div class="wrap" style="padding-block:2rem 4rem" id="sampleBox"></div>
-</section>
-
-<!-- ============================ PROJELER ============================ -->
-<section class="view" id="v-projects">
-  <div class="wrap section">
-    <div class="section-head reveal">
-      <span class="eyebrow">Projeler</span>
-      <h2>Kendi geliştirdiğim araçlar.</h2>
-      <p>İş yerindeki vakalardan farklı olarak bunlar sıfırdan kurduğum,
-         kodunu yazdığım ve sürdürdüğüm işler.</p>
-    </div>
-    <div style="display:grid;gap:1.25rem" id="projectsGrid"></div>
-  </div>
 </section>
 
 <!-- ============================ ÖZGEÇMİŞ ============================ -->
@@ -1689,7 +2023,6 @@ pre.code .f { color: var(--s7); font-weight: 500; }
           <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
         </span>
         <h3>Excel veya CSV dosyanızı buraya bırakın</h3>
-        <p>Dosya tarayıcınızda işlenir — hiçbir yere gönderilmez.</p>
         <div class="drop-actions">
           <button class="btn btn-primary" id="pickBtn" type="button">Dosya seç</button>
           <button class="btn btn-ghost" id="demoBtn" type="button">Örnek dosyayla dene</button>
@@ -1697,6 +2030,10 @@ pre.code .f { color: var(--s7); font-weight: 500; }
         <p class="drop-formats">.xlsx · .xlsm · .csv · .tsv</p>
         <input type="file" id="fileInput" accept=".xlsx,.xlsm,.csv,.tsv,.txt" class="sr-only">
       </div>
+      <p class="priv-note">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span>Stüdyoya bıraktığınız dosyalar tarayıcıda işlenir; sunucuya yüklenmez.</span>
+      </p>
       <div id="uploadErr"></div>
       <div id="sheetPick"></div>
       <div id="previewBox" style="margin-top:1.5rem"></div>
@@ -1724,8 +2061,10 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     <div>
       <h4>Sayfalar</h4>
       <a href="#/">Ana Sayfa</a><a href="#/rapor">Örnek Rapor</a>
-      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/projeler">Projeler</a><a href="#/vakalar">Vakalar</a>
+      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
+      <!-- Rozet dar ekranda gizleniyor; premium yine de her sayfadan erişilebilir olmalı. -->
+      <button class="foot-link" id="premFoot" type="button">Premium</button>
     </div>
     <div>
       <h4>İletişim</h4>
@@ -1741,6 +2080,154 @@ pre.code .f { color: var(--s7); font-weight: 500; }
   </div>
 </footer>
 
+<!-- Premium paneli. GİRİŞ/HESAP YOK: anahtarın kendisi kimliktir. -->
+<div class="prem-modal" id="premModal" role="dialog" aria-modal="true" aria-labelledby="premBas" hidden>
+  <div class="prem-kutu">
+    <button class="prem-kapat" id="premKapat" type="button" aria-label="Kapat">×</button>
+    <p class="eyebrow">Rapor Stüdyosu</p>
+    <h3 id="premBas">Premium</h3>
+    <p class="prem-ozet">Stüdyo ücretsiz çalışır. Premium, işi bitirmenizi sağlayan kısmı açar.</p>
+
+    <p class="prem-durum" id="premDurum"></p>
+
+    <!-- PLAN KARŞILAŞTIRMASI -->
+    <!-- Planlar SEÇMELİ: kartın kendisi tıklanır, seçili olan vurgulanır. -->
+    <div class="plan-grid" role="radiogroup" aria-label="Plan seçimi">
+      <div class="plan" id="planFree" role="radio" tabindex="0" aria-checked="true">
+        <span class="plan-tik" aria-hidden="true">✓</span>
+        <p class="plan-ad">Ücretsiz</p>
+        <p class="plan-fiyat"><b>0</b> <span>TL / ay</span></p>
+        <p class="plan-durum" id="planUcretsiz">Mevcut planınız</p>
+        <ul class="plan-liste">
+          <li>Yükleme, profilleme, veri kalitesi</li>
+          <li>Bulguları düzeltme</li>
+          <li>Raporun varsayılan hâli</li>
+          <li>İlk indirme</li>
+        </ul>
+      </div>
+      <div class="plan plan-one" id="planPrem" role="radio" tabindex="0" aria-checked="false">
+        <span class="plan-tik" aria-hidden="true">✓</span>
+        <span class="plan-rozet">Önerilen</span>
+        <p class="plan-ad">Premium</p>
+        <p class="plan-fiyat"><b>300</b> <span>TL / ay</span></p>
+        <p class="plan-durum" id="planPremDurum"></p>
+        <ul class="plan-liste">
+          <li><b>Sınırsız indirme</b> — Excel ve Power BI paketi</li>
+          <li><b>Bulgu detayı</b> — sorun hangi satırlardan geliyor</li>
+          <li><b>Kırmızı bulguların ayrıntısı</b></li>
+          <li><b>Rapor filtreleri</b> — ölçü, kırılım, dönem, çapraz filtre</li>
+        </ul>
+      </div>
+    </div>
+    <div class="plan-eylem">
+      <button class="btn btn-primary" id="premSatinAl" type="button">Premium'a geç</button>
+      <p class="prem-kucuk">Ödeme sonrası lisans anahtarınız e-postayla gönderilir.</p>
+    </div>
+
+    <button class="btn btn-ghost btn-sm" id="premCik" type="button" hidden>Premium'dan çık</button>
+
+    <div class="prem-anahtar">
+      <label for="premKey">Anahtarınız var mı?</label>
+      <div class="prem-anahtar-satir">
+        <input id="premKey" type="text" placeholder="RS-A1B2-C3D4-E5F6" autocomplete="off" spellcheck="false">
+        <button class="btn btn-ghost" id="premUygula" type="button">Uygula</button>
+      </div>
+      <p class="prem-not" id="premNot"></p>
+    </div>
+
+    <!-- SİZE ÖZEL İŞLER — abonelik değil, sipariş. -->
+    <hr class="prem-ayrac">
+    <p class="eyebrow">Size özel işler</p>
+    <h4 class="prem-alt-bas">Hazır ürün değil, işinize göre kurulur.</h4>
+
+    <div class="ozel-liste">
+      <div class="ozel-sat">
+        <div>
+          <b>Özel site</b>
+          <p>Bunun gibi, mesleğinizi kanıtlayan bir site. Fiyat <b>alan adıyla veya alan adsız</b>
+             olmasına göre değişir.</p>
+          <p class="ozel-hediye">Özel CV ve Premium kullanım <b>hediye</b></p>
+        </div>
+        <span class="ozel-fiyat">3.000 <small>TL</small><small class="ozel-kez">tek seferlik</small></span>
+      </div>
+      <div class="ozel-sat">
+        <div>
+          <b>Özel CV</b>
+          <p>İki dilli, yazdırılabilir, siteyle birlikte güncellenen özgeçmiş.</p>
+        </div>
+        <span class="ozel-fiyat">300 <small>TL</small><small class="ozel-kez">tek seferlik</small></span>
+      </div>
+      <div class="ozel-sat">
+        <div>
+          <b>Özel rapor</b>
+          <p>Kapsamı değişkendir; <b>özel fiyat teklifi gerekir.</b> Önce konuşalım.</p>
+        </div>
+        <span class="ozel-fiyat ozel-teklif">Teklif</span>
+      </div>
+    </div>
+
+    <div class="iletisim-kutu">
+      <p class="iletisim-bas">Özel rapor için doğrudan ulaşın</p>
+      <p class="iletisim-satir">
+        <a href="mailto:erkantoraman@outlook.com">erkantoraman@outlook.com</a>
+        <span>·</span>
+        <a href="tel:+905016626367">+90 501 662 63 67</a>
+      </p>
+      <button class="btn btn-ghost btn-sm" id="formAc" type="button" aria-expanded="false">Form doldurayım</button>
+    </div>
+
+    <!-- TALEP FORMU — sunucu yok; doldurulan bilgi e-posta gövdesine yazılır. -->
+    <form class="talep-form" id="talepForm" hidden>
+      <div class="tf-satir">
+        <label for="tfAd">Ad soyad *</label>
+        <input id="tfAd" type="text" autocomplete="name" required>
+      </div>
+      <div class="tf-satir">
+        <label for="tfEposta">E-posta *</label>
+        <input id="tfEposta" type="email" autocomplete="email" required placeholder="ornek@firma.com">
+      </div>
+      <div class="tf-satir">
+        <label for="tfEposta2">E-posta (tekrar) *</label>
+        <input id="tfEposta2" type="email" autocomplete="email" required placeholder="Aynısını yazın">
+      </div>
+      <div class="tf-satir">
+        <label for="tfTel">Telefon</label>
+        <input id="tfTel" type="tel" autocomplete="tel" placeholder="+90 5xx xxx xx xx">
+      </div>
+      <fieldset class="tf-satir tf-secim">
+        <legend>Çıktı nasıl olsun? *</legend>
+        <label><input type="radio" name="tfCikti" value="Power BI" required> Power BI</label>
+        <label><input type="radio" name="tfCikti" value="Excel"> Düz Excel</label>
+        <label><input type="radio" name="tfCikti" value="Power BI + Excel"> İkisi de</label>
+        <label><input type="radio" name="tfCikti" value="Bilmiyorum"> Bilmiyorum, siz önerin</label>
+      </fieldset>
+      <div class="tf-satir">
+        <label for="tfKonu">Veri neyle ilgili? *</label>
+        <input id="tfKonu" type="text" required placeholder="Satış, maliyet, stok, personel…">
+      </div>
+      <div class="tf-satir">
+        <label for="tfIstek">Raporda ne görmek istiyorsunuz? *</label>
+        <textarea id="tfIstek" rows="3" required placeholder="Hangi soruya cevap arıyorsunuz? Hangi kırılımlar önemli?"></textarea>
+      </div>
+      <div class="tf-satir">
+        <label for="tfBoyut">Yaklaşık satır sayısı</label>
+        <input id="tfBoyut" type="text" placeholder="Bilmiyorsanız boş bırakın">
+      </div>
+      <div class="tf-satir">
+        <label for="tfTeslim">Ne zamana lazım?</label>
+        <input id="tfTeslim" type="text" placeholder="Örn. iki hafta içinde">
+      </div>
+      <p class="prem-kucuk">Form gönderilmez; doldurduklarınız e-posta taslağına yazılır,
+        gönderme kararı sizde kalır. <b>Dosya eklemeyin</b> — önce kapsamı konuşuruz.</p>
+      <p class="prem-not" id="tfNot"></p>
+      <button class="btn btn-primary" id="tfGonder" type="submit">E-posta taslağını hazırla</button>
+    </form>
+
+    <p class="prem-kucuk">Giriş yapmanız gerekmez, hesap açılmaz. Dosyanız yine
+      bilgisayarınızdan çıkmaz — premium yalnızca bu tarayıcıda açılır.</p>
+  </div>
+</div>
+
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
 <script>
 /* ============================================================
@@ -1749,6 +2236,30 @@ pre.code .f { color: var(--s7); font-weight: 500; }
    tarayıcının native DecompressionStream'i ile açılır.
    ============================================================ */
 const MAX_ROWS = 60000;
+
+/* Satır kimliği — yinelenen satır arayan HER yer bunu kullanır
+   (buildTable sayımı, fixDupes silmesi, detay listesi, dışa aktarım notu).
+   Dört yerde dört tanım vardı ve ikisi birbirini tutmuyordu.
+
+   AYIRAÇ ŞART. Ölçüldü: ayıraçsız birleştirmede ["AB","C"] ile ["A","BC"]
+   aynı anahtarı üretiyor ve FARKLI iki satır yinelenen sanılıyordu.
+
+   KARŞILAŞTIRMA BİREBİR. Eskiden burada `.trim().toLowerCase()` vardı;
+   "ANKARA" ile "Ankara" yinelenen sayılıyordu. Ama bulgu metni "birebir
+   aynı" diyor ve silme işlemi birebir karşılaştırıyordu — sayı 1 diyor,
+   silinen 0 çıkıyordu. Harf/boşluk farkı ayrı bir bulgunun işi
+   (yazım tutarsızlığı), silme kararı ona bakarak verilmemeli. */
+const SATIR_AYIRAC = '';  // veride gecmeyecek denetim karakteri
+const rowKey = vals => vals.map(v => (v instanceof Date ? v.getTime() : String(v ?? ''))).join(SATIR_AYIRAC);
+
+/* Boyut kalkanı. MAX_ROWS ayrıştırma SIRASINDA devreye girer; oraya varmak için
+   dosyanın tamamı önce belleğe alınır (arrayBuffer) ve sıkıştırması açılır.
+   Yani dev bir dosyada sekme satır sınırına hiç ulaşamadan çöker — kalkan
+   okumadan ÖNCE, byte cinsinden konmalı.
+   Ölçek: test-buyuk.xlsx 40.000 satır × 3 sayfa = 2,2 MB. 60.000 satırlık
+   meşru bir .xlsx ~4 MB. Sıkıştırılmamış CSV çok daha şişer, o yüzden sınır
+   cömert tutuldu. */
+const MAX_FILE_MB = 100;
 
 const u16 = (b, o) => b[o] | (b[o + 1] << 8);
 const u32 = (b, o) => (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0;
@@ -2334,6 +2845,27 @@ function buildTable(rows, sheetName, opts) {
   const data = body.map(r => keep.map(i => (r[i] === undefined ? null : r[i])));
   fields.forEach((f, i) => { f.idx = i; f.get = localGet(i); });
 
+  /* TİPSİZ KAYNAK (CSV/TSV): dosyada tip diye bir şey yok, HER hücre metindir.
+     Sayısal kolonları burada gerçek sayıya çeviriyoruz. İki hata birden
+     bundan çıkmıştı:
+       1) Tertemiz bir CSV "Sayılar metin olarak saklanmış" kırmızı uyarısı
+          alıyordu — anlamsız, çünkü CSV'de zaten hepsi metin.
+       2) Çevrilmediği için toplama yolları metni okumak zorunda kalıyordu;
+          o hoşgörü de .xlsx'teki GERÇEK metin-sayı sorununu örtüyordu.
+     .xlsx tiplidir: orada metin kalan hücre gerçek bir sorundur, dokunulmaz. */
+  if (opts && opts.typed === false) {
+    for (const f of fields) {
+      if (f.type !== 'number') continue;
+      let cevrilen = 0;
+      for (const r of data) {
+        if (typeof r[f.idx] !== 'string') continue;
+        const x = toNum(r[f.idx]);
+        if (x !== null) { r[f.idx] = x; cevrilen++; }
+      }
+      if (cevrilen) f.textNums = Math.max(0, (f.textNums || 0) - cevrilen);
+    }
+  }
+
   // özet (ara toplam) satırları — analizden çıkarılır, kullanıcıya bildirilir
   const aggInfo = detectAggRows(fields, data);
 
@@ -2341,7 +2873,7 @@ function buildTable(rows, sheetName, opts) {
   const seen = new Set(); let dupes = 0;
   for (let i = 0; i < data.length; i++) {
     if (aggInfo.set.has(i)) continue;
-    const k = data[i].map(v => (v instanceof Date ? v.getTime() : String(v ?? '').trim().toLowerCase())).join('');
+    const k = rowKey(data[i]);
     if (seen.has(k)) dupes++; else seen.add(k);
   }
 
@@ -2613,6 +3145,380 @@ function applyRelations(tables, factIdx, relations) {
 /** Kırılım seçicisinde ilişkili alan kaynağıyla görünür: "Şehir (Müşteri Listesi)" */
 const fieldLabel = f => (f && f.virtual ? f.name + ' (' + f.sourceTable + ')' : (f ? f.name : '—'));
 /* ============================================================
+   .xlsx YAZICI — tarayıcı tarafı
+   Kütüphane yok. ZIP elle kurulur, deflate akışı tarayıcının native
+   CompressionStream'i ile sıkıştırılır (okuyucu DecompressionStream
+   kullanıyor; ikisi aynı tarayıcılarda var, yeni bir destek yükü yok).
+
+   DİKKAT — Node tarafındaki `xlsx-write.js` ile AYNI OPC bilgisini taşır.
+   Orada iki hata iki kez yaşandı ve ikisi de kopyalamadan çıktı:
+     1) [Content_Types].xml'de `rels` uzantısı ve her parça için Override
+        şart. Bizim okuyucumuz bu parçayı hiç açmadığı için eksikliği
+        GÖRMEZ; Excel görür ve dosyayı reddeder.
+     2) sharedStrings.xml, ona metin ekleyen sayfalardan SONRA yazılmalı.
+        Burada da `finish()` içinde en sona bırakıldı — sıra bozulmasın.
+   Bu dosya değişirse `xlsx-write.js` de gözden geçirilmeli; test.js
+   ikisinin ürettiği paket parçalarını karşılaştırır.
+   ============================================================ */
+
+const X_CRC = (() => {
+  const t = [];
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; }
+  return t;
+})();
+const xCrc32 = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = X_CRC[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+
+/* Sabit ve GEÇERLİ DOS tarih/saati (2024-01-01 12:00). Sıfır bırakılırsa ay ve
+   gün 0 olur; bazı okuyucular bunu bozuk arşiv sayar. */
+const X_DOS_TIME = (12 << 11);
+const X_DOS_DATE = ((2024 - 1980) << 9) | (1 << 5) | 1;
+
+const xEnc = s => new TextEncoder().encode(s);
+
+async function xDeflateRaw(bytes) {
+  const stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+  return new Uint8Array(await new Response(stream).arrayBuffer());
+}
+
+/** entries: [ad, içerik, sıkıştırılsın mı] üçlüleri → Uint8Array (ZIP).
+    İçerik metin ya da Uint8Array olabilir; ikincisi Power BI paketine
+    hazır .xlsx gömebilmek için (ZIP içinde ZIP). */
+async function xZip(entries) {
+  const loc = [], cen = [];
+  let off = 0;
+  for (const [name, icerik, deflate] of entries) {
+    const data = typeof icerik === 'string' ? xEnc(icerik) : icerik;
+    const comp = deflate === false ? data : await xDeflateRaw(data);
+    const nb = xEnc(name);
+    const method = deflate === false ? 0 : 8;
+    const crc = xCrc32(data);
+
+    const lh = new Uint8Array(30), lv = new DataView(lh.buffer);
+    lv.setUint32(0, 0x04034b50, true); lv.setUint16(4, 20, true); lv.setUint16(6, 0, true);
+    lv.setUint16(8, method, true); lv.setUint16(10, X_DOS_TIME, true); lv.setUint16(12, X_DOS_DATE, true);
+    lv.setUint32(14, crc, true); lv.setUint32(18, comp.length, true); lv.setUint32(22, data.length, true);
+    lv.setUint16(26, nb.length, true); lv.setUint16(28, 0, true);
+    loc.push(lh, nb, comp);
+
+    const ch = new Uint8Array(46), cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true); cv.setUint16(4, 20, true); cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0, true); cv.setUint16(10, method, true);
+    cv.setUint16(12, X_DOS_TIME, true); cv.setUint16(14, X_DOS_DATE, true);
+    cv.setUint32(16, crc, true); cv.setUint32(20, comp.length, true); cv.setUint32(24, data.length, true);
+    cv.setUint16(28, nb.length, true); cv.setUint32(42, off, true);
+    cen.push(ch, nb);
+    off += lh.length + nb.length + comp.length;
+  }
+  const cdLen = cen.reduce((a, b) => a + b.length, 0);
+  const eo = new Uint8Array(22), ev = new DataView(eo.buffer);
+  ev.setUint32(0, 0x06054b50, true); ev.setUint16(8, entries.length, true); ev.setUint16(10, entries.length, true);
+  ev.setUint32(12, cdLen, true); ev.setUint32(16, off, true);
+
+  const all = [...loc, ...cen, eo];
+  const total = all.reduce((a, b) => a + b.length, 0);
+  const out = new Uint8Array(total);
+  let q = 0;
+  for (const part of all) { out.set(part, q); q += part.length; }
+  return out;
+}
+
+const xEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const xCol = n => { let s = ''; n++; while (n > 0) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = (n - 1 - r) / 26; } return s; };
+const X_EPOCH = Date.UTC(1899, 11, 30);
+const X_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+const X_NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+const X_NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+const X_NS_PR = 'http://schemas.openxmlformats.org/package/2006/relationships';
+const X_CT = 'application/vnd.openxmlformats-officedocument.spreadsheetml';
+
+/* Excel styles.xml'de sıraya ve zorunlu çocuklara katıdır: fonts/fills/borders/
+   cellStyleXfs, cellXfs'ten ÖNCE gelmeli ve fills en az iki tane olmalı.
+   s="1" tarih, s="2" kalın başlık. */
+const X_STYLES = X_XML + `<styleSheet xmlns="${X_NS}">` +
+  // 164 tarih, 165 binlik ayraçlı sayı (pivot değerleri için)
+  '<numFmts count="2"><numFmt numFmtId="164" formatCode="dd\\.mm\\.yyyy"/>' +
+  '<numFmt numFmtId="165" formatCode="#,##0.00"/></numFmts>' +
+  '<fonts count="2">' +
+    '<font><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/></font>' +
+    '<font><b/><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/></font>' +
+  '</fonts>' +
+  '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>' +
+  '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+  '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+  '<cellXfs count="3">' +
+    '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+    '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+    '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
+  '</cellXfs>' +
+  '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
+  '</styleSheet>';
+
+/** Tablo kolon adları: Excel BENZERSİZ ve BOŞ OLMAYAN olmasını ŞART koşar;
+    ihlalde dosyayı onarmak ister. Boş olan "Kolon N" olur, yinelenen sonuna
+    sayı alır. Ayrı işlev, çünkü test doğrudan bunu sınıyor. */
+function xTabloBasliklari(basSatir) {
+  const gorulen = new Set();
+  return basSatir.map((cell, ci) => {
+    const isObj = cell && typeof cell === 'object' && !(cell instanceof Date);
+    let ad = String((isObj ? cell.v : cell) ?? '').trim() || ('Kolon' + (ci + 1));
+    const temel = ad;
+    let n = 2;
+    while (gorulen.has(ad.toLocaleLowerCase('tr'))) ad = temel + ' ' + (n++);
+    gorulen.add(ad.toLocaleLowerCase('tr'));
+    return ad;
+  });
+}
+
+/** Excel sayfa adı kuralları: 31 karakter, : \ / ? * [ ] yasak, boş olamaz. */
+function xSheetName(s, i) {
+  let n = String(s || '').replace(/[:\\/?*\[\]]/g, ' ').trim().slice(0, 31);
+  return n || ('Sayfa' + (i + 1));
+}
+
+/**
+ * Çalışma kitabı kurar.
+ *   const b = xBook();
+ *   b.sheet('Veri', rows, { autoFilter: true, freezeHeader: true })
+ *   const blob = await b.blob();
+ *
+ * rows: hücre dizisi dizisi. Hücre = ilkel değer ya da { v, bold:true }.
+ */
+function xBook() {
+  const shared = [], sMap = new Map();
+  const si = v => { if (!sMap.has(v)) { sMap.set(v, shared.length); shared.push(v); } return sMap.get(v); };
+  const sheets = [];
+  const pivotlar = [];
+
+  function cellXml(ref, val, bold) {
+    if (val === null || val === undefined || val === '') return bold ? `<c r="${ref}" s="2"/>` : '';
+    if (val instanceof Date) {
+      const serial = (val.getTime() - X_EPOCH) / 86400000;
+      return `<c r="${ref}" s="1"><v>${serial}</v></c>`;
+    }
+    if (typeof val === 'number' && isFinite(val)) {
+      return `<c r="${ref}"${bold ? ' s="2"' : ''}><v>${val}</v></c>`;
+    }
+    return `<c r="${ref}"${bold ? ' s="2"' : ''} t="s"><v>${si(String(val))}</v></c>`;
+  }
+
+  function sheet(name, rows, opt) {
+    opt = opt || {};
+    let xml = '';
+    let maxCols = 0;
+    rows.forEach((r, ri) => {
+      const cells = r.map((cell, ci) => {
+        const isObj = cell && typeof cell === 'object' && !(cell instanceof Date);
+        const v = isObj ? cell.v : cell;
+        const bold = isObj ? !!cell.bold : false;
+        return cellXml(xCol(ci) + (ri + 1), v, bold);
+      }).join('');
+      if (r.length > maxCols) maxCols = r.length;
+      xml += `<row r="${ri + 1}">${cells}</row>`;
+    });
+    /* Tablo (ListObject) için başlık adları gerekir: Excel tablo kolon
+       adlarının BENZERSİZ ve BOŞ OLMAYAN olmasını şart koşar, yoksa dosyayı
+       onarmak ister. Burada tekilleştiriliyor. */
+    const basliklar = (opt.table && rows.length) ? xTabloBasliklari(rows[0]) : null;
+    sheets.push({ name: xSheetName(name, sheets.length), rows: xml, rowCount: rows.length, maxCols, opt, basliklar });
+    return api;
+  }
+
+  async function bytes() {
+    const parts = sheets.map((s, i) => `xl/worksheets/sheet${i + 1}.xml`);
+
+    /* TABLOLAR (ListObject). Excel'in "Tablo Olarak Biçimlendir"iyle aynı şey:
+       şeritli satırlar, süzme okları, adlandırılmış aralık ve yapılandırılmış
+       başvuru (=Veri[Net Tutar]). Dinamik tablo eklemek de iki tık kalıyor.
+
+       Paket kuralları:
+       · Tablo AYRI bir parça (xl/tables/tableN.xml) + kendi content type'ı
+       · Sayfanın KENDİ rels dosyası olmalı, tabloyu oradan gösterir
+       · Sayfada <tableParts> EN SONDA durur
+       · autoFilter'ı TABLO taşır; sayfada ayrıca yazılırsa Excel onarım ister */
+    const tablolar = [];
+    sheets.forEach((s, i) => {
+      if (!s.opt.table || !s.basliklar || s.rowCount < 2) return;
+      const son = xCol(s.basliklar.length - 1) + s.rowCount;
+      tablolar.push({
+        sheetIdx: i,
+        dosya: `xl/tables/table${tablolar.length + 1}.xml`,
+        id: tablolar.length + 1,
+        ad: 'Tablo' + (tablolar.length + 1),
+        ref: 'A1:' + son,
+        basliklar: s.basliklar
+      });
+    });
+
+    const contentTypes = X_XML + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      `<Override PartName="/xl/workbook.xml" ContentType="${X_CT}.sheet.main+xml"/>` +
+      parts.map(pt => `<Override PartName="/${pt}" ContentType="${X_CT}.worksheet+xml"/>`).join('') +
+      tablolar.map(tb => `<Override PartName="/${tb.dosya}" ContentType="${X_CT}.table+xml"/>`).join('') +
+      pivotlar.map((_, k) => `<Override PartName="/xl/pivotCache/pivotCacheDefinition${k + 1}.xml" ContentType="${X_CT}.pivotCacheDefinition+xml"/>` +
+        `<Override PartName="/xl/pivotTables/pivotTable${k + 1}.xml" ContentType="${X_CT}.pivotTable+xml"/>`).join('') +
+      `<Override PartName="/xl/sharedStrings.xml" ContentType="${X_CT}.sharedStrings+xml"/>` +
+      `<Override PartName="/xl/styles.xml" ContentType="${X_CT}.styles+xml"/>` +
+      '</Types>';
+
+    /* Pivot önbellek tanımı. Kayıtlar YAZILMIYOR — refreshOnLoad ile Excel
+       kaynaktan kendisi kuruyor, böylece tutarsız önbellek riski yok. */
+    const pivotCacheXml = (pv) => X_XML +
+      `<pivotCacheDefinition xmlns="${X_NS}" xmlns:r="${X_NS_R}" invalid="1" refreshOnLoad="1" ` +
+      `refreshedBy="Rapor Stüdyosu" createdVersion="3" refreshedVersion="3" minRefreshableVersion="3" recordCount="0">` +
+      `<cacheSource type="worksheet"><worksheetSource ref="${pv.opt.kaynakRef}" sheet="${xEsc(pv.opt.kaynakSayfa)}"/></cacheSource>` +
+      `<cacheFields count="${pv.opt.alanlar.length}">` +
+      pv.opt.alanlar.map(a => `<cacheField name="${xEsc(a)}" numFmtId="0"><sharedItems/></cacheField>`).join('') +
+      '</cacheFields></pivotCacheDefinition>';
+
+    const pivotTableXml = (pv, k) => {
+      const n = pv.opt.alanlar.length;
+      const alanlar = [];
+      for (let i = 0; i < n; i++) {
+        if (i === pv.opt.satirAlan) alanlar.push('<pivotField axis="axisRow" showAll="0"><items count="1"><item t="default"/></items></pivotField>');
+        else if (i === pv.opt.veriAlan) alanlar.push('<pivotField dataField="1" showAll="0"/>');
+        else alanlar.push('<pivotField showAll="0"/>');
+      }
+      return X_XML +
+        `<pivotTableDefinition xmlns="${X_NS}" name="DinamikTablo${k + 1}" cacheId="${k + 1}" ` +
+        'dataCaption="Değerler" updatedVersion="3" minRefreshableVersion="3" createdVersion="3" ' +
+        'applyWidthHeightFormats="1" useAutoFormatting="1" itemPrintTitles="1" indent="0" outline="1" outlineData="1" multipleFieldFilters="0">' +
+        '<location ref="A3:B20" firstHeaderRow="1" firstDataRow="1" firstDataCol="1"/>' +
+        `<pivotFields count="${n}">${alanlar.join('')}</pivotFields>` +
+        `<rowFields count="1"><field x="${pv.opt.satirAlan}"/></rowFields>` +
+        '<rowItems><i><x/></i></rowItems>' +
+        '<colItems count="1"><i/></colItems>' +
+        // numFmtId="165" = binlik ayraçlı. Olmayınca değerler 1828685,51 diye
+        // okunuyor ve pivot "berbat" görünüyor.
+        `<dataFields count="1"><dataField name="${xEsc(pv.opt.veriAd || 'Toplam')}" fld="${pv.opt.veriAlan}" baseField="0" baseItem="0" numFmtId="165"/></dataFields>` +
+        '<pivotTableStyleInfo name="PivotStyleMedium9" showRowHeaders="1" showColHeaders="1" showRowStripes="1" showColStripes="0" showLastColumn="1"/>' +
+        '</pivotTableDefinition>';
+    };
+
+    const entries = [
+      ['[Content_Types].xml', contentTypes, true],
+      ['_rels/.rels', X_XML + `<Relationships xmlns="${X_NS_PR}"><Relationship Id="rId1" Type="${X_NS_R}/officeDocument" Target="xl/workbook.xml"/></Relationships>`, true],
+      ['xl/workbook.xml', X_XML + `<workbook xmlns="${X_NS}" xmlns:r="${X_NS_R}"><sheets>` +
+        sheets.map((s, i) => `<sheet name="${xEsc(s.name)}" sheetId="${i + 1}"${s.gizli ? ' state="hidden"' : ''} r:id="rId${i + 1}"/>`).join('') +
+        '</sheets>' +
+        (pivotlar.length ? `<pivotCaches>${pivotlar.map((_, k) =>
+          `<pivotCache cacheId="${k + 1}" r:id="rId${sheets.length + 3 + k}"/>`).join('')}</pivotCaches>` : '') +
+        '</workbook>', true],
+      ['xl/_rels/workbook.xml.rels', X_XML + `<Relationships xmlns="${X_NS_PR}">` +
+        sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="${X_NS_R}/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') +
+        `<Relationship Id="rId${sheets.length + 1}" Type="${X_NS_R}/styles" Target="styles.xml"/>` +
+        `<Relationship Id="rId${sheets.length + 2}" Type="${X_NS_R}/sharedStrings" Target="sharedStrings.xml"/>` +
+        pivotlar.map((_, k) => `<Relationship Id="rId${sheets.length + 3 + k}" Type="${X_NS_R}/pivotCacheDefinition" Target="pivotCache/pivotCacheDefinition${k + 1}.xml"/>`).join('') +
+        '</Relationships>', true],
+      ['xl/styles.xml', X_STYLES, true],
+      /* Şema sırası pazarlığa kapalı: sheetViews → cols → sheetData → autoFilter.
+         autoFilter'ı sheetData'dan ÖNCE yazarsanız Excel dosyayı onarmak ister.
+         <cols> olmadan tarih kolonu "########" görünüyor. */
+      ...sheets.map((s, i) => {
+        const cols = Math.max(s.maxCols, 1);
+        const tb = tablolar.find(x => x.sheetIdx === i);
+        const pv = pivotlar.findIndex(x => x.sheetIdx === i);
+        if (pv >= 0) {
+          // Pivot sayfası boş; içeriği Excel dosyayı açarken kuruyor.
+          return [parts[i], X_XML + `<worksheet xmlns="${X_NS}" xmlns:r="${X_NS_R}"><sheetData/></worksheet>`, true];
+        }
+        const views = s.opt.freezeHeader
+          ? `<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>`
+          : '';
+        // Tablo varsa süzme okları ONUN; sayfada ikinci kez yazılırsa Excel onarım ister.
+        const af = (!tb && s.opt.autoFilter && s.rowCount > 1)
+          ? `<autoFilter ref="A1:${xCol(cols - 1)}${s.rowCount}"/>`
+          : '';
+        const tp = tb ? `<tableParts count="1"><tablePart r:id="rId1"/></tableParts>` : '';
+        /* Şema sırası: sheetData → autoFilter → dataValidations → tableParts.
+           dataValidations'ı tableParts'tan SONRA yazarsanız Excel onarım ister. */
+        const dv = (s.opt.dogrulamalar && s.rowCount > 1)
+          ? `<dataValidations count="${s.opt.dogrulamalar.length}">` +
+            s.opt.dogrulamalar.map(d => {
+              const c = xCol(d.colIdx);
+              return `<dataValidation type="list" allowBlank="1" showInputMessage="1" showErrorMessage="1" ` +
+                     `errorTitle="Listede olmayan değer" error="Bu kolonda yalnızca listedeki değerler kullanılabilir." ` +
+                     `sqref="${c}2:${c}${s.rowCount}"><formula1>${xEsc(d.kaynak)}</formula1></dataValidation>`;
+            }).join('') + '</dataValidations>'
+          : '';
+        return [parts[i],
+          X_XML + `<worksheet xmlns="${X_NS}" xmlns:r="${X_NS_R}">${views}<cols><col min="1" max="${Math.max(cols, 32)}" width="18" customWidth="1"/></cols>` +
+          `<sheetData>${s.rows}</sheetData>${af}${dv}${tp}</worksheet>`, true];
+      }),
+      // Sayfa → tablo ilişkisi ve tablo tanımları
+      ...tablolar.map(tb => [`xl/worksheets/_rels/sheet${tb.sheetIdx + 1}.xml.rels`,
+        X_XML + `<Relationships xmlns="${X_NS_PR}"><Relationship Id="rId1" Type="${X_NS_R}/table" Target="../tables/table${tb.id}.xml"/></Relationships>`, true]),
+      ...tablolar.map(tb => [tb.dosya,
+        X_XML + `<table xmlns="${X_NS}" id="${tb.id}" name="${xEsc(tb.ad)}" displayName="${xEsc(tb.ad)}" ref="${tb.ref}" totalsRowShown="0">` +
+        `<autoFilter ref="${tb.ref}"/>` +
+        `<tableColumns count="${tb.basliklar.length}">` +
+        tb.basliklar.map((h, k) => `<tableColumn id="${k + 1}" name="${xEsc(h)}"/>`).join('') +
+        '</tableColumns>' +
+        '<tableStyleInfo name="TableStyleMedium2" showFirstColumn="0" showLastColumn="0" showRowStripes="1" showColumnStripes="0"/>' +
+        '</table>', true]),
+      // Pivot parçaları: önbellek tanımı, tablo tanımı ve sayfa→pivot ilişkisi
+      ...pivotlar.map((pv, k) => [`xl/pivotCache/pivotCacheDefinition${k + 1}.xml`, pivotCacheXml(pv), true]),
+      ...pivotlar.map((pv, k) => [`xl/pivotTables/pivotTable${k + 1}.xml`, pivotTableXml(pv, k), true]),
+      ...pivotlar.map((pv, k) => [`xl/pivotTables/_rels/pivotTable${k + 1}.xml.rels`,
+        X_XML + `<Relationships xmlns="${X_NS_PR}"><Relationship Id="rId1" Type="${X_NS_R}/pivotCacheDefinition" Target="../pivotCache/pivotCacheDefinition${k + 1}.xml"/></Relationships>`, true]),
+      ...pivotlar.map((pv, k) => [`xl/worksheets/_rels/sheet${pv.sheetIdx + 1}.xml.rels`,
+        X_XML + `<Relationships xmlns="${X_NS_PR}"><Relationship Id="rId1" Type="${X_NS_R}/pivotTable" Target="../pivotTables/pivotTable${k + 1}.xml"/></Relationships>`, true])
+    ];
+
+    // Paylaşılan metin tablosu EN SON: yukarıdaki sayfa XML'leri kurulurken
+    // si() ile eklenen her metin buraya girmiş olur. Sırayı değiştirmeyin.
+    entries.push(['xl/sharedStrings.xml',
+      X_XML + `<sst xmlns="${X_NS}" count="${shared.length}" uniqueCount="${shared.length}">` +
+      shared.map(s => `<si><t xml:space="preserve">${xEsc(s)}</t></si>`).join('') + '</sst>', true]);
+
+    return xZip(entries);
+  }
+
+  /* DİNAMİK TABLO (PivotTable).
+
+     En kırılgan parça. Pivot normalde iki şey ister: tanım ve ÖNBELLEK
+     KAYITLARI (verinin ikinci bir kopyası). Önbellek veriyle birebir
+     tutmazsa Excel "onarılması gerekiyor" diyor — bizim okuyucumuzun
+     göremediği, yalnız gerçek Excel'de ortaya çıkan bir hata.
+
+     Kayıtları hiç yazmıyoruz: `refreshOnLoad="1"` + `recordCount="0"` ile
+     Excel dosyayı açarken pivotu kaynak aralıktan kendisi kuruyor. Böylece
+     tutarsız önbellek ihtimali ortadan kalkıyor ve dosya küçülüyor.
+
+     opt: { kaynakSayfa, kaynakRef, alanlar[], satirAlan, veriAlan, veriAd } */
+  function pivot(name, opt) {
+    sheet(name, [], {});                       // pivotun ineceği boş sayfa
+    pivotlar.push({ sheetIdx: sheets.length - 1, opt });
+    return api;
+  }
+
+  /* AÇILIR LİSTE (veri doğrulama).
+
+     Değerler AYRI bir sayfada tutulur, satır içi listede değil: Excel'in
+     satır içi liste sınırı 255 karakter ve "Satış Temsilcisi" gibi bir
+     kolonda rahat aşılır. Liste sayfası gizlenir — kullanıcı ona bakmaz,
+     ama gerekirse görünür yapıp değer ekleyebilir.
+
+     listeler: [{ colIdx, ad, degerler[] }] */
+  function dropdowns(hedefSheetIdx, listeler) {
+    if (!listeler.length) return api;
+    const satirSayisi = listeler.reduce((a, l) => Math.max(a, l.degerler.length), 0);
+    const rows = [listeler.map(l => ({ v: l.ad, bold: true }))];
+    for (let r = 0; r < satirSayisi; r++) rows.push(listeler.map(l => l.degerler[r] ?? ''));
+    sheet('Listeler', rows, {});
+    const listeSheetIdx = sheets.length - 1;
+    sheets[listeSheetIdx].gizli = true;
+    sheets[hedefSheetIdx].opt.dogrulamalar = listeler.map((l, k) => ({
+      colIdx: l.colIdx,
+      kaynak: `Listeler!$${xCol(k)}$2:$${xCol(k)}$${l.degerler.length + 1}`
+    }));
+    return api;
+  }
+
+  const api = { sheet, pivot, dropdowns, bytes, async blob() { return new Blob([await bytes()], { type: X_CT + '.sheet' }); } };
+  return api;
+}
+/* ============================================================
    ANALİZ — toplulaştırma, kalite puanı, içgörü üretimi
    ============================================================ */
 const TR = 'tr-TR';
@@ -2633,9 +3539,44 @@ function compact(v) {
   return nf(v, 2);
 }
 const pct = (v, d) => (isFinite(v) ? nf(v * 100, d ?? 1) + '%' : '—');
+
+/* Kolon adı eşleştirmede Türkçe tuzağı — ÖLÇÜLDÜ, varsayım değil:
+     /indirim/i.test('İndirim')  →  false
+     /iade/i.test('İade')        →  false
+     /kar/i.test('Kâr')          →  false
+   Sebep: Türkçe büyük İ (U+0130) Unicode'da i ile normal büyük/küçük çifti
+   sayılmaz, `/i` bayrağı çözemez. Sonucu gerçek bir hataydı: "İndirim" adlı
+   kolondaki negatif değerler muafiyet listesine takılmayıp "Beklenmedik
+   negatif değerler" uyarısı üretiyordu — Türkçe yazan herkeste yanlış alarm.
+   Kolon adına göre karar veren HER yerde bu işlevi kullanın, `/i` bayrağına
+   güvenmeyin. Şapkalı harfler de sadeleştirilir (Kâr → kar). */
+const trKucuk = s => String(s).toLocaleLowerCase(TR)
+  .replace(/[âÂ]/g, 'a').replace(/[îÎ]/g, 'i').replace(/[ûÛ]/g, 'u');
+
+/** Negatif değer uyarısından muaf kolonlar: negatif olmaları normaldir. */
+const NEG_MUAF = /(iade|indirim|fark|sapma|kar|bakiye)/;
+const negMuafMi = f => NEG_MUAF.test(trKucuk(f.name));
 const monthKey = d => d.getUTCFullYear() * 12 + d.getUTCMonth();
 const keyLabel = k => MONTHS[k % 12] + ' ' + String(Math.floor(k / 12)).slice(2);
 const keyLabelLong = k => MONTHS[k % 12] + ' ' + Math.floor(k / 12);
+
+/* ÖLÇÜ OKUMA — toplamaya giren tek yol.
+
+   Metin olarak duran hücre TOPLANMAZ. Bu bilinçli: Excel de toplamıyor,
+   Power BI da toplamıyor. Eskiden burada `toNum` vardı, yani metni sessizce
+   okuyup topluyorduk. İki sonucu vardı, ikisi de kötüydü:
+
+     · Raporumuz 24,9 Mn diyordu, aynı dosyayı Excel'de toplayan 24,6 Mn
+       görüyordu (ölçüldü: 316.072,78 fark). Hangisi doğru diye sorulunca
+       cevap veremezdik.
+     · "Sayılar metin olarak saklanmış" uyarısını kendi raporumuz
+       yalanlıyordu; "Düzelt" tuşuna basmak hiçbir şeyi değiştirmiyordu.
+
+   CSV'de her hücre metindir — orası `buildTable(opts.typed=false)` ile
+   yüklenirken sayıya çevrilir, buraya metin gelmez. Buraya metin geliyorsa
+   kaynak .xlsx'te gerçekten metin tipinde demektir; bildirilecek bir
+   sorundur, örtülecek değil. */
+const olcuDeger = v => (typeof v === 'number' && isFinite(v) ? v : null);
 
 /** Filtre uygulanmış satır indeksleri */
 function applyFilters(t, st) {
@@ -2677,7 +3618,7 @@ function aggregate(t, rowIdx, measure, agg) {
   for (const i of rowIdx) {
     cnt++;
     if (!measure) continue;
-    const x = toNum(measure.get(t, i));
+    const x = olcuDeger(measure.get(t, i));
     if (x === null) continue;
     sum += x; n++; if (arr.length < 200000) arr.push(x);
   }
@@ -2695,7 +3636,7 @@ function groupBy(t, rowIdx, field, measure, agg) {
     let e = map.get(k);
     if (!e) { e = { key: k, sum: 0, n: 0, cnt: 0 }; map.set(k, e); }
     e.cnt++;
-    if (measure) { const x = toNum(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
+    if (measure) { const x = olcuDeger(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
   }
   const out = [...map.values()].map(e => ({ key: e.key, value: agg === 'count' ? e.cnt : agg === 'avg' ? (e.n ? e.sum / e.n : 0) : e.sum, cnt: e.cnt }));
   out.sort((a, b) => b.value - a.value);
@@ -2725,7 +3666,7 @@ function byPeriod(t, rowIdx, dateField, measure, agg, gran) {
     let e = map.get(k);
     if (!e) { e = { k, sum: 0, n: 0, cnt: 0 }; map.set(k, e); }
     e.cnt++;
-    if (measure) { const x = toNum(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
+    if (measure) { const x = olcuDeger(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
   }
   const keys = [...map.keys()].sort((a, b) => a - b);
   if (!keys.length) return [];
@@ -2750,7 +3691,7 @@ function byMonth(t, rowIdx, dateField, measure, agg) {
     let e = map.get(k);
     if (!e) { e = { k, sum: 0, n: 0, cnt: 0 }; map.set(k, e); }
     e.cnt++;
-    if (measure) { const x = toNum(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
+    if (measure) { const x = olcuDeger(measure.get(t, i)); if (x !== null) { e.sum += x; e.n++; } }
   }
   const keys = [...map.keys()].sort((a, b) => a - b);
   if (!keys.length) return [];
@@ -2780,7 +3721,7 @@ function quality(t) {
     const worst = lowFill[0];
     const sev = worst.fillRate < 0.6 ? 'critical' : 'warning';
     score -= Math.min(28, lowFill.length * 4 + (1 - worst.fillRate) * 22);
-    issues.push({ sev, title: `${lowFill.length} kolonda eksik veri var`,
+    issues.push({ sev, detailId: 'fill', title: `${lowFill.length} kolonda eksik veri var`,
       body: `En kritik olan “${worst.name}” kolonunda satırların ${pct(1 - worst.fillRate)}'i boş${lowFill.length > 1 ? `. Diğerleri: ${lowFill.slice(1, 4).map(f => '“' + f.name + '”').join(', ')}` : ''}.`,
       fix: 'Power Query · Replace / Remove' });
   }
@@ -2788,7 +3729,7 @@ function quality(t) {
   if (t.dupes > 0) {
     const r = t.dupes / n;
     score -= Math.min(22, r * 120 + 4);
-    issues.push({ sev: r > 0.02 ? 'critical' : 'warning', title: `${nf(t.dupes)} yinelenen satır`,
+    issues.push({ sev: r > 0.02 ? 'critical' : 'warning', fixId: 'dupes', detailId: 'dupes', title: `${nf(t.dupes)} yinelenen satır`,
       body: `Tüm kolonları birebir aynı olan ${nf(t.dupes)} satır bulundu (kayıtların ${pct(r)}'i). Toplamları şişirir.`,
       fix: 'Table.Distinct' });
   }
@@ -2805,7 +3746,7 @@ function quality(t) {
   // rapor üretmek anlamsızdır.
   if (t.hasHeader === false) {
     score -= 18;
-    issues.push({ sev: 'critical', title: 'Dosyada başlık satırı yok',
+    issues.push({ sev: 'critical', setup: true, title: 'Dosyada başlık satırı yok',
       body: `İlk satır da veri gibi görünüyor, bu yüzden kolonlara geçici adlar verildi (Kolon A, Kolon B…) ve <b>hiçbir satır atlanmadı</b>. Aşağıdaki kolon profilinden adları düzenleyebilir, yanlış tespit ettiysek üstteki anahtarla değiştirebilirsiniz.`,
       fix: 'Kolon adlarını girin' });
   }
@@ -2820,7 +3761,7 @@ function quality(t) {
     if (meas.length) {
       for (const i of t.aggRows) { const x = toNum(meas[0].get(t, i)); if (x) sisme += x; }
     }
-    issues.push({ sev: 'critical', title: `${nf(t.aggCount)} ara toplam satırı tespit edildi`,
+    issues.push({ sev: 'critical', detailId: 'agg', title: `${nf(t.aggCount)} ara toplam satırı tespit edildi`,
       body: `Veri satırlarının arasına serpiştirilmiş “ARA TOPLAM / GENEL TOPLAM” satırları normal kayıt sanılırsa bütün toplamlar şişer` +
         (sisme ? ` — “${meas[0].name}” için <b>${compact(sisme)}</b> fazla sayılırdı` : '') +
         `. Bu satırlar analizden çıkarıldı.`,
@@ -2842,28 +3783,28 @@ function quality(t) {
                           .sort((a, b) => b.textNums - a.textNums);
   if (textNum.length) {
     score -= Math.min(16, 6 + textNum[0].textNums / n * 60);
-    issues.push({ sev: 'critical', title: 'Sayılar metin olarak saklanmış',
+    issues.push({ sev: 'critical', fixId: 'textnum', detailId: 'textnum', title: 'Sayılar metin olarak saklanmış',
       body: `“${textNum[0].name}” kolonunda ${nf(textNum[0].textNums)} hücre sayı değil metin (para birimi, boşluk veya binlik ayraç yüzünden). Excel bu hücreleri toplamaz — toplam sessizce eksik çıkar, hata mesajı görmezsiniz.`,
       fix: 'Text → Number dönüşümü' });
   }
 
-  const negs = own.filter(f => f.role === 'measure' && f.negs > 0 && !/(iade|indirim|fark|sapma|kar|kâr|bakiye)/i.test(f.name));
+  const negs = own.filter(f => f.role === 'measure' && f.negs > 0 && !negMuafMi(f));
   if (negs.length) {
     score -= 5;
-    issues.push({ sev: 'warning', title: 'Beklenmedik negatif değerler',
+    issues.push({ sev: 'warning', detailId: 'negs', title: 'Beklenmedik negatif değerler',
       body: `“${negs[0].name}” kolonunda ${nf(negs[0].negs)} negatif kayıt var. İade/düzeltme kaydı değilse veri hatasıdır.`,
       fix: 'İş kuralı kontrolü' });
   }
 
   if (!roles.dateField) {
     score -= 15;
-    issues.push({ sev: 'critical', title: 'Tarih kolonu bulunamadı',
+    issues.push({ sev: 'critical', setup: true, title: 'Tarih kolonu bulunamadı',
       body: 'Zaman ekseni olmadan trend, YoY ve kümülatif ölçüler hesaplanamaz. Tarih kolonu metin biçiminde kalmış olabilir.',
       fix: 'Tarih tablosu gerekli' });
   }
   if (!roles.measures.length) {
     score -= 15;
-    issues.push({ sev: 'critical', title: 'Sayısal ölçü bulunamadı',
+    issues.push({ sev: 'critical', setup: true, title: 'Sayısal ölçü bulunamadı',
       body: 'Toplanabilir bir sayı kolonu tespit edilemedi. Sayılar metin olarak (binlik ayraç veya para birimiyle) saklanıyor olabilir.',
       fix: 'Tip dönüşümü' });
   }
@@ -2885,7 +3826,7 @@ function quality(t) {
   }
   if (caseDupes.length) {
     score -= Math.min(10, caseDupes.length * 4);
-    issues.push({ sev: 'warning', title: 'Aynı kategori farklı yazımlarla',
+    issues.push({ sev: 'warning', fixId: 'case', detailId: 'case', title: 'Aynı kategori farklı yazımlarla',
       body: `“${caseDupes[0].f.name}” kolonunda büyük/küçük harf veya boşluk farkıyla ${caseDupes[0].diff} çift kayıt var (ör. “ANKARA” ve “Ankara” ayrı sayılıyor).`,
       fix: 'Text.Proper / Text.Trim' });
   }
@@ -2898,6 +3839,217 @@ function quality(t) {
   if (!issues.length) issues.push({ sev: 'good', title: 'Belirgin bir kalite sorunu yok', body: 'Kolonlar tutarlı tipte, doluluk yüksek ve yinelenen satır bulunamadı. Bu veri doğrudan modellenebilir.', fix: 'Hazır' });
 
   return { score: Math.max(0, Math.min(100, Math.round(score))), issues, roles };
+}
+
+/* ============================================================
+   DÜZELTMELER — bulgunun yanındaki "Düzelt" tuşunun yaptığı iş
+
+   HİÇBİRİ KENDİLİĞİNDEN ÇALIŞMAZ. Sebebi somut: aynı müşteri ve aynı tutar
+   arka arkaya yazılmış olabilir çünkü kullanıcı kümülatif tutuyordur ve
+   sonradan alt toplam alıyordur. Bizim "yinelenen" dediğimiz o satırlar
+   onun meşru kaydıdır — sessizce silmek veriyi bozar. Kullanıcı isterse
+   silinir, istemezse durur.
+
+   Üçü de FİZİKSEL kolonlarla çalışır (`ownFields`). Sanal (ilişkili)
+   alanlar boyut tablosundan okunur, satıra yazılamaz.
+   ============================================================ */
+
+/** Yinelenen satırları eler. Yalnız TALEP ÜZERİNE çağrılır. */
+function fixDupes(t) {
+  const own = ownFields(t);
+  const seen = new Set();
+  const out = [];
+  let silinen = 0;
+  for (const r of t.data) {
+    const k = rowKey(own.map(f => r[f.idx]));
+    if (seen.has(k)) { silinen++; continue; }
+    seen.add(k);
+    out.push(r);
+  }
+  return { data: out, degisen: silinen, mesaj: silinen ? `${nf(silinen)} yinelenen satır silindi.` : 'Silinecek yinelenen satır bulunmadı.' };
+}
+
+/** Metin olarak saklanan sayıları sayıya çevirir. */
+function fixTextNums(t) {
+  const nums = ownFields(t).filter(f => f.type === 'number');
+  const out = t.data.map(r => r.slice());
+  let degisen = 0;
+  for (const r of out) {
+    for (const f of nums) {
+      if (typeof r[f.idx] !== 'string') continue;
+      const x = toNum(r[f.idx]);
+      if (x !== null && x !== undefined) { r[f.idx] = x; degisen++; }
+    }
+  }
+  return { data: out, degisen, mesaj: degisen ? `${nf(degisen)} hücre metinden sayıya çevrildi.` : 'Çevrilecek metin-sayı bulunmadı.' };
+}
+
+/** "ANKARA" ile "Ankara"yı aynı yazıma getirir. */
+function fixCase(t) {
+  const dims = ownFields(t).filter(f => f.type === 'text' && f.role === 'dim');
+  const proper = s => String(s).trim().replace(/\s+/g, ' ')
+    .toLocaleLowerCase(TR)
+    .replace(/(^|[\s\-/])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase(TR));
+  const out = t.data.map(r => r.slice());
+  let degisen = 0;
+  for (const r of out) {
+    for (const f of dims) {
+      if (isBlank(r[f.idx])) continue;
+      const v = proper(r[f.idx]);
+      if (v !== r[f.idx]) { r[f.idx] = v; degisen++; }
+    }
+  }
+  return { data: out, degisen, mesaj: degisen ? `${nf(degisen)} hücrenin yazımı birleştirildi.` : 'Yazım farkı bulunmadı.' };
+}
+
+const FIXES = {
+  dupes:   { ad: 'Yinelenen satırları sil', fn: fixDupes },
+  textnum: { ad: 'Sayıya çevir',            fn: fixTextNums },
+  case:    { ad: 'Yazımı birleştir',        fn: fixCase }
+};
+
+/* ============================================================
+   DETAY — "hangi satırlar?" sorusunun cevabı
+
+   Bulgu "11 yinelenen satır var" diyor; kullanıcı hangileri olduğunu
+   görmeden ne silmeye ne bırakmaya karar verebilir. Özellikle ARA TOPLAM
+   için kritik: o satırları biz analizden çıkarıyoruz, kullanıcı doğru
+   çıkardığımızı görebilmeli.
+
+   Hepsi `f.get(t, i)` ile okur ve `ownFields` üzerinde çalışır. Satır
+   toplama DETAY_LIMIT'te durur ama sayım devam eder — 60.000 satırlık
+   dosyada 60.000 satırlık tablo çizmenin anlamı yok.
+   ============================================================ */
+const DETAY_LIMIT = 20;
+
+/** Ortak biçim: hangi kolonlar, hangi satırlar, kaç tane var. */
+function detayCer(t, indeksler, toplam, aciklama, vurgu) {
+  const own = ownFields(t);
+  const kesit = indeksler.slice(0, DETAY_LIMIT);
+  return {
+    head: own.map(f => f.name),
+    rows: kesit.map(i => own.map(f => f.get(t, i))),
+    satirNo: kesit.map(i => i + 1),
+    toplam, gosterilen: kesit.length, aciklama,
+    vurgu: vurgu || null           // vurgulanacak kolon adı (varsa)
+  };
+}
+
+/** Yinelenen satırlar ÇİFT olarak listelenir: ilk kayıt ve tekrarı yan yana.
+
+    Önceden yalnız tekrarlar gösteriliyordu ve kullanıcı haklı olarak
+    "bunlar birbirinin aynısı değil" diyordu — 11 farklı sipariş numarası
+    görüyordu, çünkü her satırın EŞİ listede yoktu. Eşi görünmeden iddia
+    doğrulanamaz; silme kararı da verilemez. */
+function detayDupes(t) {
+  const own = ownFields(t);
+  const ilkGoruldu = new Map();     // anahtar → ilk satır indeksi
+  const ciftler = [];               // [ilkIdx, tekrarIdx]
+  let toplam = 0;
+  for (let i = 0; i < t.data.length; i++) {
+    const k = rowKey(own.map(f => f.get(t, i)));
+    if (ilkGoruldu.has(k)) {
+      toplam++;
+      if (ciftler.length < Math.floor(DETAY_LIMIT / 2)) ciftler.push([ilkGoruldu.get(k), i]);
+    } else ilkGoruldu.set(k, i);
+  }
+  const idx = [], roller = [], esler = [];
+  for (const [a, b] of ciftler) {
+    idx.push(a); roller.push('ilk');    esler.push(b + 1);
+    idx.push(b); roller.push('tekrar'); esler.push(a + 1);
+  }
+  const d = detayCer(t, idx, toplam,
+    'Her çift üst üste duruyor: önce ilk kayıt, altında birebir aynısı olan tekrar. ' +
+    '"Düzelt" yalnız TEKRAR satırlarını siler, ilk kayıtlar kalır.');
+  d.roller = roller;
+  d.esler = esler;
+  d.ciftSayisi = ciftler.length;
+  return d;
+}
+
+/** Sayı kolonunda metin duran satırlar. */
+function detayTextNums(t) {
+  const nums = ownFields(t).filter(f => f.type === 'number');
+  const bulunan = [];
+  let toplam = 0, kolon = null;
+  for (let i = 0; i < t.data.length; i++) {
+    let varMi = false;
+    for (const f of nums) {
+      if (typeof f.get(t, i) === 'string') { varMi = true; if (!kolon) kolon = f.name; }
+    }
+    if (varMi) { toplam++; if (bulunan.length < DETAY_LIMIT) bulunan.push(i); }
+  }
+  return detayCer(t, bulunan, toplam, 'Bu satırlarda sayı olması gereken hücre metin olarak duruyor; Excel onları toplamaz.', kolon);
+}
+
+/** Yazımı normal hâlinden farklı olan satırlar. */
+function detayCase(t) {
+  const dims = ownFields(t).filter(f => f.type === 'text' && f.role === 'dim');
+  const proper = s => String(s).trim().replace(/\s+/g, ' ')
+    .toLocaleLowerCase(TR)
+    .replace(/(^|[\s\-/])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase(TR));
+  const bulunan = [];
+  let toplam = 0, kolon = null;
+  for (let i = 0; i < t.data.length; i++) {
+    let varMi = false;
+    for (const f of dims) {
+      const v = f.get(t, i);
+      if (isBlank(v)) continue;
+      if (proper(v) !== v) { varMi = true; if (!kolon) kolon = f.name; }
+    }
+    if (varMi) { toplam++; if (bulunan.length < DETAY_LIMIT) bulunan.push(i); }
+  }
+  return detayCer(t, bulunan, toplam, 'Bu satırlardaki yazım, birleştirilmiş hâlinden farklı (büyük/küçük harf veya fazladan boşluk).', kolon);
+}
+
+/** Analizden ÇIKARILAN ara toplam satırları. Kullanıcı doğruluğunu görsün. */
+function detayAgg(t) {
+  const idx = t.aggRows ? [...t.aggRows] : [];
+  return detayCer(t, idx, idx.length,
+    'Bu satırlar “ara toplam / genel toplam” sayıldı ve HESAPLARA KATILMADI. Yanlış tespit ettiysek buradan görürsünüz.');
+}
+
+/** Beklenmedik negatif değer taşıyan satırlar. */
+function detayNegs(t) {
+  const olculer = ownFields(t).filter(f => f.role === 'measure' && !negMuafMi(f));
+  const bulunan = [];
+  let toplam = 0, kolon = null;
+  for (let i = 0; i < t.data.length; i++) {
+    let varMi = false;
+    for (const f of olculer) { const x = toNum(f.get(t, i)); if (x !== null && x < 0) { varMi = true; if (!kolon) kolon = f.name; } }
+    if (varMi) { toplam++; if (bulunan.length < DETAY_LIMIT) bulunan.push(i); }
+  }
+  return detayCer(t, bulunan, toplam, 'Bu satırlarda ölçü negatif. İade/düzeltme kaydı değilse veri hatasıdır.', kolon);
+}
+
+/** En düşük dolulukta olan kolonda boş kalan satırlar. */
+function detayFill(t) {
+  const own = ownFields(t);
+  const enKotu = own.filter(f => f.fillRate < 0.97 && f.role !== 'skip')
+                    .sort((a, b) => a.fillRate - b.fillRate)[0];
+  if (!enKotu) return detayCer(t, [], 0, 'Eksik veri bulunamadı.');
+  const bulunan = [];
+  let toplam = 0;
+  for (let i = 0; i < t.data.length; i++) {
+    if (isBlank(enKotu.get(t, i))) { toplam++; if (bulunan.length < DETAY_LIMIT) bulunan.push(i); }
+  }
+  return detayCer(t, bulunan, toplam, `“${enKotu.name}” kolonu bu satırlarda boş.`, enKotu.name);
+}
+
+const DETAYLAR = {
+  dupes:   detayDupes,
+  textnum: detayTextNums,
+  case:    detayCase,
+  agg:     detayAgg,
+  negs:    detayNegs,
+  fill:    detayFill
+};
+
+/** Düzeltilmiş veriyi yeniden tablo kurulabilir ham satırlara çevirir.
+    Yalnız fiziksel kolonlar yazılır; başlık satırı adlardan üretilir. */
+function rowsFromData(t, data) {
+  const own = ownFields(t);
+  return [own.map(f => f.name), ...data.map(r => own.map(f => r[f.idx]))];
 }
 
 /* ---------- içgörüler ---------- */
@@ -3023,6 +4175,262 @@ function demoRows() {
     }
   }
   return rows;
+}
+/* ============================================================
+   EXCEL DIŞA AKTARMA — sayfa içeriğini kuran saf mantık
+   DOM yok, indirme yok. Burada durmasının sebebi test edilebilirliği:
+   `test.js` bu fonksiyonları doğrudan çağırıp Excel'e yazılan toplamın
+   ekrandaki toplama eşit olduğunu ölçer. 60-app.js'in içinde kalsaydı
+   ölçülemezdi ve bu dosyanın en kritik değişmezi denetimsiz kalırdı.
+
+   KURAL: indirilen dosya EKRANDA GÖRÜNENLE aynı olmalı.
+   · Satırlar `applyFilters()` geçidinden gelir — aktif dilimleyici, çapraz
+     filtre ve tarih aralığı dahil. Başka bir yoldan satır toplamayın.
+   · Hücreler `f.get(t, i)` ile okunur. Doğrudan `t.data[i][f.idx]` demek
+     sanal (ilişkili) alanlarda sessizce yanlış değer verir.
+   · Metin olarak saklanan sayılar `toNum` ile çevrilir. Bu çeviri
+     kaybolursa dosya sorunsuz açılır ama Excel'in SUM'ı o hücreleri
+     saymaz — ölçülen bir vakada 24,9 Mn yerine 24,6 Mn çıkmıştı.
+     `test.js` bu farkı yakalar.
+
+   YİNELENEN SATIR ÇIKARILMAZ. cleanForReport() çıkarır ama o örnek rapor
+   içindir; stüdyodaki rapor ham satırlarla hesaplıyor. Dışa aktarırken
+   yinelenenleri atsaydık Excel'deki toplam ekrandaki toplamı tutmazdı.
+   Sayısı Özet sayfasında bilgi olarak yazılır.
+   ============================================================ */
+
+/* Metin normalleştirme. cleanForReport() de bunu kullanır — iki ayrı
+   "temizlenmiş" tanımı olmasın diye tek yerde duruyor. */
+const properTR = s => String(s).trim().replace(/\s+/g, ' ')
+  .toLocaleLowerCase(TR)
+  .replace(/(^|[\s\-/])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase(TR));
+
+/* İçgörü metinleri HTML taşır (<b>, <span class="num">). Excel'e düz metin. */
+const stripTags = h => String(h).replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ')
+  .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+  .replace(/\s+/g, ' ').trim();
+
+/* Ekrandaki "Çapraz filtre etkin" satırının veri karşılığı. */
+function activeFilterList(t, st) {
+  const out = [];
+  for (const k in st.filters) {
+    const set = st.filters[k];
+    if (!set || !set.size) continue;
+    const f = fieldAt(t, k);
+    if (f) out.push([fieldLabel(f), [...set].join(', ')]);
+  }
+  return out;
+}
+
+function exportRows(t, st, rowIdx) {
+  const fields = t.fields;
+  const rows = [fields.map(f => ({ v: fieldLabel(f), bold: true }))];
+  for (const i of rowIdx) {
+    rows.push(fields.map(f => {
+      const v = f.get(t, i);
+      if (v instanceof Date) return v;
+      /* Metin olarak duran sayı METİN OLARAK yazılır — çevrilmez.
+         Bir ara burada `toNum` vardı ve dosyayı sessizce düzeltiyordu; o zaman
+         indirilen dosya ekranda görünenden FAZLA gösteriyordu (ölçüldü:
+         24,9 Mn / 24,6 Mn). Dışa aktarım verinin O ANKİ hâlini yazar.
+         Sayıya çevirmek isteyen "Düzelt"e basar — tuşun anlamı budur. */
+      if (f.type === 'number') return (v === null || v === undefined || v === '') ? '' : v;
+      if (v === null || v === undefined || v === '') return '';
+      return f.type === 'text' && f.role === 'dim' ? properTR(v) : v;
+    }));
+  }
+  return rows;
+}
+
+function exportSummary(t, st, ctx, dupes) {
+  const { rowIdx, series, dimTop } = ctx;
+  const mName = st.measure ? st.measure.name : 'Kayıt sayısı';
+  const aggName = { sum: 'Toplam', avg: 'Ortalama', count: 'Kayıt sayısı' }[st.agg];
+  const total = aggregate(t, rowIdx, st.measure, st.agg);
+  const rows = [];
+  const B = v => ({ v, bold: true });
+
+  rows.push([B('RAPOR')]);
+  rows.push(['Dosya', st.fileName || '—']);
+  rows.push(['Ölçü', mName]);
+  rows.push(['Hesaplama', aggName]);
+  rows.push(['Kırılım', st.dimField ? fieldLabel(st.dimField) : '—']);
+  rows.push([aggName, total]);
+  rows.push(['Satır', rowIdx.length]);
+  rows.push(['Kaynak satır', t.rowCount]);
+  if (t.aggCount) rows.push(['Ara toplam satırı (analiz dışı)', t.aggCount]);
+  if (dupes) rows.push(['Yinelenen satır', dupes + ' — rapor toplamlarıyla tutarlı kalsın diye çıkarılmadı']);
+  rows.push([]);
+
+  rows.push([B('UYGULANAN FİLTRELER')]);
+  if (st.dateField && (st.from !== null || st.to !== null)) {
+    rows.push(['Dönem', (st.from !== null ? keyLabelLong(st.from) : 'başlangıç') + ' – ' + (st.to !== null ? keyLabelLong(st.to) : 'bitiş')]);
+  }
+  const fl = activeFilterList(t, st);
+  for (const [ad, deger] of fl) rows.push([ad, deger]);
+  if (!fl.length && !(st.dateField && (st.from !== null || st.to !== null))) rows.push(['—', 'filtre uygulanmadı']);
+  rows.push([]);
+
+  if (series.length) {
+    rows.push([B('DÖNEM')]);
+    rows.push([B('Ay'), B(aggName), B('Kayıt')]);
+    for (const s of series) rows.push([keyLabelLong(s.k), s.value, s.cnt]);
+    rows.push([]);
+  }
+  if (dimTop.length) {
+    rows.push([B(st.dimField ? fieldLabel(st.dimField).toLocaleUpperCase(TR) : 'KIRILIM')]);
+    rows.push([B('Kategori'), B(aggName), B('Kayıt'), B('Pay')]);
+    const tot = dimTop.reduce((a, d) => a + d.value, 0);
+    for (const d of dimTop) rows.push([d.key, d.value, d.cnt, tot ? d.value / tot : 0]);
+  }
+  return rows;
+}
+
+function exportInsightRows(t, st, ctx) {
+  const B = v => ({ v, bold: true });
+  const rows = [[B('Tür'), B('Başlık'), B('Açıklama')]];
+  for (const i of insights(t, st, ctx)) rows.push([i.tag, stripTags(i.h), stripTags(i.p)]);
+  return rows;
+}
+
+/* Yinelenen satır SAYIMI — bilgi amaçlı; satırlar çıkarılmaz (yukarıdaki nota bakın). */
+function countDupes(t, rowIdx) {
+  const seen = new Set();
+  let dupes = 0;
+  for (const i of rowIdx) {
+    const k = rowKey(t.fields.map(f => f.get(t, i)));
+    if (seen.has(k)) dupes++; else seen.add(k);
+  }
+  return dupes;
+}
+
+/* ============================================================
+   POWER BI PAKETİ
+
+   `.pbit` (hazır Power BI şablonu) hedefti ama şemasi sürüme duyarlı ve
+   belgelenmemiş; araştırma işi. Bu paket ara adım ve elle yapılandan çok
+   daha iyisini veriyor: veri + hazır M sorgusu + hazır DAX ölçüleri +
+   sıralı kurulum adımları, tek ZIP.
+
+   M ve DAX metni ekranda zaten üretiliyor (`genM`, `genDax`); burada
+   dosyaya yazılıyor. Aynı kod iki yerde üretilmiyor — çağıran veriyor.
+   ============================================================ */
+function pbiKurulumMetni(st, dosyaAdi) {
+  const ad = st.fileName || 'veri';
+  return [
+    'POWER BI KURULUM ADIMLARI',
+    '=========================',
+    '',
+    'Bu paket Rapor Stüdyosu tarafından üretildi.',
+    'Kaynak dosya: ' + ad,
+    '',
+    'İÇİNDEKİLER',
+    '  veri.xlsx          Raporda gördüğünüz veri (filtreler uygulanmış)',
+    '  1-PowerQuery.m     Power Query (M) sorgusu',
+    '  2-Olculer.dax      DAX ölçüleri ve ilişkiler',
+    '  KURULUM.txt        Bu dosya',
+    '',
+    'ADIMLAR',
+    '',
+    '1) veri.xlsx dosyasını kalıcı bir klasöre koyun.',
+    '   Masaüstü yerine OneDrive/SharePoint klasörü tercih edin; yol',
+    '   değişmezse otomatik yenileme kırılmaz.',
+    '',
+    '2) Power BI Desktop\'ı açın.',
+    '   Giriş > Veri Al > Boş Sorgu',
+    '   Görünüm > Gelişmiş Düzenleyici',
+    '',
+    '3) 1-PowerQuery.m içeriğini yapıştırın.',
+    '   İlk satırdaki dosya yolunu kendi klasörünüze göre düzeltin.',
+    '   Bitti > Kapat ve Uygula',
+    '',
+    '4) 2-Olculer.dax dosyasını açın.',
+    '   İçindeki her ölçüyü Power BI\'da Modelleme > Yeni Ölçü ile ekleyin.',
+    '   Dosyanın sonundaki ilişki listesini Model görünümünde kurun.',
+    '',
+    '5) Rapor sayfanızı oluşturun.',
+    '   Rapor Stüdyosu\'ndaki Özet Rapor hangi görselleri kullandıysa',
+    '   aynılarını seçebilirsiniz.',
+    '',
+    'NOT',
+    '  Bu paket .pbix veya .pbit dosyası DEĞİLDİR; çift tıklayıp açamazsınız.',
+    '  Adımları bir kez uyguladıktan sonra kendi .pbix dosyanızı',
+    '  kaydedersiniz ve sonraki aylarda yalnızca veriyi yenilersiniz.',
+    ''
+  ].join('\n');
+}
+
+/* UTF-8 BOM. ÖLÇÜLDÜ: BOM'suz dosya doğru UTF-8 olmasına rağmen Windows
+   Not Defteri'nde "Rapor StÃ¼dyosu" diye açılıyor — sistem kod sayfasıyla
+   okunuyor. Hedef kullanıcı Türkçe ve Windows'ta; KURULUM.txt'ye çift
+   tıklayacak. Paketteki her metin dosyası BOM taşır. */
+const BOM = '﻿';
+
+/** Paket girdileri. ZIP'ten AYRI durur ki test içeriği sıkıştırmayı
+    çözmeden doğrudan sınayabilsin. */
+async function pbiEntries(t, st, ctx, mKod, daxKod) {
+  const kitap = xBook();
+  kitap.sheet('Veri', exportRows(t, st, ctx.rowIdx), { table: true, freezeHeader: true });
+  return [
+    ['veri.xlsx', await kitap.bytes(), true],
+    ['1-PowerQuery.m', BOM + (mKod || '// Power Query kodu üretilemedi'), true],
+    ['2-Olculer.dax', BOM + (daxKod || '// DAX kodu üretilemedi'), true],
+    ['KURULUM.txt', BOM + pbiKurulumMetni(st), true]
+  ];
+}
+
+/** Power BI paketini ZIP olarak kurar. mKod/daxKod çağırandan gelir. */
+async function buildPbiPackage(t, st, ctx, mKod, daxKod) {
+  return xZip(await pbiEntries(t, st, ctx, mKod, daxKod));
+}
+
+/** Üç sayfalık kitabı kurar. Tarayıcıda da Node'da da çalışır. */
+function buildExportBook(t, st, ctx) {
+  const book = xBook();
+  const satirlar = exportRows(t, st, ctx.rowIdx);
+  book.sheet('Temizlenmiş veri', satirlar, { table: true, freezeHeader: true });
+  book.sheet('Özet', exportSummary(t, st, ctx, countDupes(t, ctx.rowIdx)));
+  book.sheet('İçgörüler', exportInsightRows(t, st, ctx), { autoFilter: true, freezeHeader: true });
+
+  /* Dinamik tablo: kırılım × ölçü. Kullanıcı Excel'de alan sürükleyerek
+     kendi kırılımını kurabilsin diye — bizim verdiğimiz sabit özet değil,
+     canlı bir pivot. Ölçü ya da kırılım yoksa eklenmez. */
+  /* Açılır liste: metin boyut kolonlarına, o kolonun kendi değerleriyle.
+     Amaç, kullanıcı dosyaya satır eklemeye devam ettiğinde yazım
+     tutarsızlığının BAŞTAN oluşmaması — "aynı kategori farklı yazımlarla"
+     bulgusunun kaynağını kurutuyor.
+     Çok değerli kolona (müşteri, sipariş no) liste konmaz: 380 maddelik
+     açılır liste kullanılamaz ve dosyayı şişirir. */
+  const DROPDOWN_TAVAN = 100;
+  const listeler = [];
+  for (let ci = 0; ci < t.fields.length; ci++) {
+    const f = t.fields[ci];
+    if (f.type !== 'text' || f.role !== 'dim') continue;
+    const set = new Set();
+    for (const i of ctx.rowIdx) {
+      const v = f.get(t, i);
+      if (v === null || v === undefined || String(v).trim() === '') continue;
+      set.add(properTR(v));
+      if (set.size > DROPDOWN_TAVAN) break;
+    }
+    if (set.size < 2 || set.size > DROPDOWN_TAVAN) continue;
+    listeler.push({ colIdx: ci, ad: fieldLabel(f), degerler: [...set].sort((a, b) => a.localeCompare(b, TR)) });
+  }
+  if (listeler.length) book.dropdowns(0, listeler);
+
+  const olcuIdx = st.measure ? t.fields.findIndex(f => f.idx === st.measure.idx) : -1;
+  const kirilimIdx = st.dimField ? t.fields.findIndex(f => f.idx === st.dimField.idx) : -1;
+  if (olcuIdx >= 0 && kirilimIdx >= 0 && satirlar.length > 1) {
+    book.pivot('Dinamik tablo', {
+      kaynakSayfa: 'Temizlenmiş veri',
+      kaynakRef: 'A1:' + xCol(t.fields.length - 1) + satirlar.length,
+      alanlar: t.fields.map(f => fieldLabel(f)),
+      satirAlan: kirilimIdx,
+      veriAlan: olcuIdx,
+      veriAd: 'Toplam ' + st.measure.name
+    });
+  }
+  return book;
 }
 /* ============================================================
    GRAFİKLER — el yazımı SVG. Kütüphane yok.
@@ -3759,6 +5167,229 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* sandbox */ } }
 };
 
+/* ---------- premium ----------
+   GEÇİCİ VE GÜVENLİK DEĞİLDİR. Gerçek lisans doğrulaması yok; bu yalnızca
+   localStorage'da bir bayrak. Tarayıcı konsolundan açılabilir. Ödeme akışı
+   kurulunca imzalı anahtar doğrulamasıyla değiştirilecek (bkz. devam-brief).
+   Şimdilik amacı, kilitli/açık arayüzü geliştirirken görebilmek. */
+/* Abonelik AYLIK. Bitiş tarihi ayrıca saklanır ve süre dolunca premium
+   kendiliğinden kapanır — "ödediğim ay bitti ama hâlâ açık" durumu olmasın.
+   İmzalı anahtara geçilince bitiş tarihi ANAHTARIN İÇİNDEN gelecek; burası
+   o zamana kadarki yer tutucu. */
+const PREMIUM_GUN = 30;
+let premiumBitis = +(store.get('rs-premium-bitis') || 0);
+let isPremium = store.get('rs-premium') === '1' && (!premiumBitis || Date.now() < premiumBitis);
+
+/** Kalan gün (tam sayı). Bitiş yoksa null. */
+const premiumKalanGun = () => (premiumBitis ? Math.max(0, Math.ceil((premiumBitis - Date.now()) / 86400000)) : null);
+
+window.setPremium = (v, gun) => {
+  isPremium = !!v;
+  store.set('rs-premium', v ? '1' : '0');
+  premiumBitis = v ? Date.now() + (gun ?? PREMIUM_GUN) * 86400000 : 0;
+  store.set('rs-premium-bitis', String(premiumBitis));
+  if (typeof premiumRozetiTazele === 'function') premiumRozetiTazele();
+  if (S.table) { renderProfile(); if (curStep === STEP_REPORT) renderReport(); }
+  return isPremium;
+};
+
+/* ---------- premium paneli ----------
+   GİRİŞ / HESAP YOKTUR. Hesap sistemi sunucu, parola sıfırlama ve kişisel
+   veri saklama demek; KVKK sorumluluğu doğurur ve "veriniz bilgisayarınızdan
+   çıkmıyor" argümanını zayıflatır. Yerine LİSANS ANAHTARI: anahtarın kendisi
+   kimliktir.
+
+   Site tek bir herkese açık HTML dosyası olduğu için içine gömülen her şey
+   okunabilir. Bu yüzden geçerli anahtar listesi ya da gizli kelime gömülemez;
+   tek işe yarayan yöntem İMZALI anahtardır — sayfada yalnızca AÇIK anahtar
+   durur, doğrular ama üretemez. Üretme yeteneği sahipte kalır.
+
+   ŞU AN YER TUTUCU: imza doğrulaması ve PayTR bağlantısı bağlanmadı, fiyat
+   belli değil. Anahtar biçimi kabul ediliyor ama kriptografik olarak
+   doğrulanmıyor. Yayına almadan önce MUTLAKA tamamlanmalı. */
+const PREMIUM_FIYAT = null;          // TODO: Erkan Bey verecek
+const PAYTR_BAGLANTI = null;         // TODO: PayTR ödeme bağlantısı
+
+/* Anahtar biçimi: RS-XXXX-XXXX-XXXX. Şu an yalnız BİÇİM kontrolü var;
+   imza doğrulaması (ECDSA + crypto.subtle) eklenene kadar bu bir kapı
+   değil, iskelettir. */
+const ANAHTAR_BICIMI = /^RS-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/i;
+
+function premiumPanel(ac) {
+  const el = $('#premModal');
+  if (!el) return;
+  el.hidden = !ac;
+  if (ac) { premiumRozetiTazele(); const i = $('#premKey'); if (i) i.focus(); }
+}
+
+function premiumDogrula() {
+  const inp = $('#premKey'), not = $('#premNot');
+  if (!inp || !not) return;
+  const k = inp.value.trim();
+  if (!ANAHTAR_BICIMI.test(k)) {
+    not.className = 'prem-not hata';
+    not.textContent = 'Anahtar biçimi tanınmadı. Örnek: RS-A1B2-C3D4-E5F6';
+    return;
+  }
+  // YER TUTUCU: burada imza doğrulaması olacak.
+  setPremium(true);
+  not.className = 'prem-not iyi';
+  not.textContent = 'Premium açıldı. Teşekkürler.';
+  premiumRozetiTazele();
+  setTimeout(() => premiumPanel(false), 1200);
+}
+
+function premiumRozetiTazele() {
+  const r = $('#premChip');
+  if (r) {
+    const g = premiumKalanGun();
+    /* Ücretsizken rozet bir ÇAĞRIDIR ("Premium Kullanıcı Ol"), durum etiketi
+       değil — göze çarpması isteniyor, ünvan rozetiyle aynı platin parlaklık.
+       Premium'dayken durum bildirir ve parlaklık kalkar. */
+    r.innerHTML = isPremium
+      ? (g === null ? 'Premium ✓' : `Premium ✓<span class="prem-gun"> · ${g} gün</span>`)
+      : 'Premium Ol';
+    r.classList.toggle('plat', !isPremium);
+    r.dataset.on = isPremium ? '1' : '0';
+    r.title = isPremium && g !== null
+      ? `Aboneliğiniz ${new Date(premiumBitis).toLocaleDateString(TR)} tarihinde bitiyor`
+      : 'Premium durumu';
+  }
+  // Paneldeki durum satırı ve çıkış düğmesi
+  const d = $('#premDurum'), c = $('#premCik');
+  if (d) {
+    const g = premiumKalanGun();
+    d.innerHTML = isPremium
+      ? `<b>Premium etkin.</b> ${g === null ? '' : `Kalan süre <b>${g} gün</b> — ${esc(new Date(premiumBitis).toLocaleDateString(TR))} tarihinde biter.`}`
+      : '';
+  }
+  if (c) c.hidden = !isPremium;
+  /* Plan kartları: seçim MEVCUT PLANI izler. Kullanıcı premium kartına
+     tıklayabilir (satın alma niyeti) ama gerçek plan anahtarla değişir —
+     seçim ile durum karışmasın diye "Mevcut planınız" etiketi ayrı. */
+  planSecimiTazele(isPremium ? 'prem' : 'free');
+  const pu = $('#planUcretsiz'), pd = $('#planPremDurum');
+  if (pu) pu.textContent = isPremium ? '' : 'Mevcut planınız';
+  if (pd) pd.textContent = isPremium ? 'Mevcut planınız' : '';
+  const ps = $('#premSatinAl');
+  if (ps) {
+    ps.textContent = isPremium ? 'Premium etkin' : 'Premium\'a geç';
+    ps.disabled = isPremium;
+  }
+}
+
+/** Hangi kartın seçili göründüğünü ayarlar. */
+function planSecimiTazele(hangi) {
+  const f = $('#planFree'), p = $('#planPrem');
+  if (!f || !p) return;
+  f.setAttribute('aria-checked', String(hangi === 'free'));
+  p.setAttribute('aria-checked', String(hangi === 'prem'));
+  const ps = $('#premSatinAl');
+  // Ücretsiz kart seçiliyken satın alma düğmesi öne çıkmasın.
+  if (ps && !isPremium) ps.className = hangi === 'prem' ? 'btn btn-primary' : 'btn btn-ghost';
+}
+
+/** Premium'dan çıkış. Anahtar bu tarayıcıdan silinir. */
+function premiumCik() {
+  setPremium(false);
+  const n = $('#premNot');
+  if (n) { n.className = 'prem-not'; n.textContent = 'Premium kapatıldı. Anahtarınızı yeniden girerek açabilirsiniz.'; }
+  const k = $('#premKey');
+  if (k) k.value = '';
+}
+
+/* Bir bulgunun ayrıntısı kilitli mi?
+   Kural: KIRMIZI (critical) olanların ayrıntısı premium. İSTİSNA: `setup`
+   işaretli üçü (başlık yok / tarih yok / ölçü yok) açık kalır — onlar veri
+   sorunu değil, aracın hiç çalışamama sebebi. Gizlenirse ücretsiz kullanıcı
+   neyi düzelteceğini bilemez ve ürünü hiç deneyemez. */
+const kilitliMi = i => !isPremium && i.sev === 'critical' && !i.setup;
+
+/* Özet Rapor filtreleri premium. Ücretsiz kullanıcı raporu varsayılan
+   hâliyle görür — ürünün işe yaradığını anlamasına yeter — ama ölçüyü,
+   kırılımı, dönemi değiştiremez ve çapraz filtre uygulayamaz.
+   Kendi kırılımını isteyen ya Premium alır ya "Özel rapor talep et"er. */
+/* Özel rapor talebi e-postayla gider — sunucu yok, form yok. Konu ve gövde
+   önceden doldurulur ki kullanıcı ne yazacağını düşünmesin. Dosya EKLENMEZ
+   ve istenmez; gizlilik sözü burada da geçerli. */
+const OZEL_RAPOR_EPOSTA = 'erkantoraman@outlook.com';
+function ozelRaporBaglantisi() {
+  const konu = 'Özel rapor talebi';
+  const govde = [
+    'Merhaba,',
+    '',
+    'Özel bir rapor hazırlatmak istiyorum.',
+    '',
+    'Verinin konusu     : ',
+    'Ne görmek istiyorum: ',
+    'Hangi kırılımlar   : ',
+    'Dönem              : ',
+    'Teslim beklentisi  : ',
+    '',
+    'Teşekkürler.'
+  ].join('\n');
+  return `mailto:${OZEL_RAPOR_EPOSTA}?subject=${encodeURIComponent(konu)}&body=${encodeURIComponent(govde)}`;
+}
+
+/* Özel rapor talep formu. Sunucu yok — doldurulan bilgi e-posta gövdesine
+   yazılır ve gönderme kararı kullanıcıda kalır. Dosya İSTENMEZ; önce kapsam
+   konuşulur, gizlilik sözü burada da geçerli. */
+function formGonder(e) {
+  e.preventDefault();
+  const g = id => (($(id) || {}).value || '').trim();
+  const not = $('#tfNot');
+  const uyar = m => { if (not) { not.className = 'prem-not hata'; not.textContent = m; } };
+
+  const eposta = g('#tfEposta'), eposta2 = g('#tfEposta2');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(eposta)) return uyar('E-posta adresi geçerli görünmüyor.');
+  if (eposta !== eposta2) return uyar('İki e-posta alanı aynı değil. Lütfen kontrol edin.');
+
+  const cikti = (document.querySelector('input[name="tfCikti"]:checked') || {}).value;
+  if (!cikti) return uyar('Çıktının Power BI mı Excel mi olacağını seçin.');
+  for (const [id, ad] of [['#tfAd', 'Ad soyad'], ['#tfKonu', 'Verinin konusu'], ['#tfIstek', 'Raporda ne görmek istediğiniz']]) {
+    if (!g(id)) return uyar(ad + ' alanı boş.');
+  }
+
+  const govde = [
+    'Özel rapor talebi',
+    '─────────────────',
+    'Ad soyad      : ' + g('#tfAd'),
+    'E-posta       : ' + eposta,
+    'Telefon       : ' + (g('#tfTel') || '—'),
+    '',
+    'Çıktı biçimi  : ' + cikti,
+    'Verinin konusu: ' + g('#tfKonu'),
+    'Satır sayısı  : ' + (g('#tfBoyut') || '—'),
+    'Teslim        : ' + (g('#tfTeslim') || '—'),
+    '',
+    'Raporda ne görmek istiyorum:',
+    g('#tfIstek'),
+    '',
+    '(Rapor Stüdyosu talep formundan oluşturuldu.)'
+  ].join('\n');
+
+  open(`mailto:${OZEL_RAPOR_EPOSTA}?subject=${encodeURIComponent('Özel rapor talebi — ' + g('#tfAd'))}&body=${encodeURIComponent(govde)}`, '_self');
+  if (not) {
+    not.className = 'prem-not iyi';
+    not.textContent = 'E-posta taslağınız hazırlandı. Posta uygulamanız açılmadıysa yukarıdaki adrese doğrudan yazabilirsiniz.';
+  }
+}
+
+function filtreIzni() {
+  if (isPremium) return true;
+  const n = $('#filtreNot');
+  if (n) {
+    n.innerHTML = '<b>Filtreler Premium özelliğidir.</b> Rapor varsayılan hâliyle ücretsiz görünür; ' +
+      'ölçüyü, kırılımı ve dönemi değiştirmek için Premium gerekiyor. ' +
+      '<button class="link-btn" type="button" id="filtrePrem">Premium\'a bak</button>' +
+      ' · <a class="link-btn" href="' + ozelRaporBaglantisi() + '">Özel rapor talep et</a>' +
+      '<span class="ucret-not">Özel rapor talepleri kapsamına göre değerlendirilir; <b>ücret yeniden hesaplanır.</b></span>';
+    const b = $('#filtrePrem');
+    if (b) b.addEventListener('click', () => premiumPanel(true));
+  }
+  return false;
+}
+
 /* ---------- tema ---------- */
 let hero = null;
 (function theme() {
@@ -3778,7 +5409,7 @@ let hero = null;
 
 /* ---------- yönlendirme ---------- */
 const ROUTES = { '#/': 'v-home', '#/rapor': 'v-report', '#/hakkimda': 'v-about',
-                 '#/vakalar': 'v-cases', '#/projeler': 'v-projects', '#/cv': 'v-cv',
+                 '#/vakalar': 'v-cases', '#/cv': 'v-cv',
                  '#/studyo': 'v-studio' };
 function route() {
   const h = ROUTES[location.hash] ? location.hash : '#/';
@@ -3798,6 +5429,38 @@ $('#burger').addEventListener('click', () => {
   $('#burger').setAttribute('aria-expanded', String(open));
 });
 $('#yr').textContent = new Date().getFullYear();
+
+/* ---------- premium paneli bağlantıları ---------- */
+premiumRozetiTazele();
+$('#premChip') && $('#premChip').addEventListener('click', () => premiumPanel(true));
+$('#premFoot') && $('#premFoot').addEventListener('click', () => premiumPanel(true));
+$('#premUrun') && $('#premUrun').addEventListener('click', () => premiumPanel(true));
+$('#talepForm') && $('#talepForm').addEventListener('submit', formGonder);
+for (const [id, ad] of [['#planFree','free'], ['#planPrem','prem']]) {
+  const el = $(id);
+  if (!el) continue;
+  const sec = () => planSecimiTazele(ad);
+  el.addEventListener('click', sec);
+  el.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); sec(); } });
+}
+$('#formAc') && $('#formAc').addEventListener('click', () => {
+  const f = $('#talepForm'), b = $('#formAc');
+  f.hidden = !f.hidden;
+  b.setAttribute('aria-expanded', String(!f.hidden));
+  b.textContent = f.hidden ? 'Form doldurayım' : 'Formu kapat';
+  if (!f.hidden) $('#tfAd').focus();
+});
+$('#premKapat') && $('#premKapat').addEventListener('click', () => premiumPanel(false));
+$('#premUygula') && $('#premUygula').addEventListener('click', premiumDogrula);
+$('#premCik') && $('#premCik').addEventListener('click', premiumCik);
+$('#premKey') && $('#premKey').addEventListener('keydown', e => { if (e.key === 'Enter') premiumDogrula(); });
+$('#premModal') && $('#premModal').addEventListener('click', e => { if (e.target.id === 'premModal') premiumPanel(false); });
+addEventListener('keydown', e => { if (e.key === 'Escape') premiumPanel(false); });
+if (PREMIUM_FIYAT) $('#premFiyat').textContent = PREMIUM_FIYAT;
+if (PAYTR_BAGLANTI) {
+  const b = $('#premSatinAl');
+  if (b) { b.disabled = false; b.addEventListener('click', () => open(PAYTR_BAGLANTI, '_blank', 'noopener')); }
+}
 
 /* ---------- statik içerik ---------- */
 const SKILLS = [
@@ -3829,15 +5492,15 @@ const SKILLS = [
 ];
 
 const TIMELINE = [
-  { from: 'Eki 2025', to: 'Tem 2026', role: 'Raporlama Uzmanı', org: 'Teamguerilla',
+  { from: 'Eki 2025', to: 'Tem 2026', role: 'İş Zekâsı ve Raporlama Uzmanı', org: 'Teamguerilla',
     meta: 'İstanbul · Tam zamanlı · Reklam / saha hizmetleri',
     body: 'Anlaşmalı müşteriler adına sahadaki personel için KPI raporları hazırladım. SQL üzerinden sistem ve raporlama süreçlerini iyileştirdim. Power BI ve Excel otomasyonlarıyla, yeni gelen müşteriler için standartlaşan raporların devreye alınmasını hızlandırdım.',
     tags: ['SQL', 'Power BI', 'Excel otomasyonu', 'KPI raporlama'] },
-  { from: 'Eki 2024', to: 'Eki 2025', role: 'Raporlama Uzmanı', org: 'Panasonic Electric Works Sales Middle East FZE',
+  { from: 'Eki 2024', to: 'Eki 2025', role: 'Kıdemli Saha ve Bütçe Raporlama Uzmanı', org: 'Panasonic Electric Works Sales Middle East FZE',
     meta: 'Elektrik / elektronik',
-    body: 'Şirketin raporlama süreçlerinde görev aldım.',
-    tags: ['Raporlama', 'Excel', 'Veri analizi'] },
-  { from: 'Kas 2023', to: 'Eki 2024', role: 'Raporlama Uzmanı', org: 'Platin Kimya Dış Tic. Müm. Ltd. Şti.',
+    body: 'Yönetime sunulan günlük satış raporlarını hazırladım. Uluslararası ve yerel satışların ayrı ayrı izlenebilmesi için yeni talep edilen takip raporlarını kurdum. Bu raporları düzenli bir akışa bağlayarak satış tarafının gün gün takip edilmesini sağladım.',
+    tags: ['Satış raporlaması', 'Uluslararası satış takibi', 'Yönetim raporlaması', 'Excel'] },
+  { from: 'Kas 2023', to: 'Eki 2024', role: 'Maliyet ve Raporlama Uzmanı', org: 'Platin Kimya Dış Tic. Müm. Ltd. Şti.',
     meta: 'Tam zamanlı · Kimya / sağlık',
     body: 'Maliyet raporlaması süreçlerini yönettim; günlük, haftalık ve aylık raporları hazırlayıp yönetime sundum. Maliyetlerde yapılabilecek revizeleri inceleyerek maliyet etkinliğini artırmayı hedefledim. Yeni raporlama standartları için araştırma yaparak süreçleri sürekli geliştirdim.',
     tags: ['Maliyet raporlaması', 'Yönetim raporlaması', 'Excel', 'Süreç geliştirme'] },
@@ -3869,42 +5532,6 @@ const CERTS = [
   ['İngilizce', 'Orta seviye — yabancı yöneticiye rapor sunumu yapacak düzeyde', 'Dil']
 ];
 
-/* Projeler: iş yerindeki vakalardan farklı olarak sıfırdan geliştirilen işler.
-   İlk kayıt bu sitenin kendisi — teknik ayrıntıları ölçülmüş gerçek değerler. */
-const PROJECTS = [
-  {
-    ad: 'Rapor Stüdyosu',
-    tur: 'Web uygulaması · sürüyor',
-    ozet: "Excel dosyasını tarayıcıda okuyup veri kalitesini denetleyen, otomatik rapor üreten ve Power BI'a taşımak için gereken kodu yazan araç. Bu sitenin içinde çalışıyor.",
-    neden: 'Her yeni raporlama işinde aynı üç şeyi elle yapıyordum: kolonları profillemek, veri kalitesini denetlemek, Power Query ve DAX iskeletini yazmak. Bunu bir kez otomatikleştirdim.',
-    yapilanlar: [
-      'Tarayıcıda .xlsx okuma — ZIP arşivi ve SpreadsheetML elle çözülüyor, hiçbir kütüphane kullanılmıyor',
-      'Otomatik veri kalitesi denetimi: ara toplam satırları, yinelenen kayıt, metin olarak saklanan sayı, çoklu para birimi, yazım tutarsızlığı',
-      'Çok tablolu model: sayfalar arası ilişki tespiti ve sanal alanlarla birleştirme',
-      'Power Query (M) ve DAX kod üretimi — dosyanın kendi kolon adlarına göre',
-      'Power BI mantığında 4 sayfalı etkileşimli rapor: dilimleyici, çapraz filtreleme, detaya inme'
-    ],
-    teknik: ['JavaScript (bağımlılıksız)', 'DecompressionStream', 'SpreadsheetML', 'Canvas 2D', 'El yazımı SVG'],
-    olcum: [
-      ['40.000 satır', '859 ms işleme süresi'],
-      ['41 test', 'otomatik motor denetimi'],
-      ['26/26', 'WCAG kontrast kontrolü'],
-      ['0', 'dış bağımlılık']
-    ],
-    link: { yazi: 'Canlı olarak dene', href: '#/studyo' }
-  },
-  {
-    ad: 'Proje adı',
-    tur: 'Tür · yıl',
-    taslak: true,
-    ozet: 'Bu kartı kendi projenizle değiştirin: ne yaptığını bir cümlede anlatın.',
-    neden: 'Bu projeyi neden yaptınız? Hangi sorun sizi buna itti?',
-    yapilanlar: ['Yaptığınız işi maddeler hâlinde yazın', 'Teknik kararlarınızı belirtin', 'Neyin zor olduğunu anlatın'],
-    teknik: ['Kullandığınız araçlar'],
-    olcum: [['Rakam', 'neyi ölçtüğü'], ['Rakam', 'neyi ölçtüğü']]
-  }
-];
-
 const CASES = [
   { sector: 'Hyundai Asansör · 2018–2023', title: 'Dağınık operasyon takibini tek raporlama çatısı altında topladım',
     lede: 'Teklif, faturalandırma, mutabakat, tahsilat ve dava süreçleri ayrı ayrı takip ediliyordu; kimse bütünü tek yerden göremiyordu.',
@@ -3930,28 +5557,6 @@ const CASES = [
     kpis: [['Tek şablon', 'tüm müşterilerde ortak'], ['Otomatik', 'saha KPI rapor üretimi'], ['SQL', 'sorgular kaynakta iyileştirildi']],
     todo: 'Devreye alma süresini ne kadar kısalttığınızı biliyorsanız burası tam yeri.' }
 ];
-
-/* ---------- Projeler ---------- */
-function renderProjects() {
-  $('#projectsGrid').innerHTML = PROJECTS.map(pr => `
-    <article class="case reveal-s${pr.taslak ? ' proje-taslak' : ''}">
-      <div class="case-head">
-        <p class="eyebrow">${esc(pr.tur)}</p>
-        <h3>${esc(pr.ad)}${pr.taslak ? '<span class="taslak-rozet">şablon</span>' : ''}</h3>
-        <p>${esc(pr.ozet)}</p>
-        ${pr.link ? `<a class="btn btn-ghost btn-sm" href="${esc(pr.link.href)}" style="margin-top:.9rem">
-          ${esc(pr.link.yazi)}
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>` : ''}
-      </div>
-      <div class="case-body">
-        <div class="case-cell"><h4>Neden yaptım</h4><p>${esc(pr.neden)}</p></div>
-        <div class="case-cell"><h4>Ne yaptım</h4><ul>${pr.yapilanlar.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
-        <div class="case-cell"><h4>Teknik</h4><div class="tags" style="margin-top:0">${pr.teknik.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div></div>
-        <div class="case-cell case-res"><h4>Ölçüm</h4>${pr.olcum.map(([a, b]) => `<div class="kpi"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}</div>
-      </div>
-    </article>`).join('');
-}
 
 function renderStatic() {
   $('#skillsGrid').innerHTML = SKILLS.map(g => `
@@ -3999,7 +5604,6 @@ function renderStatic() {
   $('#certList').innerHTML = CERTS.map(([a, b, c]) =>
     `<div class="mini-row"><b>${esc(a)}</b><span>${esc(b)}</span><em>${esc(c)}</em></div>`).join('');
 }
-  renderProjects();
 
 renderStatic();
 
@@ -4049,6 +5653,14 @@ function reset() {
 
 async function handleFile(file) {
   $('#uploadErr').innerHTML = '';
+  // Boyut kalkanı okumadan önce: bkz. MAX_FILE_MB. Sırayı bozmayın —
+  // arrayBuffer() çağrıldıktan sonra kontrol etmek çökmeyi engellemez.
+  if (!file.size) { showErr('Dosya boş görünüyor (0 byte).'); return; }
+  const mb = file.size / (1024 * 1024);
+  if (mb > MAX_FILE_MB) {
+    showErr(`Dosya ${nf(mb)} MB — sınır ${MAX_FILE_MB} MB. Stüdyo en fazla ${nf(MAX_ROWS)} satır işliyor; bu boyuttaki bir dosya tarayıcının belleğine sığmaz. Dosyayı bölüp yeniden deneyin.`);
+    return;
+  }
   $('#previewBox').innerHTML = '<div class="empty-state"><h3>Dosya okunuyor…</h3><p>Büyük dosyalarda birkaç saniye sürebilir.</p></div>';
   try {
     const isCsv = /\.(csv|tsv|txt)$/i.test(file.name);
@@ -4057,7 +5669,8 @@ async function handleFile(file) {
     else sheets = await readXlsx(await file.arrayBuffer());
     if (!sheets.length || !sheets[0].rows.length) throw new Error('Dosyada veri bulunamadı.');
     S.fileName = file.name;
-    loadSheets(sheets, file.size);
+    // CSV/TSV tipsizdir — motorun bunu bilmesi şart (bkz. buildTable, opts.typed)
+    loadSheets(sheets, file.size, !isCsv);
   } catch (err) {
     $('#previewBox').innerHTML = '';
     showErr(err && err.message ? err.message : String(err));
@@ -4070,12 +5683,14 @@ function loadDemo() {
   loadSheets([{ name: 'Satış Detay', rows: demoRows() }], 0);
 }
 
-function loadSheets(sheets, size) {
+function loadSheets(sheets, size, typed) {
   S.sheets = sheets;
   S.headerOverride = undefined;   // her yeni dosyada otomatik tespite dön
+  S.fixState = {};                // düzeltme geçmişi de sıfırlanır
+  S.typed = typed !== false;      // .xlsx tipli, .csv/.tsv tipsiz
   // Bütün sayfalar tablo olarak kurulur: ilişki tespiti için hepsi gerekli.
   // Diğer sayfalar artık görmezden gelinmiyor.
-  S.tables = sheets.map(sh => buildTable(sh.rows, sh.name));
+  S.tables = sheets.map(sh => buildTable(sh.rows, sh.name, { typed: S.typed }));
   // en çok satırı olan sayfayı varsayılan seç
   S.sheetIdx = sheets.reduce((best, s, i) => (s.rows.length > sheets[best].rows.length ? i : best), 0);
   $('#sheetPick').innerHTML = sheets.length > 1
@@ -4094,7 +5709,7 @@ function useSheet() {
   $$('#sheetPick .sheet-tab').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.i === S.sheetIdx)));
   const sh = S.sheets[S.sheetIdx];
   // Başlık kararı yalnız seçili sayfaya uygulanır; diğerleri kurulu kalır.
-  if (S.headerOverride !== undefined) S.tables[S.sheetIdx] = buildTable(sh.rows, sh.name, { hasHeader: S.headerOverride });
+  if (S.headerOverride !== undefined) S.tables[S.sheetIdx] = buildTable(sh.rows, sh.name, { hasHeader: S.headerOverride, typed: S.typed });
   const t = S.tables[S.sheetIdx];
   if (!t.rowCount || !t.fields.length) { $('#previewBox').innerHTML = ''; showErr('Bu sayfada tablo biçiminde veri bulunamadı. Başlık satırının üstündeki boş/başlık bloklarını kaldırmayı deneyin.'); return; }
 
@@ -4220,15 +5835,56 @@ function renderProfile() {
 
     <p class="eyebrow" style="margin-bottom:.6rem">Bulgular</p>
     <div class="issues" style="margin-bottom:1.5rem">
-      ${q.issues.map(i => `
-        <div class="issue" data-sev="${i.sev}">
+      ${q.issues.map((i, qi) => {
+        const kilit = kilitliMi(i);
+        const govde = kilit
+          ? `<p class="kilit">
+               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+               Ayrıntı Premium'da: hangi kolon, kaç satır ve toplamı ne kadar etkilediği.</p>`
+          : `<p>${i.body}</p>`;
+        const KILIT_ICO = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
+        const detay = i.detailId
+          ? `<button class="btn btn-ghost btn-sm detay-btn" type="button" data-detay="${esc(i.detailId)}" aria-expanded="false">
+               ${isPremium ? '' : KILIT_ICO} Detay</button>`
+          : '';
+        // Düzelt'te kilit ikonu YOK: düzeltme herkese açık (bkz. applyFix).
+        const duzelt = i.fixId
+          ? `<button class="btn btn-ghost btn-sm fix-btn" type="button" data-fix="${esc(i.fixId)}" data-qi="${qi}">Düzelt</button>`
+          : '';
+        return `
+        <div class="issue-grup">
+        <div class="issue" data-sev="${i.sev}"${kilit ? ' data-kilit="1"' : ''}>
           <span class="sev-ico">${i.sev === 'good'
             ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
             : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5M12 16.5v.1"/><circle cx="12" cy="12" r="9"/></svg>'}</span>
-          <span><b>${esc(i.title)}</b><p>${i.body}</p></span>
-          <span class="fix">${esc(i.fix)}</span>
-        </div>`).join('')}
+          <span><b>${esc(i.title)}</b>${govde}</span>
+          <span class="issue-act"><span class="issue-btns">${detay}${duzelt}</span><span class="fix">${esc(i.fix)}</span></span>
+        </div>
+        ${i.detailId ? `<div class="issue-detay" data-sev="${i.sev}" id="detay-${esc(i.detailId)}" hidden></div>` : ''}
+        </div>`; }).join('')}
     </div>
+    <p class="fix-note" id="fixNote" role="status" aria-live="polite"></p>
+    ${(() => {
+      // Uygulanan düzeltmeler bulgular listesinde GÖRÜNMEZ (sorun çözülünce
+      // bulgu kalkıyor). Geri alma yolu bu yüzden ayrı bir şeritte durur.
+      const st = (S.fixState && S.fixState[S.sheetIdx]) || null;
+      if (!st || !st.applied.length) return '';
+      // Her düzeltme KENDİ satırında, kendi "Geri al"ıyla. Düzeltmeler
+      // birbirinden bağımsız; sıralı bir geçmiş değil ki "sonuncuyu geri al"
+      // anlamlı olsun. Toplu geri alma tuşu da yok — tek tıkla birden çok
+      // bilinçli işlemi silmek tehlikeli.
+      return `<div class="fix-undo">
+        <p class="fix-undo-head"><b>Uygulanan düzeltmeler.</b>
+          Veri artık dosyadaki hâlinden farklı — istediğinizi tek tek geri alabilirsiniz.</p>
+        <ul class="fix-undo-list">
+          ${st.applied.map(k => `<li>
+            <span class="fix-undo-ad">${esc(FIXES[k.fixId].ad)}</span>
+            <span class="fix-undo-msg">${esc(k.mesaj)}</span>
+            <button class="btn btn-ghost btn-sm" type="button" data-undo="${esc(k.fixId)}">Geri al</button>
+          </li>`).join('')}
+        </ul>
+      </div>`;
+    })()}
 
     <p class="eyebrow" style="margin-bottom:.6rem">Kolon profili</p>
     <div class="tbl-wrap"><table class="dt">
@@ -4258,6 +5914,165 @@ function renderProfile() {
     inp.addEventListener('blur', apply);
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); if (e.key === 'Escape') { inp.value = ''; inp.blur(); } });
   });
+  $$('#profileBox .fix-btn').forEach(b => b.addEventListener('click', () => applyFix(b.dataset.fix)));
+  $$('#profileBox [data-undo]').forEach(b => b.addEventListener('click', () => undoFix(b.dataset.undo)));
+  $$('#profileBox .detay-btn').forEach(b => b.addEventListener('click', () => toggleDetay(b)));
+}
+
+/* ---------- düzeltme geçmişi ----------
+   Düzeltme GERİ ALINABİLİR olmalı. Kullanıcının "yinelenen" sandığımız
+   satırları meşru olabilir — her ay aynı müşteriye kesilen fatura, alt alta
+   yazılmış günlük kayıt. Yanlışlıkla silerse dosyayı baştan yüklemek zorunda
+   kalmamalı; müdahalesiz hâline her zaman dönebilmeli.
+
+   Yöntem: orijinal satırların TEK kopyası saklanır, uygulanan düzeltmeler
+   liste olarak tutulur. Geri alma = listeden çıkar, orijinalden baştan oynat.
+   Böylece her düzeltme için ayrı anlık görüntü tutmuyoruz (60.000 satırda
+   bellek yükü olurdu) ve sıra korunduğu için sonuç birebir aynı çıkıyor. */
+function fixStateFor(si) {
+  if (!S.fixState) S.fixState = {};
+  if (!S.fixState[si]) S.fixState[si] = { origRows: S.sheets[si].rows, origHeader: S.headerOverride, applied: [] };
+  return S.fixState[si];
+}
+
+/** Orijinalden başlayıp yürürlükteki düzeltmeleri uygulanma sırasıyla tekrar
+    uygular. Düzeltmeler bağımsız olduğu için ARADAN biri çıkarılabilir.
+
+    Mesajlar BURADA tazelenir, saklanmaz: bir düzeltme kaldırılınca kalanların
+    etkisi değişebilir. Metin→sayı geri alınırsa yinelenen satır sayısı başka
+    çıkar ("11 satır silindi" yazısı yalan olurdu). */
+function replayFixes(si) {
+  const st = fixStateFor(si);
+  const sh = S.sheets[si];
+  sh.rows = st.origRows;
+  S.headerOverride = st.origHeader;
+  S.tables[si] = buildTable(sh.rows, sh.name, st.origHeader !== undefined ? { hasHeader: st.origHeader, typed: S.typed } : { typed: S.typed });
+  for (const kayit of st.applied) {
+    const t = S.tables[si];
+    const r = FIXES[kayit.fixId].fn(t);
+    kayit.mesaj = r.mesaj;
+    sh.rows = rowsFromData(t, r.data);
+    S.headerOverride = true;
+    S.tables[si] = buildTable(sh.rows, sh.name, { hasHeader: true, typed: S.typed });
+  }
+  useSheet();
+}
+
+/** "Detay" tuşu: bulgunun hangi satırlardan kaynaklandığını hemen altında
+    açar. Premium. Satırlar TIKLANDIĞINDA hesaplanır — altı bulgunun tamamını
+    her profil çiziminde taramak 60.000 satırlık dosyada boşa iş olurdu. */
+function toggleDetay(btn) {
+  const id = btn.dataset.detay;
+  const kutu = $('#detay-' + id);
+  if (!kutu) return;
+
+  if (!kutu.hidden) {                       // açıksa kapat
+    kutu.hidden = true; kutu.innerHTML = '';
+    btn.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  if (!isPremium) {
+    const not = $('#fixNote');
+    if (not) not.innerHTML = '<b>Detay Premium özelliğidir.</b> Bulgunun kendisi ücretsiz görünür; hangi satırlardan kaynaklandığını görmek için Premium gerekiyor.';
+    return;
+  }
+  const d = DETAYLAR[id] && DETAYLAR[id](S.table);
+  if (!d) return;
+
+  const vurguIdx = d.vurgu ? d.head.indexOf(d.vurgu) : -1;
+  const ciftli = !!d.roller;   // yinelenen detayı ilk kayıt + tekrar çiftleri verir
+  const sayac = ciftli
+    ? (d.ciftSayisi < d.toplam ? `${nf(d.toplam)} tekrardan ilk ${nf(d.ciftSayisi)} tanesi, eşleriyle` : `${nf(d.toplam)} tekrarın tamamı, eşleriyle`)
+    : (d.gosterilen < d.toplam ? `${nf(d.toplam)} satırdan ilk ${nf(d.gosterilen)} tanesi` : `${nf(d.toplam)} satırın tamamı`);
+
+  kutu.innerHTML = !d.toplam
+    ? `<p class="detay-bos">Gösterilecek satır bulunamadı.</p>`
+    : `<p class="detay-bas">${esc(d.aciklama)}<span class="detay-say">${sayac}</span></p>
+       <div class="tbl-wrap"><table class="dt">
+         <thead><tr><th class="detay-no">Satır</th>${ciftli ? '<th>Durum</th>' : ''}${d.head.map((h, k) =>
+           `<th${k === vurguIdx ? ' class="detay-vurgu"' : ''}>${esc(h)}</th>`).join('')}</tr></thead>
+         <tbody>${d.rows.map((r, ri) => {
+           const rol = ciftli ? d.roller[ri] : null;
+           // Çiftin ilk satırında üst çizgi: gruplar gözle ayrılsın.
+           const yeniCift = ciftli && rol === 'ilk' && ri > 0;
+           return `<tr${rol ? ` data-rol="${rol}"` : ''}${yeniCift ? ' class="cift-bas"' : ''}>
+             <td class="detay-no">${nf(d.satirNo[ri])}</td>
+             ${ciftli ? `<td class="detay-rol">${rol === 'ilk'
+               ? `<span class="rol-ilk">ilk kayıt</span>`
+               : `<span class="rol-tekrar">tekrar</span> <span class="rol-es">↑ ${nf(d.esler[ri])}. satırın aynısı</span>`}</td>` : ''}
+             ${r.map((c, k) => `<td${k === vurguIdx ? ' class="detay-vurgu"' : ''}>${esc(hucreMetni(c))}</td>`).join('')}
+           </tr>`; }).join('')}</tbody>
+       </table></div>`;
+  kutu.hidden = false;
+  btn.setAttribute('aria-expanded', 'true');
+}
+
+/** Detay tablosunda hücre gösterimi. Tarih yerelleşir, boş ayırt edilir. */
+function hucreMetni(v) {
+  if (v === null || v === undefined || String(v).trim() === '') return '(boş)';
+  if (v instanceof Date) return v.toLocaleDateString(TR);
+  return String(v);
+}
+
+/** Tek bir düzeltmeyi geri alır — hangisi olursa, sıradan bağımsız. */
+function undoFix(fixId) {
+  const st = fixStateFor(S.sheetIdx);
+  const i = st.applied.findIndex(x => x.fixId === fixId);
+  if (i < 0) return;
+  st.applied.splice(i, 1);
+  replayFixes(S.sheetIdx);
+  const not = $('#fixNote');
+  if (not) not.innerHTML = `<b>Geri alındı:</b> ${esc(FIXES[fixId].ad)}. ` +
+    (st.applied.length ? `${st.applied.length} düzeltme yürürlükte kaldı.` : 'Veri artık dosyadaki hâliyle birebir aynı.');
+}
+
+/** "Düzelt" tuşu. Veriyi DEĞİŞTİRİR — bu yüzden yalnız kullanıcı isteyince,
+    ve her zaman geri alınabilir şekilde. Düzeltilmiş satırlar ham satırlara
+    çevrilip tablo baştan kurulur; profil, puan, ilişkiler tazelenir. */
+function applyFix(fixId) {
+  const not = $('#fixNote');
+  const F = FIXES[fixId];
+  if (!F || !S.table) return;
+  /* DÜZELTME PREMIUM DEĞİLDİR — bilinçli karar. Kullanıcının kendi verisini
+     kullanılabilir hâle getirmesini parayla sınırlamak, veriyi rehin tutmak
+     olur. Premium olan, sorunun HANGİ SATIRLARDAN geldiğini görmek (Detay)
+     ve kırmızı bulguların ayrıntısı. */
+  const t = S.table;
+  const r = F.fn(t);
+  if (!r.degisen) { if (not) not.textContent = r.mesaj; return; }
+  // Geçmişi düzeltmeden ÖNCE kur: origRows şu anki (henüz bozulmamış) satırlar.
+  const st = fixStateFor(S.sheetIdx);
+  st.applied.push({ fixId, mesaj: r.mesaj });
+
+  // Düzeltme ölçüyü değiştiriyorsa kullanıcı BUNU görmeli. Yinelenen satır
+  // silmek toplamı gerçekten düşürür; "11 satır silindi" demek yetmez,
+  // sayısının ne kadar kaydığını söylemezsek sessizce yanlış sayı üretmiş
+  // oluruz — bu projede en büyük hata.
+  const olcuAdi = S.measure ? S.measure.name : null;
+  const oncekiToplam = S.measure ? aggregate(t, applyFilters(t, S), S.measure, 'sum') : null;
+
+  // Ham satırları yeniden kur ve tabloyu baştan inşa et. Başlık artık kesin
+  // var (adları biz yazıyoruz), o yüzden otomatik tespite bırakılmaz.
+  S.sheets[S.sheetIdx].rows = rowsFromData(t, r.data);
+  S.headerOverride = true;
+  S.tables[S.sheetIdx] = buildTable(S.sheets[S.sheetIdx].rows, S.sheets[S.sheetIdx].name, { hasHeader: true, typed: S.typed });
+  useSheet();
+
+  let mesaj = r.mesaj;
+  if (olcuAdi && oncekiToplam !== null) {
+    const yeniOlcu = S.table.fields.find(f => f.name === olcuAdi);
+    if (yeniOlcu) {
+      const yeniToplam = aggregate(S.table, applyFilters(S.table, S), yeniOlcu, 'sum');
+      const fark = yeniToplam - oncekiToplam;
+      if (Math.abs(fark) > 0.005) {
+        mesaj += ` <b>${esc(olcuAdi)} toplamı ${fark < 0 ? 'azaldı' : 'arttı'}: ${compact(Math.abs(fark))}</b> — yeni toplam ${compact(yeniToplam)}.`;
+      } else {
+        mesaj += ` ${esc(olcuAdi)} toplamı değişmedi.`;
+      }
+    }
+  }
+  const not2 = $('#fixNote');
+  if (not2) not2.innerHTML = mesaj;
 }
 
 function profileRow(f) {
@@ -4525,9 +6340,14 @@ function renderReport() {
       ${S.dateField ? `
       <div class="ctl"><label for="fSel">Başlangıç</label><select id="fSel">${monthOpts(S.from)}</select></div>
       <div class="ctl"><label for="tSel">Bitiş</label><select id="tSel">${monthOpts(S.to)}</select></div>` : ''}
-      <div class="ctl" style="margin-left:auto"><label>&nbsp;</label>
-        <button class="btn btn-ghost btn-sm" id="clearBtn" type="button">Filtreleri temizle</button></div>
+      <div class="ctl ctl-acts" style="margin-left:auto"><label>&nbsp;</label>
+        <div class="ctl-acts-row">
+          <button class="btn btn-ghost btn-sm" id="clearBtn" type="button">Filtreleri temizle</button>
+          <button class="btn btn-primary btn-sm" id="xlsxBtn" type="button">Sonucu Excel'e İndir</button>
+        </div></div>
     </div>
+    <p class="filtre-not" id="filtreNot" role="status" aria-live="polite"></p>
+    <p class="xlsx-err" id="xlsxErr" role="status" aria-live="polite"></p>
 
     <div class="filter-note ${activeFilters.length ? 'on' : ''}">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg>
@@ -4591,19 +6411,37 @@ function renderReport() {
       </div>
     </div>`;
 
-  $('#mSel') && $('#mSel').addEventListener('change', e => { S.measure = fieldAt(t, e.target.value); renderReport(); renderInsights(); renderPBI(); });
-  $('#aSel').addEventListener('change', e => { S.agg = e.target.value; renderReport(); renderInsights(); });
-  $('#dSel') && $('#dSel').addEventListener('change', e => { S.dimField = fieldAt(t, e.target.value); S.filters = {}; renderReport(); renderInsights(); renderPBI(); });
-  $('#fSel') && $('#fSel').addEventListener('change', e => { S.from = +e.target.value; if (S.to < S.from) S.to = S.from; renderReport(); renderInsights(); });
-  $('#tSel') && $('#tSel').addEventListener('change', e => { S.to = +e.target.value; if (S.from > S.to) S.from = S.to; renderReport(); renderInsights(); });
+  $('#xlsxBtn') && $('#xlsxBtn').addEventListener('click', e => exportExcel(e.currentTarget));
+  /* Filtre kontrolleri premium. Kilitliyken devre dışı bırakılıyor — tıklayıp
+     hiçbir şey olmamasındansa neden olmadığını söylemek daha dürüst; kilit
+     rozeti ve açıklama not alanında. */
+  const filtreKontrolleri = ['#mSel', '#aSel', '#dSel', '#fSel', '#tSel'];
+  if (!isPremium) {
+    for (const sel of filtreKontrolleri) {
+      const el = $(sel);
+      if (!el) continue;
+      el.disabled = true;
+      el.title = 'Filtreler Premium özelliğidir';
+    }
+    const cb = $('#clearBtn');
+    if (cb) { cb.disabled = true; cb.title = 'Filtreler Premium özelliğidir'; }
+    const rail = $('#reportBox .ctl-rail');
+    if (rail) rail.dataset.kilit = '1';
+  }
+  $('#mSel') && $('#mSel').addEventListener('change', e => { if (!filtreIzni()) return; S.measure = fieldAt(t, e.target.value); renderReport(); renderInsights(); renderPBI(); });
+  $('#aSel').addEventListener('change', e => { if (!filtreIzni()) return; S.agg = e.target.value; renderReport(); renderInsights(); });
+  $('#dSel') && $('#dSel').addEventListener('change', e => { if (!filtreIzni()) return; S.dimField = fieldAt(t, e.target.value); S.filters = {}; renderReport(); renderInsights(); renderPBI(); });
+  $('#fSel') && $('#fSel').addEventListener('change', e => { if (!filtreIzni()) return; S.from = +e.target.value; if (S.to < S.from) S.to = S.from; renderReport(); renderInsights(); });
+  $('#tSel') && $('#tSel').addEventListener('change', e => { if (!filtreIzni()) return; S.to = +e.target.value; if (S.from > S.to) S.from = S.to; renderReport(); renderInsights(); });
   const clearAll = () => { S.filters = {}; const r = monthRange(t, S.dateField || {}); if (S.dateField && r) { S.from = r[0]; S.to = r[1]; } renderReport(); renderInsights(); };
-  $('#clearBtn').addEventListener('click', clearAll);
-  $('#clearX') && $('#clearX').addEventListener('click', clearAll);
+  $('#clearBtn').addEventListener('click', () => { if (filtreIzni()) clearAll(); });
+  $('#clearX') && $('#clearX').addEventListener('click', () => { if (filtreIzni()) clearAll(); });
 
   drawLine($('#cTrend'), series, { height: 268, unit });
   drawBars($('#cBars'), dimTop, {
     unit, selected: S.dimField && S.filters[S.dimField.idx] && S.filters[S.dimField.idx].size === 1 ? [...S.filters[S.dimField.idx]][0] : null,
     onPick: key => {
+      if (!filtreIzni()) return;          // çapraz filtre de premium
       const k = S.dimField.idx;
       if (S.filters[k] && S.filters[k].has(key)) delete S.filters[k];
       else S.filters[k] = new Set([key]);
@@ -4743,6 +6581,11 @@ function renderPBI() {
       <p style="font-size:.9375rem">Aşağıdaki kod bu dosyanın kendi kolon adlarına göre üretildi.
       Power BI Desktop'ta <b>Boş Sorgu → Gelişmiş Düzenleyici</b>'ye yapıştırıp kaynak yolunu değiştirmeniz yeterli.
       ${rels.length ? `<b>${rels.length} tablo ilişkisi</b> tespit edildiği için her tablo ayrı sorgu olarak üretildi.` : ''}</p>
+      <div class="pbi-indir">
+        <button class="btn btn-primary pbi-btn" type="button">Power BI paketini indir</button>
+        <span class="pbi-icerik">veri.xlsx · 1-PowerQuery.m · 2-Olculer.dax · KURULUM.txt</span>
+      </div>
+      <p class="xlsx-err" id="pbiErr" role="status" aria-live="polite"></p>
     </div>
 
     <div class="chart-card" style="margin-bottom:1rem">
@@ -4780,6 +6623,7 @@ function renderPBI() {
     </div>`;
 
   starSchema($('#cStar'), model);
+  $$('#pbiBox .pbi-btn').forEach(b => b.addEventListener('click', () => exportPbi(b)));
   $$('#pbiBox .copy').forEach(b => b.addEventListener('click', () => copyCode(b)));
 }
 
@@ -5125,9 +6969,7 @@ const counter = (v, extraCls) => {
     Uygulanan dönüşümler, Power BI paketinde ürettiğimiz M kodunun aynısıdır:
     Text.Proper(Text.Trim()) · Table.Distinct · metin→sayı. */
 function cleanForReport(t) {
-  const proper = s => String(s).trim().replace(/\s+/g, ' ')
-    .toLocaleLowerCase(TR)
-    .replace(/(^|[\s\-/])(\p{L})/gu, (m, a, b) => a + b.toLocaleUpperCase(TR));
+  const proper = properTR;
   // Yalnız fiziksel kolonlar yazılabilir; sanal alanlar boyut tablosundan okunur.
   const dims = ownFields(t).filter(f => f.role === 'dim' && f.type === 'text');
   const nums = ownFields(t).filter(f => f.type === 'number');
@@ -5158,6 +7000,77 @@ function cleanForReport(t) {
     table: Object.assign({}, t, { data: rows, rowCount: rows.length, dupes: 0 }),
     stats: { dupes, normalized, coerced }
   };
+}
+
+/* Excel indirme. Sayfa içeriğini kuran mantık `45-export.js`'te durur (test
+   edilebilir olsun diye); burada yalnızca buton durumu, indirme ve hata var. */
+/** Blob'u indirir. */
+function indir(blob, ad) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = ad;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+/* İndirme PREMIUM. İlk indirme ücretsiz: kullanıcı ürünün işe yaradığını
+   parayla sormasın. İkinciden itibaren kapı iner. Sayaç localStorage'da —
+   güvenlik değil, dürüst bir deneme hakkı. */
+const ilkIndirmeKullanildi = () => store.get('rs-indirme') === '1';
+const indirmeKullan = () => store.set('rs-indirme', '1');
+
+function indirmeIzni(err) {
+  if (isPremium) return true;
+  if (!ilkIndirmeKullanildi()) { indirmeKullan(); return true; }
+  if (err) {
+    err.innerHTML = '<b>İlk indirmenizi kullandınız.</b> Sınırsız indirme Premium\'da. ' +
+      '<button class="link-btn" type="button" id="premAc">Premium\'a bak</button>';
+    const b = $('#premAc');
+    if (b) b.addEventListener('click', () => premiumPanel(true));
+  }
+  return false;
+}
+
+async function exportExcel(btn) {
+  const t = S.table;
+  if (!t) return;
+  const err = $('#xlsxErr');
+  if (err) err.innerHTML = '';
+  if (!indirmeIzni(err)) return;
+  const eski = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Hazırlanıyor…'; }
+  try {
+    const blob = await buildExportBook(t, S, reportContext(S)).blob();
+    indir(blob, (S.fileName || 'rapor').replace(/\.[^.]+$/, '') + ' — Rapor Stüdyosu.xlsx');
+  } catch (e) {
+    if (err) err.textContent = 'Excel oluşturulamadı: ' + (e && e.message ? e.message : e);
+    console.error('Excel dışa aktarma:', e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = eski; }
+  }
+}
+
+/** Power BI paketi: veri + M + DAX + kurulum adımları, tek ZIP. */
+async function exportPbi(btn) {
+  const t = S.table;
+  if (!t) return;
+  const err = $('#pbiErr');
+  if (err) err.innerHTML = '';
+  if (!indirmeIzni(err)) return;
+  const eski = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Hazırlanıyor…'; }
+  try {
+    const factName = safeName(t.sheetName).replace(/\s+/g, '') || 'Fact';
+    const bytes = await buildPbiPackage(t, S, reportContext(S),
+      genM(t, S.roles), genDax(t, S.roles, S.measure, factName));
+    indir(new Blob([bytes], { type: 'application/zip' }),
+      (S.fileName || 'rapor').replace(/\.[^.]+$/, '') + ' — Power BI paketi.zip');
+  } catch (e) {
+    if (err) err.textContent = 'Paket oluşturulamadı: ' + (e && e.message ? e.message : e);
+    console.error('Power BI paketi:', e);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = eski; }
+  }
 }
 
 /* ============================================================
@@ -5855,11 +7768,11 @@ const cvTarih = (s, lang) => lang === 'en' ? s.replace(/^(\p{L}{3})/u, m => CV_A
 
 /* Deneyim çevirileri — sıra TIMELINE ile birebir aynı */
 const CV_TIMELINE_EN = [
-  { role: 'Reporting Specialist', meta: 'Istanbul · Full-time · Advertising / field services',
+  { role: 'Business Intelligence & Reporting Specialist', meta: 'Istanbul · Full-time · Advertising / field services',
     body: 'Produced KPI reports for field staff on behalf of contracted clients. Improved system and reporting processes through SQL. Using Power BI and Excel automation, shortened the time needed to bring standardised reports live for new clients.' },
-  { role: 'Reporting Specialist', meta: 'Electrical / electronics',
-    body: 'Worked in the company\'s reporting processes.' },
-  { role: 'Reporting Specialist', meta: 'Full-time · Chemicals / healthcare',
+  { role: 'Senior Field & Budget Reporting Specialist', meta: 'Electrical / electronics',
+    body: 'Prepared the daily sales reports presented to management. Built the newly requested tracking reports that allowed international and domestic sales to be followed separately. Put these reports on a regular cycle, keeping day-to-day visibility on the sales side.' },
+  { role: 'Cost & Reporting Specialist', meta: 'Full-time · Chemicals / healthcare',
     body: 'Managed cost reporting; prepared daily, weekly and monthly reports and presented them to management. Reviewed possible cost revisions to improve cost efficiency. Researched new reporting standards and continuously improved the process.' },
   { role: 'Senior Analysis & Reporting Specialist', meta: '5 yrs 6 mo · Full-time · Elevators',
     body: 'Started as a customer representative and became a senior specialist within three years. Ensured quotation and approval processes ran effectively; tracked warehouse consumption, invoicing, reconciliation and collection. Took part in initiating and following legal cases. Analysed and monitored KPI targets. Brought auditing of all transactions under one roof and produced daily, weekly and monthly reports, making the processes transparent and controllable. Delivered in-house Excel and SAP training.' },
