@@ -1820,6 +1820,88 @@ pre.code .f { color: var(--s7); font-weight: 500; }
 #v-merge .mg-acts { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; margin: 1.25rem 0 0 }
 #v-merge .mg-empty { padding: 2rem .95rem; text-align: center; color: var(--ink-3) }
 #v-merge .mg-link { background: none; border: none; color: var(--accent-hi); font: inherit; text-decoration: underline; cursor: pointer; padding: 0 }
+
+/* ============================================================
+   MUTABAKAT (#/mutabakat) — hepsi #v-recon içinde kapsamlı
+   ============================================================ */
+#v-recon .mr-lede { max-width: 70ch; margin: .25rem 0 1.25rem }
+#v-recon .mr-drops { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem }
+#v-recon .mr-drop { padding: 1.1rem .95rem; gap: .5rem }
+#v-recon .mr-drop h3 { margin: 0; font-size: 1.05rem }
+#v-recon .mr-drop.done { border-style: solid; border-color: var(--accent); background: var(--accent-soft) }
+
+#v-recon .mr-panel { border: 1px solid var(--rule); background: var(--surface); box-shadow: var(--shadow); margin-top: 1.25rem }
+#v-recon .mr-head {
+  display: flex; align-items: center; gap: .7rem; flex-wrap: wrap;
+  padding: .7rem .95rem; border-bottom: 1px solid var(--rule);
+}
+#v-recon .mr-hint { font-size: .84rem; color: var(--ink-3) }
+#v-recon .mr-link { background: none; border: none; color: var(--accent-hi); font: inherit; font-size: .84rem; text-decoration: underline; cursor: pointer; padding: 0 }
+
+#v-recon .mr-firms { display: flex; flex-wrap: wrap; gap: .4rem; padding: .85rem .95rem; max-height: 190px; overflow-y: auto }
+#v-recon .mr-fchk {
+  display: flex; align-items: center; gap: .4rem; cursor: pointer;
+  border: 1px solid var(--rule-2); padding: .25rem .55rem; font-size: .86rem; color: var(--ink-2);
+}
+#v-recon .mr-fchk.on { border-color: var(--accent); background: var(--accent-soft); color: var(--ink) }
+#v-recon .mr-fchk input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer }
+#v-recon .mr-fchk b { font-weight: 500; font-size: .76rem; color: var(--ink-3); white-space: nowrap }
+
+#v-recon .mr-line {
+  display: flex; align-items: center; gap: 1.1rem; flex-wrap: wrap;
+  padding: .7rem .95rem; border-top: 1px solid var(--rule); font-size: .88rem; color: var(--ink-2);
+}
+#v-recon .mr-line label { display: flex; align-items: center; gap: .4rem }
+#v-recon .mr-line input[type=number] {
+  width: 72px; font: inherit; padding: .3rem .4rem;
+  background: var(--surface-2); border: 1px solid var(--control); color: var(--ink);
+}
+#v-recon .mr-chk input { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer }
+#v-recon select { font: inherit; font-size: .88rem; color: var(--ink); background: var(--surface); border: 1px solid var(--control); padding: .3rem .4rem; max-width: 320px }
+
+#v-recon .mr-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.25rem;
+}
+#v-recon .mr-stat { background: var(--surface); padding: .7rem .9rem }
+#v-recon .mr-stat.bad { background: #fbeaea }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #v-recon .mr-stat.bad { background: #2a1616 } }
+:root[data-theme="dark"] #v-recon .mr-stat.bad { background: #2a1616 }
+#v-recon .mr-stat .k { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--ink-3) }
+#v-recon .mr-stat .v { font-size: 1.6rem; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums }
+#v-recon .mr-stat .u { font-size: .8rem; color: var(--ink-3) }
+#v-recon .mr-stat.bad .k, #v-recon .mr-stat.bad .v { color: var(--crit-ink) }
+
+#v-recon .mr-acts { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; margin-top: 1.25rem }
+#v-recon .mr-tabs { display: flex; gap: .3rem; flex-wrap: wrap }
+#v-recon .mr-tab {
+  font: inherit; font-size: .82rem; padding: .25rem .6rem; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--rule-2); color: var(--ink-2);
+}
+#v-recon .mr-tab.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600 }
+
+#v-recon .mr-scroll { overflow-x: auto }
+#v-recon table.mr-t { border-collapse: collapse; width: 100%; font-size: .84rem }
+#v-recon table.mr-t th {
+  text-align: left; padding: .5rem .7rem; white-space: nowrap;
+  font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600;
+  color: var(--ink-3); border-bottom: 1px solid var(--rule-2);
+}
+#v-recon table.mr-t th.num, #v-recon table.mr-t td.num { text-align: right; font-variant-numeric: tabular-nums }
+#v-recon table.mr-t td {
+  padding: .4rem .7rem; border-bottom: 1px solid var(--rule); white-space: nowrap;
+  max-width: 230px; overflow: hidden; text-overflow: ellipsis;
+}
+#v-recon table.mr-t tr.st-diff td { background: #fdf1e3 }
+#v-recon table.mr-t tr.st-none td { background: #fbeaea; color: var(--crit-ink) }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #v-recon table.mr-t tr.st-diff td { background: #2c2418 }
+  :root:not([data-theme="light"]) #v-recon table.mr-t tr.st-none td { background: #2a1616 }
+}
+:root[data-theme="dark"] #v-recon table.mr-t tr.st-diff td { background: #2c2418 }
+:root[data-theme="dark"] #v-recon table.mr-t tr.st-none td { background: #2a1616 }
+#v-recon .mr-foot { padding: .6rem .95rem; border-top: 1px solid var(--rule); color: var(--ink-3); font-size: .82rem }
+#v-recon .mr-empty { padding: 2rem .95rem; text-align: center; color: var(--ink-3) }
 </style>
 <header class="mast">
   <div class="wrap mast-in">
@@ -1833,6 +1915,7 @@ pre.code .f { color: var(--s7); font-weight: 500; }
       <a href="#/rapor">Örnek Rapor</a>
       <a href="#/studyo">Rapor Stüdyosu</a>
       <a href="#/birlestir">Birleştirici</a>
+      <a href="#/mutabakat">Mutabakat</a>
       <a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
     </nav>
@@ -2192,6 +2275,47 @@ pre.code .f { color: var(--s7); font-weight: 500; }
   </div>
 </section>
 
+<section class="view" id="v-recon">
+  <div class="wrap studio">
+    <div class="studio-bar">
+      <h1>Mutabakat</h1>
+      <span class="file-chip" id="mrChip">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/></svg>
+        <b id="mrChipName"></b><span id="mrChipMeta"></span>
+      </span>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost btn-sm" id="mrReset" type="button" style="display:none">Sıfırla</button>
+    </div>
+
+    <p class="hint mr-lede">Kendi kantar/irsaliye kayıtlarınızla karşı taraftan gelen listeyi satır satır karşılaştırır. Önce irsaliye numarasının <b>son 5 hanesinden</b>, tutmazsa <b>plaka + tonaj + tarih</b> üçlüsünden eşler; tarih kayması ve kg toleransı ayarlanabilir.</p>
+
+    <div class="mr-drops">
+      <div class="drop mr-drop" id="mrDropA" tabindex="0" role="button" aria-label="Kendi kayıtlarınızı yükleyin">
+        <p class="eyebrow" style="margin:0">1 · Bizim kayıtlar</p>
+        <h3>DATA dosyanız</h3>
+        <div class="drop-actions"><button class="btn btn-primary btn-sm" id="mrPickA" type="button">Dosya seç</button></div>
+        <p class="drop-formats" id="mrInfoA">Firma, irsaliye no, plaka, tarih ve kilo kolonlarını içeren döküm</p>
+        <input type="file" id="mrInputA" accept=".xlsx,.xlsm,.csv,.tsv,.txt" class="sr-only">
+      </div>
+      <div class="drop mr-drop" id="mrDropB" tabindex="0" role="button" aria-label="Karşı tarafın listesini yükleyin">
+        <p class="eyebrow" style="margin:0">2 · Karşı taraf</p>
+        <h3>Gelen irsaliye listesi</h3>
+        <div class="drop-actions"><button class="btn btn-primary btn-sm" id="mrPickB" type="button">Dosya seç</button></div>
+        <p class="drop-formats" id="mrInfoB">Dönüştürücüden geçmiş liste: tarih · irsaliye no · plaka · kg</p>
+        <input type="file" id="mrInputB" accept=".xlsx,.xlsm,.csv,.tsv,.txt" class="sr-only">
+      </div>
+    </div>
+
+    <p class="priv-note">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <span>Her iki dosya da tarayıcıda işlenir; sunucuya yüklenmez.</span>
+    </p>
+
+    <div id="mrErr"></div>
+    <div id="mrBody"></div>
+  </div>
+</section>
+
 </main>
 
 <footer class="foot">
@@ -2206,7 +2330,8 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     <div>
       <h4>Sayfalar</h4>
       <a href="#/">Ana Sayfa</a><a href="#/rapor">Örnek Rapor</a>
-      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/birlestir">Birleştirici</a><a href="#/vakalar">Vakalar</a>
+      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/birlestir">Birleştirici</a>
+      <a href="#/mutabakat">Mutabakat</a><a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
       <!-- Rozet dar ekranda gizleniyor; premium yine de her sayfadan erişilebilir olmalı. -->
       <button class="foot-link" id="premFoot" type="button">Premium</button>
@@ -3383,17 +3508,28 @@ const X_STYLES = X_XML + `<styleSheet xmlns="${X_NS}">` +
   // 164 tarih, 165 binlik ayraçlı sayı (pivot değerleri için)
   '<numFmts count="2"><numFmt numFmtId="164" formatCode="dd\\.mm\\.yyyy"/>' +
   '<numFmt numFmtId="165" formatCode="#,##0.00"/></numFmts>' +
-  '<fonts count="2">' +
+  '<fonts count="4">' +
     '<font><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/></font>' +
     '<font><b/><sz val="11"/><color theme="1"/><name val="Calibri"/><family val="2"/></font>' +
+    '<font><sz val="11"/><color rgb="FF9B2C1F"/><name val="Calibri"/><family val="2"/></font>' +
+    '<font><sz val="11"/><color rgb="FF8A4B10"/><name val="Calibri"/><family val="2"/></font>' +
   '</fonts>' +
-  '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>' +
+  '<fills count="4"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>' +
+    '<fill><patternFill patternType="solid"><fgColor rgb="FFF6D8D3"/><bgColor indexed="64"/></patternFill></fill>' +
+    '<fill><patternFill patternType="solid"><fgColor rgb="FFFBEBD3"/><bgColor indexed="64"/></patternFill></fill>' +
+  '</fills>' +
   '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
   '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
-  '<cellXfs count="3">' +
+  /* 0 düz · 1 tarih · 2 kalın — SIRA DEĞİŞMEZ, eski dosyalar bu indekslere bağlı.
+     3/4 vurgulu satır (kırmızı/turuncu), 5/6 aynısının tarih biçimlisi. */
+  '<cellXfs count="7">' +
     '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
     '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
     '<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/>' +
+    '<xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/>' +
+    '<xf numFmtId="0" fontId="3" fillId="3" borderId="0" xfId="0" applyFont="1" applyFill="1"/>' +
+    '<xf numFmtId="164" fontId="2" fillId="2" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1"/>' +
+    '<xf numFmtId="164" fontId="3" fillId="3" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1"/>' +
   '</cellXfs>' +
   '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>' +
   '</styleSheet>';
@@ -3434,16 +3570,21 @@ function xBook() {
   const sheets = [];
   const pivotlar = [];
 
-  function cellXml(ref, val, bold) {
-    if (val === null || val === undefined || val === '') return bold ? `<c r="${ref}" s="2"/>` : '';
+  function cellXml(ref, val, bold, vurgu) {
+    // vurgu: 'bad' kırmızı, 'warn' turuncu — satır bazlı işaretleme için
+    const sd = vurgu === 'bad' ? 5 : vurgu === 'warn' ? 6 : 1;
+    const sn = vurgu === 'bad' ? 3 : vurgu === 'warn' ? 4 : (bold ? 2 : 0);
+    if (val === null || val === undefined || val === '') {
+      return (bold || vurgu) ? `<c r="${ref}" s="${sn}"/>` : '';
+    }
     if (val instanceof Date) {
       const serial = (val.getTime() - X_EPOCH) / 86400000;
-      return `<c r="${ref}" s="1"><v>${serial}</v></c>`;
+      return `<c r="${ref}" s="${sd}"><v>${serial}</v></c>`;
     }
     if (typeof val === 'number' && isFinite(val)) {
-      return `<c r="${ref}"${bold ? ' s="2"' : ''}><v>${val}</v></c>`;
+      return `<c r="${ref}"${sn ? ` s="${sn}"` : ''}><v>${val}</v></c>`;
     }
-    return `<c r="${ref}"${bold ? ' s="2"' : ''} t="s"><v>${si(String(val))}</v></c>`;
+    return `<c r="${ref}"${sn ? ` s="${sn}"` : ''} t="s"><v>${si(String(val))}</v></c>`;
   }
 
   function sheet(name, rows, opt) {
@@ -3455,7 +3596,7 @@ function xBook() {
         const isObj = cell && typeof cell === 'object' && !(cell instanceof Date);
         const v = isObj ? cell.v : cell;
         const bold = isObj ? !!cell.bold : false;
-        return cellXml(xCol(ci) + (ri + 1), v, bold);
+        return cellXml(xCol(ci) + (ri + 1), v, bold, isObj ? cell.vurgu : null);
       }).join('');
       if (r.length > maxCols) maxCols = r.length;
       xml += `<row r="${ri + 1}">${cells}</row>`;
@@ -5555,7 +5696,7 @@ let hero = null;
 /* ---------- yönlendirme ---------- */
 const ROUTES = { '#/': 'v-home', '#/rapor': 'v-report', '#/hakkimda': 'v-about',
                  '#/vakalar': 'v-cases', '#/cv': 'v-cv',
-                 '#/studyo': 'v-studio', '#/birlestir': 'v-merge' };
+                 '#/studyo': 'v-studio', '#/birlestir': 'v-merge', '#/mutabakat': 'v-recon' };
 function route() {
   const h = ROUTES[location.hash] ? location.hash : '#/';
   $$('.view').forEach(v => v.classList.toggle('on', v.id === ROUTES[h]));
@@ -5567,6 +5708,7 @@ function route() {
   if (h === '#/cv') { renderCV(); initCVControls(); }
   if (h === '#/studyo' && S.table && curStep === 2) renderReport();
   if (h === '#/birlestir') renderMerge();
+  if (h === '#/mutabakat') renderRecon();
   observeAll(document.getElementById(ROUTES[h]));
 }
 addEventListener('hashchange', route);
@@ -8541,6 +8683,606 @@ async function mgHandleFiles(list) {
   drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) mgHandleFiles(e.dataTransfer.files); });
   $('#mgReset').addEventListener('click', () => {
     MG.srcs = []; MG.tpl = 0; MG.dupKey = -1; mgErr(''); renderMerge();
+  });
+})();
+
+
+/* ============================================================
+   MUTABAKAT (#/mutabakat)
+   Kendi kayıtlarımızla karşı taraftan gelen irsaliye listesini
+   SATIR SATIR eşler. Eşleştirme sırası:
+     1) irsaliye numarasının son 5 hanesi (metin — baştaki sıfır korunur)
+     2) plaka + tonaj + tarih (tarih kayması ve ± gün toleransıyla)
+   Bir karşı satır bir kez kullanılır: çift sayım olmaz.
+
+   Yeni bağımlılık yok — stüdyonun motoru:
+     readXlsx / parseCSV / buildTable / xBook / indir
+   ============================================================ */
+
+const MR = {
+  a: null, b: null,              // kaynaklar (bizim / karşı)
+  firms: [],                     // seçili cariler (aynı firma birkaç ünvanla geçebilir)
+  shift: 0,                      // karşı tarafın tarihi bizimkinden kaç gün sapıyor
+  tol: 1,                        // ± gün toleransı
+  kg: 0,                         // bu kg'a kadar fark "uyumlu" sayılır
+  scope: true,                   // bizim tarafı karşının dönemine kırp
+  tab: 'all'
+};
+const MR_KEYLEN = 5;
+
+const mrBlank = v => v === null || v === undefined || String(v).trim() === '';
+const mrNorm = v => String(v == null ? '' : v)
+  .replace(/İ/g, 'i').replace(/I/g, 'i').replace(/ı/g, 'i').toLowerCase()
+  .replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c')
+  .replace(/[^a-z0-9]/g, '');
+
+/* Son N hane — METİN. "GEI2026000001825" → "01825" (baştaki sıfır kritik). */
+function mrKey(v) {
+  if (mrBlank(v)) return '';
+  const d = String(v).replace(/\D/g, '');
+  if (!d) return '';
+  return d.length <= MR_KEYLEN ? d : d.slice(-MR_KEYLEN);
+}
+function mrNum(v) {
+  if (typeof v === 'number') return isFinite(v) ? v : null;
+  if (mrBlank(v)) return null;
+  let s = String(v).replace(/\s|kg|KG/g, '').trim();
+  const dot = s.indexOf('.') >= 0, com = s.indexOf(',') >= 0;
+  if (dot && com) s = s.replace(/\./g, '').replace(',', '.');
+  else if (com) s = s.replace(',', '.');
+  else if (dot && /^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+  const n = parseFloat(s);
+  return isFinite(n) ? n : null;
+}
+function mrDate(v) {
+  if (v instanceof Date) return isNaN(v) ? null : new Date(v.getFullYear(), v.getMonth(), v.getDate());
+  if (typeof v === 'number' && v > 20000 && v < 80000) return serialToDate(v);
+  if (typeof v === 'string') {
+    const m = v.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+    const t = v.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
+    if (t) { let y = +t[3]; if (y < 100) y += 2000; return new Date(y, +t[2] - 1, +t[1]); }
+  }
+  return null;
+}
+const mrDay = d => d ? Math.round(d.getTime() / 86400000) : null;
+const mrFmt = d => d ? d.toLocaleDateString(TR) : '';
+const mrPlate = v => mrBlank(v) ? '' : String(v).toUpperCase().replace(/[\s\-.]/g, '');
+
+/* ---------- kolon tanıma ---------- */
+const MR_HINTS = {
+  firma:    [['firma', 100], ['cari', 95], ['musteri', 85], ['unvan', 80], ['tedarikci', 80]],
+  irsaliye: [['eirsaliyeno', 105], ['eirsaliye', 100], ['irsaliyeno', 95], ['irslno', 90], ['belgeno', 70], ['faturano', 60]],
+  irsaliye2:[['irslno', 105], ['irsaliyeno', 95], ['belgeno', 70]],
+  plaka:    [['plakano', 100], ['plaka', 95], ['arac', 60]],
+  tarih:    [['irsaliyetarihi', 105], ['sevktarihi', 95], ['tarih', 80], ['tartitarihi', 60]],
+  tonaj:    [['irsaliyekilosu', 105], ['tonajkg', 100], ['tonaj', 95], ['netkilo', 90], ['kilo', 80], ['ton', 70], ['gecerlikilo', 55], ['miktar', 60]]
+};
+function mrPick(names, key, skip) {
+  let best = -1, bestScore = 0;
+  names.forEach((h, c) => {
+    if (skip && skip.indexOf(c) >= 0) return;
+    const n = mrNorm(h);
+    let sc = 0;
+    MR_HINTS[key].forEach(([tok, w]) => {
+      if (n === tok) sc = Math.max(sc, w);
+      else if (n.indexOf(tok) >= 0) sc = Math.max(sc, w - 15);
+    });
+    if (sc > bestScore) { bestScore = sc; best = c; }
+  });
+  return bestScore >= 45 ? best : -1;
+}
+function mrAutoMap(names, side) {
+  const m = {};
+  m.irsaliye = mrPick(names, 'irsaliye');
+  m.irsaliye2 = side === 'a' ? mrPick(names, 'irsaliye2', [m.irsaliye]) : -1;
+  m.plaka = mrPick(names, 'plaka');
+  m.tarih = mrPick(names, 'tarih');
+  m.tonaj = mrPick(names, 'tonaj');
+  m.firma = side === 'a' ? mrPick(names, 'firma') : -1;
+  return m;
+}
+
+function mrLoad(fileName, sheetName, rows, typed, side) {
+  const t = buildTable(rows, sheetName, { typed });
+  const names = t.fields.map(f => f.name);
+  /* Raporda kullanıcının KENDİ dosya yapısını aynen geri veriyoruz: başlık satırı
+     ve satırlar orijinal hâliyle saklanır. buildTable boş kolonları atıp adları
+     tekilleştirdiği için t.data rapor kaynağı olarak kullanılamaz. */
+  const header = t.hasHeader ? (rows[t.headerIndex] || []) : [];
+  const body = rows.slice(t.hasHeader ? t.headerIndex + 1 : t.headerIndex)
+                   .filter(r => r.some(c => !mrBlank(c)));
+  let width = header.length;
+  body.forEach(r => { if (r.length > width) width = r.length; });
+  /* Ne başlığı ne verisi olan kolonlar atılır (Excel'in sağda bıraktığı N/O/P gibi
+     boşluklar). Başlığı olup içi boş olan kolon KALIR — o kullanıcının yapısıdır. */
+  const keep = [];
+  for (let c = 0; c < width; c++) {
+    let dolu = !mrBlank(header[c]);
+    for (let i = 0; i < body.length && !dolu; i++) if (!mrBlank(body[i][c])) dolu = true;
+    if (dolu) keep.push(c);
+  }
+  return { file: fileName, sheet: sheetName, t, names, header, body, width, keep,
+           map: mrAutoMap(names, side), side };
+}
+
+/* Kaynağın satırlarını ortak biçime çevirir */
+function mrRows(src) {
+  if (!src) return [];
+  const m = src.map, out = [];
+  src.t.data.forEach((r, i) => {
+    if (src.t.aggRows.has(i)) return;                    // ara toplam satırı
+    const rawNo = (m.irsaliye >= 0 && !mrBlank(r[m.irsaliye])) ? r[m.irsaliye]
+                : (m.irsaliye2 >= 0 ? r[m.irsaliye2] : '');
+    const row = {
+      i,
+      firma: m.firma >= 0 ? String(r[m.firma] == null ? '' : r[m.firma]).trim() : '',
+      no: mrBlank(rawNo) ? '' : String(rawNo).trim(),
+      key: mrKey(rawNo),
+      plaka: m.plaka >= 0 ? mrPlate(r[m.plaka]) : '',
+      tarih: m.tarih >= 0 ? mrDate(r[m.tarih]) : null,
+      kg: m.tonaj >= 0 ? mrNum(r[m.tonaj]) : null,
+      raw: r,
+      orig: src.body[i] || r
+    };
+    if (!row.no && !row.plaka && row.kg === null) return;
+    out.push(row);
+  });
+  return out;
+}
+
+/* Karşının kısa kodlarıyla en çok kesişen firma — tahmin, karar kullanıcının */
+function mrGuessFirma(ourAll, theirs) {
+  const keys = new Set(theirs.map(r => r.key).filter(Boolean));
+  if (!keys.size) return [];
+  const hit = new Map();
+  ourAll.forEach(r => {
+    if (!r.key || !keys.has(r.key)) return;
+    hit.set(r.firma, (hit.get(r.firma) || 0) + 1);
+  });
+  return [...hit.entries()].sort((a, b) => b[1] - a[1]).map(([firma, n]) => ({ firma, n }));
+}
+
+/* ---------- eşleştirme ---------- */
+function mrRun() {
+  const ourAll = mrRows(MR.a), theirs = mrRows(MR.b);
+  if (!ourAll.length || !theirs.length) return null;
+
+  let ours = MR.firms.length ? ourAll.filter(r => MR.firms.indexOf(r.firma) >= 0) : ourAll.slice();
+
+  // Karşının dönemi dışındaki kendi kayıtlarımız "eksik" sayılmasın
+  let lo = null, hi = null;
+  const days = theirs.map(r => mrDay(r.tarih)).filter(d => d !== null);
+  if (days.length) { lo = Math.min(...days); hi = Math.max(...days); }
+  const span = MR.shift + MR.tol + 1;
+  if (MR.scope && lo !== null) {
+    ours = ours.filter(r => {
+      const d = mrDay(r.tarih);
+      return d === null || (d >= lo - span && d <= hi + span);
+    });
+  }
+
+  ours.forEach(r => { r.m = null; r.method = ''; r.note = ''; r.groupOk = false; });
+  theirs.forEach(r => { r.used = false; r.mo = null; });
+
+  /* 1) İrsaliye son 5 hane — iki taraf da gruplanır, grup içinde tonaja göre eşlenir.
+        Bir irsaliyede birden çok kalem olabildiği için grup grup çalışmak şart. */
+  const byKeyT = new Map();
+  theirs.forEach(r => { if (r.key) { if (!byKeyT.has(r.key)) byKeyT.set(r.key, []); byKeyT.get(r.key).push(r); } });
+  const byKeyO = new Map();
+  ours.forEach(r => { if (r.key) { if (!byKeyO.has(r.key)) byKeyO.set(r.key, []); byKeyO.get(r.key).push(r); } });
+
+  byKeyO.forEach((og, key) => {
+    const tg = byKeyT.get(key);
+    if (!tg || !tg.length) return;
+    const oSort = og.slice().sort((a, b) => (b.kg || 0) - (a.kg || 0));
+    const tPool = tg.filter(x => !x.used);
+    oSort.forEach(o => {
+      let best = null, bestD = Infinity;
+      tPool.forEach(t => {
+        if (t.used) return;
+        const d = Math.abs((o.kg || 0) - (t.kg || 0));
+        if (d < bestD) { bestD = d; best = t; }
+      });
+      if (best) { best.used = true; best.mo = o; o.m = best; o.method = 'irsaliye'; }
+    });
+    // Kalem ayrımı farkı: sayılar tutmuyor ama toplam tutuyorsa bu bir fark değildir
+    const oSum = og.reduce((a, r) => a + (r.kg || 0), 0);
+    const tSum = tg.reduce((a, r) => a + (r.kg || 0), 0);
+    if (og.length !== tg.length && Math.abs(oSum - tSum) <= Math.max(MR.kg, 1)) {
+      // Karşı taraf aynı irsaliyeyi tek satırda vermiş (ya da tersi). Toplam tuttuğu
+      // sürece bu bir tonaj farkı değildir; fark toplamını şişirmesin diye ayrı durum.
+      og.forEach(r => { r.groupOk = true; r.note = 'Kalem ayrımı farklı, irsaliye toplamı uyumlu (' + nf(oSum) + ' kg)'; });
+    }
+  });
+
+  /* 2) Plaka + tonaj + tarih — sadece 1. aşamada eşleşmeyenler için */
+  ours.forEach(o => {
+    if (o.m || !o.plaka || o.kg === null) return;
+    const od = mrDay(o.tarih);
+    const cands = theirs.filter(t => {
+      if (t.used || t.plaka !== o.plaka || t.kg === null) return false;
+      if (Math.abs(t.kg - o.kg) > Math.max(MR.kg, 1)) return false;
+      if (od === null || mrDay(t.tarih) === null) return true;
+      return Math.abs(mrDay(t.tarih) - (od + MR.shift)) <= MR.tol;
+    });
+    if (cands.length === 1) { cands[0].used = true; cands[0].mo = o; o.m = cands[0]; o.method = 'plaka+tonaj+tarih'; }
+    else if (cands.length > 1) { o.method = 'belirsiz'; o.note = cands.length + ' aday var, elle bakılmalı'; }
+  });
+
+  /* durum */
+  let uyumlu = 0, farkli = 0, farkKg = 0, bizdeYok = 0, karsidaYok = 0, belirsiz = 0, kalem = 0;
+  ours.forEach(o => {
+    if (!o.m) {
+      if (o.groupOk) { o.durum = 'Kalem ayrımı'; kalem++; return; }
+      o.durum = o.method === 'belirsiz' ? 'Belirsiz' : 'Eşleşmedi';
+      if (o.method === 'belirsiz') belirsiz++; else karsidaYok++;
+      return;
+    }
+    const d = (o.kg === null || o.m.kg === null) ? null : (o.kg - o.m.kg);
+    o.fark = d;
+    const od = mrDay(o.tarih), td = mrDay(o.m.tarih);
+    if (od !== null && td !== null && td - od !== MR.shift) {
+      const k = td - od;
+      o.note = (o.note ? o.note + ' · ' : '') + 'Tarih kayması ' + (k > 0 ? '+' : '') + k + ' gün';
+    }
+    if (o.groupOk) { o.durum = 'Kalem ayrımı'; kalem++; }
+    else if (d === null || Math.abs(d) <= MR.kg) { o.durum = 'Uyumlu'; uyumlu++; }
+    else { o.durum = 'Fark var'; farkli++; farkKg += Math.abs(d); }
+  });
+  const theirUnmatched = theirs.filter(t => !t.used);
+  bizdeYok = theirUnmatched.length;
+
+  return { ours, theirs, theirUnmatched, uyumlu, farkli, farkKg, bizdeYok, karsidaYok, belirsiz, kalem,
+           lo, hi, ourAll };
+}
+
+/* ---------- çizim ---------- */
+function renderRecon() {
+  const host = $('#mrBody');
+  $('#mrInfoA').textContent = MR.a ? (MR.a.file + ' · ' + nf(MR.a.t.dataRowCount) + ' satır') : 'Firma, irsaliye no, plaka, tarih ve kilo kolonlarını içeren döküm';
+  $('#mrInfoB').textContent = MR.b ? (MR.b.file + ' · ' + nf(MR.b.t.dataRowCount) + ' satır') : 'Dönüştürücüden geçmiş liste: tarih · irsaliye no · plaka · kg';
+  $('#mrDropA').classList.toggle('done', !!MR.a);
+  $('#mrDropB').classList.toggle('done', !!MR.b);
+  $('#mrReset').style.display = (MR.a || MR.b) ? '' : 'none';
+
+  if (!MR.a || !MR.b) {
+    host.innerHTML = MR.a || MR.b
+      ? '<div class="mr-empty">İki dosya da yüklenince karşılaştırma başlar.</div>' : '';
+    $('#mrChip').classList.remove('on');
+    return;
+  }
+
+  const ourAll = mrRows(MR.a), theirs = mrRows(MR.b);
+  const guesses = mrGuessFirma(ourAll, theirs);
+  if (!MR.firms.length && guesses.length) MR.firms = guesses.map(g => g.firma);
+  const firms = [...new Set(ourAll.map(r => r.firma).filter(Boolean))].sort((a, b) => a.localeCompare(b, TR));
+  const gMap = new Map(guesses.map(g => [g.firma, g.n]));
+
+  let res = mrRun();
+  // Tarih kayması ilk hesapta ölçülür: eşleşen satırlarda en sık görülen fark
+  if (res && !MR.shiftSet) {
+    const say = new Map();
+    res.ours.forEach(o => {
+      if (!o.m) return;
+      const a = mrDay(o.tarih), b = mrDay(o.m.tarih);
+      if (a === null || b === null) return;
+      say.set(b - a, (say.get(b - a) || 0) + 1);
+    });
+    let en = 0, k = MR.shift;
+    say.forEach((n, d) => { if (n > en) { en = n; k = d; } });
+    MR.shiftSet = true;
+    if (k !== MR.shift) { MR.shift = k; res = mrRun(); }
+  }
+  if (res) res.guesses = guesses;
+  if (!res) { host.innerHTML = '<div class="mr-empty">Karşılaştırılacak satır bulunamadı.</div>'; return; }
+
+  $('#mrChipName').textContent = MR.firms.length ? (MR.firms.length === 1 ? MR.firms[0] : MR.firms.length + ' cari') : 'cari seçilmedi';
+  $('#mrChipMeta').textContent = res.lo !== null
+    ? ' · ' + mrFmt(new Date(res.lo * 86400000)) + ' – ' + mrFmt(new Date(res.hi * 86400000)) : '';
+  $('#mrChip').classList.add('on');
+
+  const ilk = guesses[0], ikinci = guesses[1];
+  const guven = !ilk ? 'kesişim yok — cariyi elle seçin'
+    : (ikinci ? ilk.n + ' satır tuttu · ikinci sıradaki ' + ikinci.firma.slice(0, 24) + ' (' + ikinci.n + ')'
+              : ilk.n + ' satır tuttu · başka aday yok');
+
+  host.innerHTML = `
+    <div class="mr-panel">
+      <div class="mr-head">
+        <p class="eyebrow" style="margin:0">Cari</p>
+        <span class="mr-hint">${esc(guven)}</span>
+        <span class="spacer"></span>
+        <button class="mr-link" id="mrAllHit" type="button">eşleşenlerin hepsi</button>
+        <button class="mr-link" id="mrNone" type="button">temizle</button>
+      </div>
+      <div class="mr-firms">
+        ${(guesses.length ? guesses.map(g => g.firma) : []).concat(MR.firms.filter(f => !gMap.has(f)))
+          .map(f => `<label class="mr-fchk${MR.firms.indexOf(f) >= 0 ? ' on' : ''}">
+             <input type="checkbox" class="mr-fbox" value="${esc(f)}"${MR.firms.indexOf(f) >= 0 ? ' checked' : ''}>
+             ${esc(f)}<b>${gMap.has(f) ? gMap.get(f) + ' eşleşme' : 'eşleşme yok'}</b></label>`).join('')
+          || '<span class="mr-hint">Karşı listeyle kesişen cari bulunamadı — aşağıdan elle ekleyin.</span>'}
+      </div>
+      <div class="mr-line">
+        <label>Başka cari ekle
+          <select id="mrAddFirma">
+            <option value="">— seç —</option>
+            ${firms.filter(f => MR.firms.indexOf(f) < 0).map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('')}
+          </select>
+        </label>
+        <span class="mr-hint">${nf(firms.length)} cari var, ${nf(MR.firms.length)} tanesi seçili</span>
+      </div>
+      <div class="mr-line">
+        <label>Tarih kayması <input type="number" id="mrShift" value="${MR.shift}" step="1"> gün</label>
+        <label>± tolerans <input type="number" id="mrTol" value="${MR.tol}" min="0" step="1"> gün</label>
+        <label>Kg toleransı <input type="number" id="mrKg" value="${MR.kg}" min="0" step="10"></label>
+        <label class="mr-chk"><input type="checkbox" id="mrScope"${MR.scope ? ' checked' : ''}> Karşının dönemi dışındaki kayıtlarımızı sayma</label>
+      </div>
+    </div>
+
+    <div class="mr-stats">
+      ${mrStat('Uyumlu', nf(res.uyumlu), 'satır eşleşti', false)}
+      ${mrStat('Fark var', nf(res.farkli), res.farkli ? 'toplam ' + nf(res.farkKg) + ' kg' : 'yok', res.farkli > 0)}
+      ${mrStat('Karşıda var, bizde yok', nf(res.bizdeYok), res.bizdeYok ? 'incelenmeli' : 'eksik yok', res.bizdeYok > 0)}
+      ${mrStat('Bizde var, karşıda yok', nf(res.karsidaYok), MR.scope ? 'dönem içi' : 'tüm kayıtlar', res.karsidaYok > 0)}
+      ${mrStat('Kalem ayrımı', nf(res.kalem), res.kalem ? 'toplam uyumlu, satır sayısı farklı' : 'yok', false)}
+      ${mrStat('Belirsiz', nf(res.belirsiz), res.belirsiz ? 'birden çok aday' : 'yok', res.belirsiz > 0)}
+    </div>
+
+    <div class="mr-acts">
+      <button class="btn btn-primary" id="mrDl" type="button">Mutabakat raporunu indir</button>
+      <button class="btn btn-ghost" id="mrToStudio" type="button">Rapor Stüdyosu'na gönder</button>
+      <span id="mrMsg" class="hint" style="margin:0"></span>
+    </div>
+    <div id="mrDlErr"></div>
+
+    <div class="mr-panel" style="margin-top:1.25rem">
+      <div class="mr-head">
+        <p class="eyebrow" style="margin:0">Satır karşılaştırması</p>
+        <span class="spacer"></span>
+        <div class="mr-tabs">
+          ${[['all', 'Tümü'], ['diff', 'Fark var'], ['none', 'Eşleşmeyen'], ['their', 'Karşıda var bizde yok']]
+            .map(([k, l]) => `<button class="mr-tab${MR.tab === k ? ' on' : ''}" data-tab="${k}" type="button">${l}</button>`).join('')}
+        </div>
+      </div>
+      <div class="mr-scroll">${mrTable(res)}</div>
+      <div class="mr-foot" id="mrFoot"></div>
+    </div>`;
+
+  mrWire(res);
+}
+
+function mrStat(k, v, u, bad) {
+  return `<div class="mr-stat${bad ? ' bad' : ''}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="u">${esc(u)}</div></div>`;
+}
+
+function mrTable(res) {
+  if (MR.tab === 'their') {
+    const rows = res.theirUnmatched;
+    if (!rows.length) return '<div class="mr-empty">Karşı tarafın her satırı karşılandı — eksik satır yok.</div>';
+    return `<table class="mr-t"><thead><tr>
+      <th>Karşı tarih</th><th>Karşı irsaliye</th><th>Karşı plaka</th><th class="num">Karşı kg</th></tr></thead><tbody>
+      ${rows.slice(0, 200).map(t => `<tr class="st-none"><td>${esc(mrFmt(t.tarih))}</td><td>${esc(t.no)}</td><td>${esc(t.plaka)}</td><td class="num">${t.kg === null ? '' : nf(t.kg)}</td></tr>`).join('')}
+      </tbody></table>`;
+  }
+  let rows = res.ours;
+  if (MR.tab === 'diff') rows = rows.filter(r => r.durum === 'Fark var');
+  if (MR.tab === 'none') rows = rows.filter(r => r.durum === 'Eşleşmedi' || r.durum === 'Belirsiz');
+  if (!rows.length) return '<div class="mr-empty">Bu listede satır yok.</div>';
+  return `<table class="mr-t"><thead><tr>
+    <th>Tarih</th><th>İrsaliye no</th><th>Plaka</th><th class="num">Bizim kg</th>
+    <th>Karşı tarih</th><th>Karşı irsaliye</th><th class="num">Karşı kg</th><th class="num">Fark</th>
+    <th>Yöntem</th><th>Durum</th><th>Not</th></tr></thead><tbody>
+    ${rows.slice(0, 200).map(o => {
+      const cls = (o.durum === 'Uyumlu' || o.durum === 'Kalem ayrımı') ? 'st-ok' : o.durum === 'Fark var' ? 'st-diff' : 'st-none';
+      return `<tr class="${cls}">
+        <td>${esc(mrFmt(o.tarih))}</td><td>${esc(o.no)}</td><td>${esc(o.plaka)}</td>
+        <td class="num">${o.kg === null ? '' : nf(o.kg)}</td>
+        <td>${o.m ? esc(mrFmt(o.m.tarih)) : ''}</td>
+        <td>${o.m ? esc(o.m.no) : ''}</td>
+        <td class="num">${o.m && o.m.kg !== null ? nf(o.m.kg) : ''}</td>
+        <td class="num">${o.fark === null || o.fark === undefined ? '' : nf(o.fark)}</td>
+        <td>${esc(o.method || '')}</td><td>${esc(o.durum)}</td>
+        <td title="${esc(o.note || '')}">${esc(o.note || '')}</td></tr>`;
+    }).join('')}
+    </tbody></table>`;
+}
+
+function mrWire(res) {
+  $$('#mrBody .mr-fbox').forEach(b => b.addEventListener('change', function () {
+    const f = this.value;
+    if (this.checked) { if (MR.firms.indexOf(f) < 0) MR.firms.push(f); }
+    else MR.firms = MR.firms.filter(x => x !== f);
+    renderRecon();
+  }));
+  const add = $('#mrAddFirma');
+  if (add) add.addEventListener('change', function () {
+    if (this.value && MR.firms.indexOf(this.value) < 0) MR.firms.push(this.value);
+    renderRecon();
+  });
+  $('#mrAllHit').addEventListener('click', () => { MR.firms = res.guesses.map(g => g.firma); renderRecon(); });
+  $('#mrNone').addEventListener('click', () => { MR.firms = []; renderRecon(); });
+  const num = (id, key) => $(id).addEventListener('change', function () {
+    const v = parseInt(this.value, 10);
+    MR[key] = isFinite(v) ? v : 0; renderRecon();
+  });
+  num('#mrShift', 'shift'); MR.shiftSet = true; num('#mrTol', 'tol'); num('#mrKg', 'kg');
+  $('#mrScope').addEventListener('change', function () { MR.scope = this.checked; renderRecon(); });
+  $$('#mrBody .mr-tab').forEach(b => b.addEventListener('click', () => { MR.tab = b.dataset.tab; renderRecon(); }));
+  $('#mrDl').addEventListener('click', () => mrDownload(res));
+  $('#mrToStudio').addEventListener('click', () => mrToStudio(res));
+
+  const gosterilen = MR.tab === 'their' ? res.theirUnmatched.length : res.ours.length;
+  $('#mrFoot').textContent = (gosterilen > 200 ? 'İlk 200 satır gösteriliyor · rapor dosyasında hepsi olur. ' : '')
+    + 'Eşleştirme sırası: irsaliye son ' + MR_KEYLEN + ' hane → plaka + tonaj + tarih. Bir karşı satır yalnız bir kez kullanılır.';
+}
+
+/* ---------- çıktı ---------- */
+/* Bizim dosyamız — kolonlarına dokunulmaz, sağına mutabakat kolonları eklenir.
+   Başlık satırı veri satırlarıyla AYNI genişliğe getirilir; yoksa ek kolonlar kayar. */
+function mrBaslik(src, ek) {
+  const h = src.header.length ? src.header : src.names;
+  const base = src.keep.map(c => (h[c] == null ? '' : h[c]));
+  return base.concat(ek).map(v => ({ v, bold: true }));
+}
+function mrSatir(src, orig) {
+  const r = orig || [];
+  return src.keep.map(c => (r[c] === undefined || r[c] === null ? '' : r[c]));
+}
+/* Satırın tamamına renk: kırmızı eşleşmeyen, turuncu tonaj farkı */
+function mrBoya(line, vurgu) {
+  if (!vurgu) return line;
+  return line.map(v => ({ v: (v && typeof v === 'object' && !(v instanceof Date)) ? v.v : v, vurgu }));
+}
+
+function mrBizimRows(res) {
+  const src = MR.a;
+  const rows = [mrBaslik(src, ['DURUM', 'YÖNTEM', 'KARŞI TARİH', 'KARŞI İRSALİYE NO', 'KARŞI PLAKA', 'KARŞI KG', 'FARK (KG)'])];
+  res.ours.forEach(o => {
+    const line = mrSatir(src, o.orig);
+    line.push(o.durum || '', o.method || '',
+      o.m ? (o.m.tarih || '') : '', o.m ? o.m.no : '', o.m ? o.m.plaka : '',
+      o.m && o.m.kg !== null ? o.m.kg : '',
+      (o.fark === null || o.fark === undefined) ? '' : o.fark);
+    const vurgu = (o.durum === 'Eşleşmedi' || o.durum === 'Belirsiz') ? 'bad'
+                : (o.durum === 'Fark var' ? 'warn' : null);
+    rows.push(mrBoya(line, vurgu));
+  });
+  return rows;
+}
+
+/* Karşı tarafın dosyası — sadece durum ve fark yazılır, gerisi fazlalık */
+function mrKarsiRows(res) {
+  const src = MR.b;
+  const rows = [mrBaslik(src, ['DURUM', 'FARK (KG)'])];
+  res.theirs.forEach(t => {
+    const line = mrSatir(src, t.orig);
+    const o = t.mo;
+    const durum = !o ? 'Eşleşmedi' : (o.durum === 'Fark var' ? 'Eşleşti — tonaj farkı var' : 'Eşleşti');
+    line.push(durum, (o && o.fark !== null && o.fark !== undefined) ? o.fark : '');
+    const vurgu = !o ? 'bad' : (o.durum === 'Fark var' ? 'warn' : null);
+    rows.push(mrBoya(line, vurgu));
+  });
+  return rows;
+}
+
+function mrOzetRows(res) {
+  const donem = res.lo !== null
+    ? mrFmt(new Date(res.lo * 86400000)) + ' – ' + mrFmt(new Date(res.hi * 86400000)) : '—';
+  const rows = [
+    [{ v: 'MUTABAKAT ÖZETİ', bold: true }],
+    ['Cari', MR.firms.length ? MR.firms.join(' · ') : '—'],
+    ['Dönem', donem],
+    ['Bizim dosya', MR.a.file],
+    ['Karşı dosya', MR.b.file],
+    ['Tarih kayması varsayımı', MR.shift + ' gün (± ' + MR.tol + ' gün)'],
+    ['Kg toleransı', MR.kg + ' kg'],
+    [],
+    [{ v: 'SAYAÇLAR', bold: true }],
+    ['Uyumlu', res.uyumlu],
+    ['Fark var', res.farkli],
+    ['Fark toplamı (kg)', res.farkKg],
+    ['Karşıda var, bizde yok', res.bizdeYok],
+    ['Bizde var, karşıda yok', res.karsidaYok],
+    ['Kalem ayrımı (toplam uyumlu)', res.kalem],
+    ['Belirsiz', res.belirsiz],
+    []
+  ];
+  rows.push([{ v: 'TONAJ FARKI OLAN SATIRLAR', bold: true }]);
+  const farklar = res.ours.filter(o => o.durum === 'Fark var');
+  if (!farklar.length) rows.push(['Fark yok']);
+  else {
+    rows.push(['Tarih', 'İrsaliye no', 'Plaka', 'Bizim kg', 'Karşı kg', 'Fark'].map(v => ({ v, bold: true })));
+    farklar.forEach(o => rows.push([o.tarih || '', o.no, o.plaka, o.kg, o.m ? o.m.kg : '', o.fark].map(v => ({ v, vurgu: 'warn' }))));
+  }
+  rows.push([]);
+  rows.push([{ v: 'KARŞIDA VAR, BİZDE YOK', bold: true }]);
+  if (!res.theirUnmatched.length) rows.push(['Eksik satır yok']);
+  else {
+    rows.push(['Karşı tarih', 'Karşı irsaliye', 'Karşı plaka', 'Karşı kg'].map(v => ({ v, bold: true })));
+    res.theirUnmatched.forEach(t => rows.push([t.tarih || '', t.no, t.plaka, t.kg].map(v => ({ v, vurgu: 'bad' }))));
+  }
+  return rows;
+}
+
+/* "Sheet1", "Sayfa1" gibi adlar bilgi taşımaz; onların yerine okunur bir ad yazılır */
+function mrSheetAd(ad, yedek) {
+  const n = mrNorm(ad);
+  if (!n || /^(sheet|sayfa|tablo|table)\d*$/.test(n)) return yedek;
+  return ad;
+}
+
+function mrOutName() {
+  const f = (MR.firms[0] || 'mutabakat').replace(/[\\/:*?"<>|]/g, ' ').trim().slice(0, 60);
+  return f + ' - mutabakat.xlsx';
+}
+
+async function mrDownload(res) {
+  const err = $('#mrDlErr'); err.innerHTML = '';
+  if (!indirmeIzni(err)) return;
+  const btn = $('#mrDl'), eski = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Hazırlanıyor…';
+  try {
+    const book = xBook();
+    book.sheet('Mutabakat Özeti', mrOzetRows(res), { freezeHeader: false });
+    book.sheet(mrSheetAd(MR.a.sheet, 'Bizim kayıtlar'), mrBizimRows(res), { autoFilter: true, freezeHeader: true });
+    book.sheet(mrSheetAd(MR.b.sheet, 'Karşı taraf'), mrKarsiRows(res), { autoFilter: true, freezeHeader: true });
+    indir(await book.blob(), mrOutName());
+    $('#mrMsg').textContent = 'Rapor indirildi.';
+  } catch (e) {
+    err.innerHTML = `<div class="err">Rapor oluşturulamadı: ${esc(e && e.message ? e.message : String(e))}</div>`;
+  } finally { btn.disabled = false; btn.textContent = eski; }
+}
+
+function mrToStudio(res) {
+  const rows = mrBizimRows(res).map(r => r.map(c => (c && typeof c === 'object' && !(c instanceof Date)) ? c.v : c));
+  S.fileName = mrOutName();
+  loadSheets([{ name: 'Mutabakat', rows }], 0, true);
+  location.hash = '#/studyo';
+}
+
+/* ---------- dosya alma ---------- */
+async function mrHandle(file, side) {
+  $('#mrErr').innerHTML = '';
+  try {
+    if (!file.size) throw new Error('Dosya boş görünüyor.');
+    if (file.size / (1024 * 1024) > MAX_FILE_MB) throw new Error('Dosya sınırı ' + MAX_FILE_MB + ' MB.');
+    const isCsv = /\.(csv|tsv|txt)$/i.test(file.name);
+    const sheets = isCsv
+      ? [{ name: file.name.replace(/\.[^.]+$/, ''), rows: parseCSV(await file.text()) }]
+      : await readXlsx(await file.arrayBuffer());
+    // en çok satırı olan sayfa
+    const sh = sheets.reduce((b, s) => (s.rows.length > b.rows.length ? s : b), sheets[0]);
+    const src = mrLoad(file.name, sh.name, sh.rows, !isCsv, side);
+    if (!src.t.fields.length || !src.t.dataRowCount) throw new Error('Tablo biçiminde veri bulunamadı.');
+    if (side === 'a') { MR.a = src; MR.firms = []; } else MR.b = src;
+    MR.shiftSet = false;
+    renderRecon();
+  } catch (e) {
+    $('#mrErr').innerHTML = `<div class="err"><b>${esc(file.name)} okunamadı.</b><br>${esc(e && e.message ? e.message : String(e))}</div>`;
+  }
+}
+
+(function mrInit() {
+  const A = $('#mrDropA'), B = $('#mrDropB');
+  if (!A || !B) return;
+  [['A', 'a'], ['B', 'b']].forEach(([suf, side]) => {
+    const drop = $('#mrDrop' + suf), input = $('#mrInput' + suf);
+    $('#mrPick' + suf).addEventListener('click', e => { e.stopPropagation(); input.click(); });
+    drop.addEventListener('click', e => { if (e.target.closest('button')) return; input.click(); });
+    drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+    input.addEventListener('change', () => { if (input.files[0]) mrHandle(input.files[0], side); input.value = ''; });
+    ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('hot'); }));
+    ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => {
+      e.preventDefault();
+      if (t === 'dragleave' && drop.contains(e.relatedTarget)) return;
+      drop.classList.remove('hot');
+    }));
+    drop.addEventListener('drop', e => { const f = e.dataTransfer.files[0]; if (f) mrHandle(f, side); });
+  });
+  $('#mrReset').addEventListener('click', () => {
+    MR.a = null; MR.b = null; MR.firms = []; MR.tab = 'all';
+    $('#mrErr').innerHTML = ''; renderRecon();
   });
 })();
 
