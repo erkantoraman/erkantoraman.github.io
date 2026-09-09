@@ -8257,7 +8257,7 @@ function initCVControls() {
    ============================================================ */
 
 const MG = { srcs: [], tpl: 0, source: true, append: false, dup: true, dupKey: -1,
-             mod: 'tek', sirala: true, tarihKol: -1 };
+             mod: 'tek', sirala: true, tarihKol: -1, ad: 'ikisi' };
 let mgUid = 0;
 
 const mgBlank = v => v === null || v === undefined || String(v).trim() === '';
@@ -8352,6 +8352,7 @@ function mgBuild() {
   const withSrc = MG.mod === 'tek' && MG.source && onCount > 1;
 
   const rows = [];
+  const adlar = mgAdHarita();
   let agg = 0;
   MG.srcs.forEach(s => {
     if (!s.on) return;
@@ -8370,7 +8371,7 @@ function mgBuild() {
       ex.forEach(u => { if (!mgBlank(r[u.c])) extra[u.name] = r[u.c]; });
       if (!any && !Object.keys(extra).length) return;
       added.forEach(n => vals.push(extra[n] === undefined ? '' : extra[n]));
-      rows.push({ vals, src: s.name, sheet: mgSayfaAd(s), dup: false });
+      rows.push({ vals, src: s.name, sheet: adlar[s.id], dup: false });
     });
   });
 
@@ -8395,10 +8396,24 @@ function mgBuild() {
   return { cols: cols.concat(added), tplCount: cols.length, addedCount: added.length, rows, dup, agg, withSrc };
 }
 
-/* Sayfa adı: çok sayfalı dosyada sayfa adı, tekse dosya adı (uzantısız) */
-function mgSayfaAd(s) {
-  const ad = s.sheet ? s.sheet : s.file.replace(/\.[^.]+$/, '');
-  return String(ad).trim().slice(0, 31) || 'Sayfa';
+/* Çıktı sayfa adı.
+   'ikisi' : "dosya - sayfa". Hangi sayfanın hangi dosyadan geldiği kaybolmaz;
+             iki dosyada aynı adlı sayfa olduğunda da çakışma olmaz.
+   'sayfa' : sadece sayfa adı. Çakışırsa yine dosya adıyla ayrıştırılır. */
+function mgHamAd(s) {
+  const dosya = s.file.replace(/\.[^.]+$/, '');
+  if (MG.ad === 'sayfa') return s.sheet ? s.sheet : dosya;
+  return s.sheet ? (dosya + ' - ' + s.sheet) : dosya;
+}
+function mgAdHarita() {
+  const out = {}, say = {}, acik = MG.srcs.filter(s => s.on !== false);
+  acik.forEach(s => { const a = mgHamAd(s); say[a] = (say[a] || 0) + 1; });
+  acik.forEach(s => {
+    let a = mgHamAd(s);
+    if (say[a] > 1) a = s.file.replace(/\.[^.]+$/, '') + ' - ' + a;   // çakışmayı dosya adı çözer
+    out[s.id] = String(a).trim().slice(0, 31) || 'Sayfa';
+  });
+  return out;
 }
 
 /* Tarih kolonu: değerlerinin çoğu tarihe çözülen ilk kolon */
@@ -8556,7 +8571,12 @@ function renderMerge() {
               <option value="sayfa"${MG.mod === 'sayfa' ? ' selected' : ''}>Her kaynak ayrı sayfa</option>
             </select>
           </label>
-          ${MG.mod === 'sayfa' ? `<label><input type="checkbox" id="mgSirala"${MG.sirala ? ' checked' : ''}> Sayfaları tarihe göre sırala</label>` : ''}
+          ${MG.mod === 'sayfa' ? `<label>Sayfa adı:
+            <select id="mgAd">
+              <option value="ikisi"${MG.ad === 'ikisi' ? ' selected' : ''}>Dosya adı - sayfa adı</option>
+              <option value="sayfa"${MG.ad === 'sayfa' ? ' selected' : ''}>Sadece sayfa adı</option>
+            </select></label>
+          <label><input type="checkbox" id="mgSirala"${MG.sirala ? ' checked' : ''}> Sayfaları tarihe göre sırala</label>` : ''}
           <label${MG.mod === 'sayfa' ? '' : ' hidden'}><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''} hidden></label>
           ${MG.mod === 'tek' ? `<label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu</label>` : ''}
           <label><input type="checkbox" id="mgOptAdd"${MG.append ? ' checked' : ''}> Eşleşmeyen kolonları ekle</label>
@@ -8609,6 +8629,7 @@ function mgCardHtml(s, i, names) {
         </label>
         <span class="mg-name">${esc(s.file)}</span>
         ${s.sheet ? `<span class="mg-tag">sayfa: ${esc(s.sheet)}</span>` : ''}
+        ${MG.mod === 'sayfa' && s.on !== false ? `<span class="mg-tag">→ ${esc(mgAdHarita()[s.id] || '')}</span>` : ''}
         ${isTpl ? '<span class="mg-tag tpl">ŞABLON</span>'
                 : `<span class="mg-tag ${m === names.length ? 'ok' : 'no'}">${m}/${names.length} kolon eşleşti</span>`}
         <span class="mg-tag">${nf(satir)} satır</span>
@@ -8693,6 +8714,8 @@ function mgWire(names) {
   $('#mgMod').addEventListener('change', function () { MG.mod = this.value; renderMerge(); });
   const sr = $('#mgSirala');
   if (sr) sr.addEventListener('change', function () { MG.sirala = this.checked; renderMerge(); });
+  const ad = $('#mgAd');
+  if (ad) ad.addEventListener('change', function () { MG.ad = this.value; renderMerge(); });
   $('#mgOptAdd').addEventListener('change', function () { MG.append = this.checked; renderMerge(); });
   $('#mgOptDup').addEventListener('change', function () { MG.dup = this.checked; renderMerge(); });
   $('#mgDupKey').addEventListener('change', function () { MG.dupKey = +this.value; renderMerge(); });
@@ -9274,8 +9297,8 @@ function renderRecon() {
     </div>
 
     <div class="mr-acts">
-      <button class="btn btn-primary" id="mrDl" type="button">Mutabakat raporunu indir</button>
-      <button class="btn btn-ghost" id="mrToStudio" type="button">Rapor Stüdyosu'na gönder</button>
+      <button class="btn btn-primary" id="mrToStudio" type="button">Rapor Stüdyosu'na gönder</button>
+      <button class="btn btn-ghost" id="mrDl" type="button">Mutabakat raporunu indir</button>
       <span id="mrMsg" class="hint" style="margin:0"></span>
     </div>
     <div id="mrDlErr"></div>
