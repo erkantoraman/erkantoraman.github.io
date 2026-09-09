@@ -1902,6 +1902,15 @@ pre.code .f { color: var(--s7); font-weight: 500; }
 :root[data-theme="dark"] #v-recon table.mr-t tr.st-none td { background: #2a1616 }
 #v-recon .mr-foot { padding: .6rem .95rem; border-top: 1px solid var(--rule); color: var(--ink-3); font-size: .82rem }
 #v-recon .mr-empty { padding: 2rem .95rem; text-align: center; color: var(--ink-3) }
+#v-recon .mr-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: .8rem; padding: .85rem .95rem }
+#v-recon .mr-f { display: flex; flex-direction: column; gap: .25rem }
+#v-recon .mr-f label { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--ink-3) }
+#v-recon .mr-f select { width: 100%; max-width: none }
+#v-recon .mr-f select.void { border-color: var(--critical); color: var(--crit-ink) }
+#v-recon .mr-f small { font-size: .76rem; color: var(--ink-3); min-height: 1.1em; overflow-wrap: anywhere }
+#v-recon .mr-tag { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; padding: .12rem .45rem; border: 1px solid var(--rule-2); color: var(--ink-3) }
+#v-recon .mr-tag.ok { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-hi) }
+#v-recon .mr-tag.no { background: #fbeaea; border-color: var(--critical); color: var(--crit-ink) }
 </style>
 <header class="mast">
   <div class="wrap mast-in">
@@ -8752,35 +8761,130 @@ const mrPlate = v => mrBlank(v) ? '' : String(v).toUpperCase().replace(/[\s\-.]/
 /* ---------- kolon tanıma ---------- */
 const MR_HINTS = {
   firma:    [['firma', 100], ['cari', 95], ['musteri', 85], ['unvan', 80], ['tedarikci', 80]],
-  irsaliye: [['eirsaliyeno', 105], ['eirsaliye', 100], ['irsaliyeno', 95], ['irslno', 90], ['belgeno', 70], ['faturano', 60]],
-  irsaliye2:[['irslno', 105], ['irsaliyeno', 95], ['belgeno', 70]],
-  plaka:    [['plakano', 100], ['plaka', 95], ['arac', 60]],
-  tarih:    [['irsaliyetarihi', 105], ['sevktarihi', 95], ['tarih', 80], ['tartitarihi', 60]],
-  tonaj:    [['irsaliyekilosu', 105], ['tonajkg', 100], ['tonaj', 95], ['netkilo', 90], ['kilo', 80], ['ton', 70], ['gecerlikilo', 55], ['miktar', 60]]
+  tarih:    [['irsaliyetarihi', 105], ['sevktarihi', 100], ['tarih', 80], ['date', 60], ['sevk', 50], ['tartitarihi', 55]],
+  irsaliye: [['eirsaliyeno', 105], ['irsaliyeno', 100], ['sevkirsaliyeno', 95], ['irsaliye', 90],
+             ['faturano', 85], ['belgeno', 80], ['irslno', 90], ['no', 30]],
+  irsaliye2:[['irslno', 105], ['irsaliyeno', 95], ['belgeno', 70], ['no', 30]],
+  plaka:    [['plakano', 100], ['plaka', 95], ['aracplaka', 95], ['arac', 50], ['tasit', 50]],
+  tonaj:    [['irsaliyekilosu', 105], ['kantarkilosu', 100], ['netkilo', 100], ['tonaj', 100], ['tonajkg', 100],
+             ['brutkilo', 85], ['kilo', 85], ['ton', 85], ['netagirlik', 85], ['agirlik', 70],
+             ['miktar', 70], ['kg', 70], ['gecerlikilo', 55], ['net', 45]]
 };
-function mrPick(names, key, skip) {
-  let best = -1, bestScore = 0;
+
+/* Bir alanın ASLA eşleşmemesi gereken başlıklar.
+   "İrsaliye Kilosu" bir irsaliye NUMARASI değildir; "Sipariş No" da tonaj değildir. */
+const MR_BLOCK = {
+  firma:    ['tarih', 'plaka', 'kilo', 'tonaj'],
+  tarih:    ['tonaj', 'kilo', 'plaka', 'tutar', 'adet'],
+  irsaliye: ['kilo', 'tonaj', 'tutar', 'fiyat', 'miktar', 'agirlik', 'tarih', 'plaka', 'kg', 'ton'],
+  irsaliye2:['kilo', 'tonaj', 'tutar', 'fiyat', 'miktar', 'agirlik', 'tarih', 'plaka', 'kg', 'ton'],
+  plaka:    ['tarih', 'tonaj', 'kilo', 'tutar'],
+  tonaj:    ['tarih', 'plaka', 'siparis', 'musteri', 'santiye', 'no', 'id', 'kod']
+};
+function mrBlocked(key, n) {
+  const list = MR_BLOCK[key] || [];
+  for (let i = 0; i < list.length; i++) {
+    const tok = list[i];
+    if (tok.length <= 3 ? (n === tok) : (n.indexOf(tok) >= 0)) return true;
+  }
+  return false;
+}
+
+/* Bir kolondan örnek değerler (özet satırları hariç) + doluluk oranı */
+function mrVals(t, c) {
+  const out = [];
+  for (let i = 0; i < t.data.length && out.length < 60; i++) {
+    if (t.aggRows.has(i)) continue;
+    const v = t.data[i][c];
+    if (!mrBlank(v)) out.push(v);
+  }
+  return out;
+}
+function mrFill(t, c) {
+  const n = Math.min(t.data.length, 400);
+  let dolu = 0, gorulen = 0;
+  for (let i = 0; i < n; i++) {
+    if (t.aggRows.has(i)) continue;
+    gorulen++;
+    if (!mrBlank(t.data[i][c])) dolu++;
+  }
+  return gorulen ? dolu / gorulen : 0;
+}
+/* Sıra numarası kolonu (1,2,3…) belge numarası değildir.
+   DİKKAT: gerçek irsaliye numaraları da ardışık olabilir (54700, 54701…).
+   O yüzden ardışıklık TEK BAŞINA yetmez; 1'den başlaması ya da küçük kalması aranır. */
+function mrSira(vals) {
+  if (vals.length < 3) return false;
+  const say = vals.map(v => parseInt(String(v).replace(/\D/g, ''), 10)).filter(isFinite);
+  if (say.length < 3) return false;
+  let art = 0;
+  for (let i = 1; i < say.length; i++) if (say[i] === say[i - 1] + 1) art++;
+  if (art < say.length - 2) return false;
+  return say[0] <= 2 || Math.max.apply(null, say) < 5000;
+}
+const MR_PLAKA_RE = /^[0-8][0-9]\s?[A-ZÇĞİÖŞÜ]{1,3}\s?[0-9]{2,5}$/;
+
+/* Puan = başlık + içerik kanıtı + DOLULUK.
+   Doluluk şart: "Kantar Kilosu" yarı boş, "İrsaliye Kilosu" tam dolu olduğunda
+   dolu olan kazanmalı — dönüştürücüde bu kuralı eklemek gerçek bir hatayı çözmüştü. */
+function mrPick(t, names, key, skip) {
+  let best = -1, bestScore = 25;
   names.forEach((h, c) => {
     if (skip && skip.indexOf(c) >= 0) return;
     const n = mrNorm(h);
+    if (mrBlocked(key, n)) return;
     let sc = 0;
     MR_HINTS[key].forEach(([tok, w]) => {
       if (n === tok) sc = Math.max(sc, w);
       else if (n.indexOf(tok) >= 0) sc = Math.max(sc, w - 15);
     });
+    if (sc <= 0) return;
+    const vals = mrVals(t, c);
+    if (key === 'irsaliye' || key === 'irsaliye2') {
+      if (mrSira(vals)) sc -= 70;
+      else if (vals.length && vals.every(v => String(v).replace(/\D/g, '').length >= 4)) sc += 20;
+    }
+    if (key === 'plaka' && vals.length) {
+      const ok = vals.filter(v => MR_PLAKA_RE.test(String(v).toUpperCase().replace(/\s+/g, ' ').trim())).length;
+      sc += ok / vals.length > 0.6 ? 25 : -20;
+    }
+    if (key === 'tarih' && vals.length) {
+      const ok = vals.filter(v => mrDate(v)).length;
+      sc += ok / vals.length > 0.6 ? 25 : -40;
+    }
+    if (key === 'tonaj' && vals.length) {
+      const ok = vals.filter(v => mrNum(v) !== null).length;
+      sc += ok / vals.length > 0.6 ? 20 : -40;
+    }
+    sc += Math.round(mrFill(t, c) * 25);
     if (sc > bestScore) { bestScore = sc; best = c; }
   });
-  return bestScore >= 45 ? best : -1;
+  return best;
 }
-function mrAutoMap(names, side) {
+function mrAutoMap(t, names, side) {
   const m = {};
-  m.irsaliye = mrPick(names, 'irsaliye');
-  m.irsaliye2 = side === 'a' ? mrPick(names, 'irsaliye2', [m.irsaliye]) : -1;
-  m.plaka = mrPick(names, 'plaka');
-  m.tarih = mrPick(names, 'tarih');
-  m.tonaj = mrPick(names, 'tonaj');
-  m.firma = side === 'a' ? mrPick(names, 'firma') : -1;
+  m.irsaliye = mrPick(t, names, 'irsaliye');
+  m.irsaliye2 = side === 'a' ? mrPick(t, names, 'irsaliye2', [m.irsaliye]) : -1;
+  m.plaka = mrPick(t, names, 'plaka');
+  m.tarih = mrPick(t, names, 'tarih');
+  m.tonaj = mrPick(t, names, 'tonaj');
+  m.firma = side === 'a' ? mrPick(t, names, 'firma') : -1;
   return m;
+}
+
+/* Ton mu kg mı: virgüllü ondalık ("26,060"), küsuratlı sayı ya da 1000 altı → ton */
+function mrTonMu(v) {
+  if (typeof v === 'string' && /,\d/.test(v)) return true;
+  const n = mrNum(v);
+  if (n === null) return false;
+  if (n !== Math.round(n)) return true;
+  return n < 1000;
+}
+function mrKg(v, birim) {
+  const n = mrNum(v);
+  if (n === null) return null;
+  const ton = birim === 'ton' ? true : birim === 'kg' ? false : mrTonMu(v);
+  return Math.round(ton ? n * 1000 : n);
 }
 
 function mrLoad(fileName, sheetName, rows, typed, side) {
@@ -8803,7 +8907,7 @@ function mrLoad(fileName, sheetName, rows, typed, side) {
     if (dolu) keep.push(c);
   }
   return { file: fileName, sheet: sheetName, t, names, header, body, width, keep,
-           map: mrAutoMap(names, side), side };
+           birim: 'auto', map: mrAutoMap(t, names, side), side };
 }
 
 /* Kaynağın satırlarını ortak biçime çevirir */
@@ -8821,7 +8925,7 @@ function mrRows(src) {
       key: mrKey(rawNo),
       plaka: m.plaka >= 0 ? mrPlate(r[m.plaka]) : '',
       tarih: m.tarih >= 0 ? mrDate(r[m.tarih]) : null,
-      kg: m.tonaj >= 0 ? mrNum(r[m.tonaj]) : null,
+      kg: m.tonaj >= 0 ? mrKg(r[m.tonaj], src.birim) : null,
       raw: r,
       orig: src.body[i] || r
     };
@@ -8988,6 +9092,9 @@ function renderRecon() {
               : ilk.n + ' satır tuttu · başka aday yok');
 
   host.innerHTML = `
+    ${mrKolonPanel(MR.a, 'a', 'Bizim kayıtlar')}
+    ${mrKolonPanel(MR.b, 'b', 'Karşı taraf')}
+
     <div class="mr-panel">
       <div class="mr-head">
         <p class="eyebrow" style="margin:0">Cari</p>
@@ -9052,6 +9159,57 @@ function renderRecon() {
   mrWire(res);
 }
 
+/* Kolon eşleştirme — otomatik tanıma şaştığında elle düzeltilebilsin diye.
+   Sessiz yanlış eşleştirme, görünür yanlış eşleştirmeden çok daha tehlikeli. */
+const MR_ALAN = {
+  a: [['irsaliye', 'İrsaliye no'], ['irsaliye2', 'Yedek irsaliye no'], ['plaka', 'Plaka'], ['tarih', 'Tarih'], ['tonaj', 'Tonaj'], ['firma', 'Cari / firma']],
+  b: [['irsaliye', 'İrsaliye no'], ['plaka', 'Plaka'], ['tarih', 'Tarih'], ['tonaj', 'Tonaj']]
+};
+function mrKolonPanel(src, side, baslik) {
+  if (!src) return '';
+  const alanlar = MR_ALAN[side];
+  const eksik = alanlar.filter(([k]) => src.map[k] < 0 && k !== 'irsaliye2' && k !== 'firma').length;
+  return `
+    <div class="mr-panel">
+      <div class="mr-head">
+        <p class="eyebrow" style="margin:0">${esc(baslik)} — kolonlar</p>
+        <span class="mr-hint">${esc(src.file)}</span>
+        <span class="spacer"></span>
+        ${eksik ? `<span class="mr-tag no">${eksik} kolon tanınmadı</span>` : '<span class="mr-tag ok">tümü tanındı</span>'}
+      </div>
+      <div class="mr-map">
+        ${alanlar.map(([k, l]) => {
+          const c = src.map[k];
+          let ornek = '';
+          if (c >= 0) {
+            const v = mrVals(src.t, c)[0];
+            const dol = Math.round(mrFill(src.t, c) * 100);
+            ornek = (v === undefined ? 'veri yok'
+              : 'örnek: ' + (k === 'tonaj' ? nf(mrKg(v, src.birim)) + ' kg' : (v instanceof Date ? mrFmt(v) : String(v))))
+              + (dol < 100 ? '  ·  %' + dol + ' dolu' : '');
+          } else ornek = 'seçilmedi';
+          return `<div class="mr-f">
+            <label>${esc(l)}</label>
+            <select class="mr-sel${c < 0 ? ' void' : ''}" data-side="${side}" data-alan="${k}">
+              <option value="-1"${c < 0 ? ' selected' : ''}>— yok —</option>
+              ${src.names.map((h, i) => `<option value="${i}"${c === i ? ' selected' : ''}>${esc(h)}</option>`).join('')}
+            </select>
+            <small>${esc(ornek)}</small>
+          </div>`;
+        }).join('')}
+        <div class="mr-f">
+          <label>Tonaj birimi</label>
+          <select class="mr-birim" data-side="${side}">
+            <option value="auto"${src.birim === 'auto' ? ' selected' : ''}>Otomatik (virgüllüyse ton)</option>
+            <option value="ton"${src.birim === 'ton' ? ' selected' : ''}>Hepsi ton → ×1000</option>
+            <option value="kg"${src.birim === 'kg' ? ' selected' : ''}>Hepsi kg</option>
+          </select>
+          <small>${src.map.tonaj >= 0 ? esc(String(mrVals(src.t, src.map.tonaj)[0] ?? '')) + ' → ' + nf(mrKg(mrVals(src.t, src.map.tonaj)[0], src.birim)) + ' kg' : ''}</small>
+        </div>
+      </div>
+    </div>`;
+}
+
 function mrStat(k, v, u, bad) {
   return `<div class="mr-stat${bad ? ' bad' : ''}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="u">${esc(u)}</div></div>`;
 }
@@ -9089,6 +9247,18 @@ function mrTable(res) {
 }
 
 function mrWire(res) {
+  $$('#mrBody .mr-sel').forEach(s => s.addEventListener('change', function () {
+    const src = this.dataset.side === 'a' ? MR.a : MR.b;
+    src.map[this.dataset.alan] = parseInt(this.value, 10);
+    if (this.dataset.side === 'a') MR.firms = [];
+    MR.shiftSet = false;
+    renderRecon();
+  }));
+  $$('#mrBody .mr-birim').forEach(s => s.addEventListener('change', function () {
+    const src = this.dataset.side === 'a' ? MR.a : MR.b;
+    src.birim = this.value;
+    renderRecon();
+  }));
   $$('#mrBody .mr-fbox').forEach(b => b.addEventListener('change', function () {
     const f = this.value;
     if (this.checked) { if (MR.firms.indexOf(f) < 0) MR.firms.push(f); }
