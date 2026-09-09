@@ -1712,6 +1712,114 @@ pre.code .f { color: var(--s7); font-weight: 500; }
 }
 .rel-todo .mono { font-family: var(--f-mono); font-size: .74rem; color: var(--ink); }
 .rel-todo em { font-style: normal; font-size: .7rem; color: var(--ink-3); }
+
+/* ============================================================
+   BİRLEŞTİRİCİ (#/birlestir)
+   Stüdyonun bileşenlerini kullanır; buradaki kurallar yalnız
+   #v-merge içinde geçerli olsun diye hepsi kapsamlandırılmıştır.
+   ============================================================ */
+#v-merge .mg-lede { max-width: 68ch; margin: .25rem 0 1.25rem }
+
+#v-merge .mg-tpl {
+  margin-top: 1.5rem; border: 1px solid var(--rule); background: var(--surface);
+  box-shadow: var(--shadow);
+}
+#v-merge .mg-tpl-head {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  padding: .7rem .95rem; border-bottom: 1px solid var(--rule);
+}
+#v-merge .mg-cols { display: flex; flex-wrap: wrap; gap: .35rem; padding: .85rem .95rem }
+#v-merge .mg-col {
+  font-family: var(--f-mono); font-size: .78rem; padding: .15rem .5rem;
+  background: var(--accent-soft); color: var(--accent-hi); border: 1px solid var(--accent);
+}
+#v-merge .mg-col i { opacity: .55; font-style: normal; margin-right: .35rem }
+#v-merge .mg-col.add { background: var(--surface-2); color: var(--ink-2); border-color: var(--rule-2) }
+
+#v-merge .mg-srcs { display: flex; flex-direction: column; gap: .85rem; margin-top: 1.25rem }
+#v-merge .mg-src { border: 1px solid var(--rule); background: var(--surface); box-shadow: var(--shadow) }
+#v-merge .mg-src.off { opacity: .55; box-shadow: none; border-style: dashed }
+#v-merge .mg-src.off .mg-src-body { display: none }
+#v-merge .mg-src-head {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  padding: .7rem .95rem; border-bottom: 1px solid var(--rule);
+}
+#v-merge .mg-name { font-weight: 600; overflow-wrap: anywhere }
+#v-merge .mg-tag {
+  font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600;
+  padding: .12rem .45rem; border: 1px solid var(--rule-2); color: var(--ink-3); white-space: nowrap;
+}
+#v-merge .mg-tag.tpl { background: var(--accent); border-color: var(--accent); color: var(--accent-ink) }
+#v-merge .mg-tag.ok { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-hi) }
+#v-merge .mg-tag.no { background: #fbeaea; border-color: var(--critical); color: var(--crit-ink) }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #v-merge .mg-tag.no { background: #2a1616 }
+}
+:root[data-theme="dark"] #v-merge .mg-tag.no { background: #2a1616 }
+
+#v-merge .mg-line {
+  display: flex; align-items: center; gap: .9rem; flex-wrap: wrap;
+  padding: .6rem .95rem; border-bottom: 1px solid var(--rule);
+  font-size: .88rem; color: var(--ink-2);
+}
+#v-merge .mg-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: .8rem; padding: .85rem .95rem }
+#v-merge .mg-f { display: flex; flex-direction: column; gap: .25rem }
+#v-merge .mg-f label {
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase;
+  font-weight: 600; color: var(--ink-3); overflow-wrap: anywhere;
+}
+#v-merge select {
+  font: inherit; font-size: .9rem; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--control); padding: .35rem .45rem; width: 100%;
+}
+#v-merge select.void { border-color: var(--critical); color: var(--crit-ink) }
+#v-merge .mg-f small { font-size: .78rem; color: var(--ink-3); min-height: 1.1em; overflow-wrap: anywhere }
+
+#v-merge .mg-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.25rem;
+}
+#v-merge .mg-stat { background: var(--surface); padding: .7rem .9rem }
+#v-merge .mg-stat.bad { background: #fbeaea }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #v-merge .mg-stat.bad { background: #2a1616 }
+}
+:root[data-theme="dark"] #v-merge .mg-stat.bad { background: #2a1616 }
+#v-merge .mg-stat .k { font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; color: var(--ink-3) }
+#v-merge .mg-stat .v { font-size: 1.6rem; font-weight: 700; line-height: 1.15; font-variant-numeric: tabular-nums }
+#v-merge .mg-stat .u { font-size: .8rem; color: var(--ink-3) }
+#v-merge .mg-stat.bad .k, #v-merge .mg-stat.bad .v { color: var(--crit-ink) }
+
+#v-merge .mg-out { margin-top: 1.25rem; border: 1px solid var(--rule); background: var(--surface); box-shadow: var(--shadow) }
+#v-merge .mg-out-head {
+  display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+  padding: .7rem .95rem; border-bottom: 1px solid var(--rule);
+}
+#v-merge .mg-opts { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; font-size: .86rem; color: var(--ink-2) }
+#v-merge .mg-opts label { display: flex; align-items: center; gap: .35rem; cursor: pointer }
+#v-merge .mg-opts input[type=checkbox] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer }
+#v-merge .mg-opts select { width: auto }
+#v-merge .mg-scroll { overflow-x: auto }
+#v-merge table.mg-t { border-collapse: collapse; width: 100%; font-size: .86rem }
+#v-merge table.mg-t th {
+  text-align: left; padding: .5rem .8rem; white-space: nowrap;
+  font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600;
+  color: var(--ink-3); border-bottom: 1px solid var(--rule-2);
+}
+#v-merge table.mg-t th.add { color: var(--ink-2) }
+#v-merge table.mg-t td {
+  padding: .4rem .8rem; border-bottom: 1px solid var(--rule); white-space: nowrap;
+  max-width: 260px; overflow: hidden; text-overflow: ellipsis;
+}
+#v-merge table.mg-t tr.dup td { background: #fbeaea; color: var(--crit-ink) }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #v-merge table.mg-t tr.dup td { background: #2a1616 }
+}
+:root[data-theme="dark"] #v-merge table.mg-t tr.dup td { background: #2a1616 }
+#v-merge .mg-foot { padding: .6rem .95rem; border-top: 1px solid var(--rule); color: var(--ink-3); font-size: .82rem }
+#v-merge .mg-acts { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; margin: 1.25rem 0 0 }
+#v-merge .mg-empty { padding: 2rem .95rem; text-align: center; color: var(--ink-3) }
+#v-merge .mg-link { background: none; border: none; color: var(--accent-hi); font: inherit; text-decoration: underline; cursor: pointer; padding: 0 }
 </style>
 <header class="mast">
   <div class="wrap mast-in">
@@ -1724,6 +1832,7 @@ pre.code .f { color: var(--s7); font-weight: 500; }
       <a href="#/">Ana Sayfa</a>
       <a href="#/rapor">Örnek Rapor</a>
       <a href="#/studyo">Rapor Stüdyosu</a>
+      <a href="#/birlestir">Birleştirici</a>
       <a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
     </nav>
@@ -2047,6 +2156,42 @@ pre.code .f { color: var(--s7); font-weight: 500; }
   </div>
 </section>
 
+<section class="view" id="v-merge">
+  <div class="wrap studio">
+    <div class="studio-bar">
+      <h1>Excel Birleştirici</h1>
+      <span class="file-chip" id="mgChip">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/></svg>
+        <b id="mgChipName"></b><span id="mgChipMeta"></span>
+      </span>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost btn-sm" id="mgReset" type="button" style="display:none">Sıfırla</button>
+    </div>
+
+    <p class="hint mg-lede">Birden fazla Excel'i tek listede toplar. <b>İlk yüklediğiniz dosyanın başlıkları şablon olur</b>; sonraki dosyalar kolon adlarına göre o şablona oturtulur, tutmayanları elle eşlersiniz. Sonuç doğrudan Rapor Stüdyosu'na gönderilebilir.</p>
+
+    <div class="drop" id="mgDrop" tabindex="0" role="button" aria-label="Birleştirilecek dosyaları yükle">
+      <span class="drop-ico">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7.5 8.5L12 4l4.5 4.5"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/></svg>
+      </span>
+      <h3>Birleştirilecek dosyaları buraya bırakın</h3>
+      <div class="drop-actions">
+        <button class="btn btn-primary" id="mgPick" type="button">Dosyaları seç</button>
+      </div>
+      <p class="drop-formats">.xlsx · .xlsm · .csv · .tsv — birden fazla dosya seçebilirsiniz, çok sayfalı dosyada her sayfa ayrı kaynak olur</p>
+      <input type="file" id="mgInput" accept=".xlsx,.xlsm,.csv,.tsv,.txt" multiple class="sr-only">
+    </div>
+
+    <p class="priv-note">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <span>Birleştirdiğiniz dosyalar tarayıcıda işlenir; sunucuya yüklenmez.</span>
+    </p>
+
+    <div id="mgErr"></div>
+    <div id="mgBody"></div>
+  </div>
+</section>
+
 </main>
 
 <footer class="foot">
@@ -2061,7 +2206,7 @@ pre.code .f { color: var(--s7); font-weight: 500; }
     <div>
       <h4>Sayfalar</h4>
       <a href="#/">Ana Sayfa</a><a href="#/rapor">Örnek Rapor</a>
-      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/vakalar">Vakalar</a>
+      <a href="#/studyo">Rapor Stüdyosu</a><a href="#/birlestir">Birleştirici</a><a href="#/vakalar">Vakalar</a>
       <a href="#/hakkimda">Hakkımda</a>
       <!-- Rozet dar ekranda gizleniyor; premium yine de her sayfadan erişilebilir olmalı. -->
       <button class="foot-link" id="premFoot" type="button">Premium</button>
@@ -5410,7 +5555,7 @@ let hero = null;
 /* ---------- yönlendirme ---------- */
 const ROUTES = { '#/': 'v-home', '#/rapor': 'v-report', '#/hakkimda': 'v-about',
                  '#/vakalar': 'v-cases', '#/cv': 'v-cv',
-                 '#/studyo': 'v-studio' };
+                 '#/studyo': 'v-studio', '#/birlestir': 'v-merge' };
 function route() {
   const h = ROUTES[location.hash] ? location.hash : '#/';
   $$('.view').forEach(v => v.classList.toggle('on', v.id === ROUTES[h]));
@@ -5421,6 +5566,7 @@ function route() {
   if (h === '#/rapor') renderSample();
   if (h === '#/cv') { renderCV(); initCVControls(); }
   if (h === '#/studyo' && S.table && curStep === 2) renderReport();
+  if (h === '#/birlestir') renderMerge();
   observeAll(document.getElementById(ROUTES[h]));
 }
 addEventListener('hashchange', route);
@@ -7939,4 +8085,461 @@ function initCVControls() {
   $('#cvPrint').addEventListener('click', () => window.print());
 
 }
+
+/* ============================================================
+   BİRLEŞTİRİCİ (#/birlestir)
+   Birden çok Excel'i tek listede toplar. İLK kaynak şablondur:
+   kolon kümesini ve sırasını o belirler, diğerleri ona oturur.
+
+   Yeni bağımlılık YOK — stüdyonun kendi motoru kullanılıyor:
+     readXlsx / parseCSV  → dosya okuma
+     buildTable           → başlık tespiti, tip çıkarımı, ARA TOPLAM ayıklama
+     xBook / indir        → Excel yazma
+     loadSheets           → birleşik tabloyu stüdyoya devretme
+   Böylece birleştirme, stüdyonun gördüğü veriyle birebir aynı veriyi görür.
+   ============================================================ */
+
+const MG = { srcs: [], tpl: 0, source: true, append: false, dup: true, dupKey: -1 };
+let mgUid = 0;
+
+const mgBlank = v => v === null || v === undefined || String(v).trim() === '';
+const mgNorm = v => String(v == null ? '' : v)
+  .replace(/İ/g, 'i').replace(/I/g, 'i').replace(/ı/g, 'i').toLowerCase()
+  .replace(/ş/g, 's').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ç/g, 'c')
+  .replace(/[^a-z0-9]/g, '');
+const mgShow = v => (v === null || v === undefined) ? '' : (v instanceof Date ? fmtRaw(v) : String(v));
+const mgNames = s => s.t.fields.map(f => f.name);
+
+function mgErr(html) {
+  $('#mgErr').innerHTML = html ? `<div class="err">${html}</div>` : '';
+}
+
+/* ---------- kaynak kurma ---------- */
+function mgSource(fileName, sheetName, rows, multi, typed) {
+  const t = buildTable(rows, sheetName, { typed });
+  return {
+    id: ++mgUid, file: fileName, sheet: multi ? sheetName : '',
+    name: multi ? (fileName + ' › ' + sheetName) : fileName,
+    t, typed, on: true, open: false, map: []
+  };
+}
+
+/* Şablon kolonlarını kaynak kolonlarıyla eşler:
+   1) birebir aynı ad  2) biri diğerini içeriyor  3) aynı sıradaki boşta kolon */
+function mgAutoMap(s, tplNames) {
+  const src = mgNames(s).map(mgNorm), used = {}, map = [];
+  tplNames.forEach((th, ti) => {
+    const tn = mgNorm(th); let hit = -1;
+    for (let c = 0; c < src.length; c++) {
+      if (used[c] || !src[c]) continue;
+      if (src[c] === tn) { hit = c; break; }
+    }
+    map[ti] = hit; if (hit >= 0) used[hit] = true;
+  });
+  tplNames.forEach((th, ti) => {
+    if (map[ti] >= 0) return;
+    const tn = mgNorm(th); if (!tn) return;
+    let hit = -1;
+    for (let c = 0; c < src.length; c++) {
+      if (used[c] || !src[c]) continue;
+      if ((src[c].includes(tn) || tn.includes(src[c])) && Math.min(src[c].length, tn.length) >= 3) { hit = c; break; }
+    }
+    map[ti] = hit; if (hit >= 0) used[hit] = true;
+  });
+  tplNames.forEach((th, ti) => {
+    if (map[ti] >= 0) return;
+    if (ti < src.length && !used[ti]) { map[ti] = ti; used[ti] = true; }
+  });
+  return map;
+}
+
+function mgRemap() {
+  const tpl = MG.srcs[MG.tpl]; if (!tpl) return;
+  const names = mgNames(tpl);
+  MG.srcs.forEach((s, i) => {
+    if (i === MG.tpl) s.map = names.map((_, c) => c);
+    else if (!s.locked) s.map = mgAutoMap(s, names);
+  });
+}
+
+const mgMatched = s => s.map.filter(c => c >= 0).length;
+
+/* Şablona girmeyen, ama içinde veri olan kaynak kolonları */
+function mgExtra(s) {
+  const used = {}; s.map.forEach(c => { if (c >= 0) used[c] = true; });
+  const out = [];
+  s.t.fields.forEach((f, c) => {
+    if (used[c]) return;
+    for (let i = 0; i < s.t.data.length; i++) {
+      if (s.t.aggRows.has(i)) continue;
+      if (!mgBlank(s.t.data[i][c])) { out.push({ c, name: f.name }); return; }
+    }
+  });
+  return out;
+}
+
+/* ---------- birleştirme ---------- */
+function mgBuild() {
+  const tpl = MG.srcs[MG.tpl];
+  if (!tpl) return null;
+  const cols = mgNames(tpl);
+  const added = [];
+  if (MG.append) {
+    MG.srcs.forEach(s => {
+      if (!s.on) return;
+      mgExtra(s).forEach(u => { if (!cols.includes(u.name) && !added.includes(u.name)) added.push(u.name); });
+    });
+  }
+  const onCount = MG.srcs.filter(s => s.on).length;
+  const withSrc = MG.source && onCount > 1;
+
+  const rows = [];
+  let agg = 0;
+  MG.srcs.forEach(s => {
+    if (!s.on) return;
+    const ex = MG.append ? mgExtra(s) : [];
+    s.t.data.forEach((r, ri) => {
+      // ARA TOPLAM / GENEL TOPLAM satırları: stüdyonun kendi tespiti
+      if (s.t.aggRows.has(ri)) { agg++; return; }
+      const vals = []; let any = false;
+      for (let i = 0; i < cols.length; i++) {
+        const c = s.map[i];
+        const v = (c >= 0 && c < r.length && r[c] !== undefined) ? r[c] : '';
+        if (!mgBlank(v)) any = true;
+        vals.push(mgBlank(v) ? '' : v);
+      }
+      const extra = {};
+      ex.forEach(u => { if (!mgBlank(r[u.c])) extra[u.name] = r[u.c]; });
+      if (!any && !Object.keys(extra).length) return;
+      added.forEach(n => vals.push(extra[n] === undefined ? '' : extra[n]));
+      rows.push({ vals, src: s.name, dup: false });
+    });
+  });
+
+  let dup = 0;
+  if (MG.dup) {
+    const seen = new Map();
+    rows.forEach(r => {
+      let k;
+      if (MG.dupKey >= 0 && MG.dupKey < cols.length) {
+        k = mgShow(r.vals[MG.dupKey]).trim();
+        if (!k) return;                       // ölçüt hücresi boşsa karşılaştırmaya girmez
+        k = 'K' + k;
+      } else {
+        k = r.vals.slice(0, cols.length).map(mgShow).join('');
+      }
+      if (!seen.has(k)) seen.set(k, []);
+      seen.get(k).push(r);
+    });
+    seen.forEach(g => { if (g.length > 1) { dup += g.length; g.forEach(r => { r.dup = true; }); } });
+  }
+
+  return { cols: cols.concat(added), tplCount: cols.length, addedCount: added.length, rows, dup, agg, withSrc };
+}
+
+function mgOutName() {
+  const tpl = MG.srcs[MG.tpl];
+  if (!tpl) return 'birlesik.xlsx';
+  const base = tpl.file.replace(/\.[^.]+$/, '').trim().slice(0, 80);
+  const files = [];
+  MG.srcs.forEach(s => { if (s.on && !files.includes(s.file)) files.push(s.file); });
+  return files.length > 1 ? `${base} (+${files.length - 1} dosya) - birlesik.xlsx` : `${base} - birlesik.xlsx`;
+}
+
+/* ---------- çizim ---------- */
+function renderMerge() {
+  const host = $('#mgBody');
+  if (!MG.srcs.length) {
+    host.innerHTML = '';
+    $('#mgChip').classList.remove('on');
+    $('#mgReset').style.display = 'none';
+    return;
+  }
+  const tpl = MG.srcs[MG.tpl];
+  const res = mgBuild();
+  const names = mgNames(tpl);
+
+  $('#mgChipName').textContent = MG.srcs.length + ' kaynak';
+  $('#mgChipMeta').textContent = ' · şablon: ' + tpl.name;
+  $('#mgChip').classList.add('on');
+  $('#mgReset').style.display = '';
+
+  const eksik = MG.srcs.reduce((a, s, i) => (s.on && i !== MG.tpl) ? a + (names.length - mgMatched(s)) : a, 0);
+
+  host.innerHTML = `
+    <div class="mg-tpl">
+      <div class="mg-tpl-head">
+        <p class="eyebrow" style="margin:0">Şablon başlıkları</p>
+        <span class="mg-tag">${esc(tpl.name)}</span>
+        <span class="spacer"></span>
+        <span class="mg-tag">${names.length} kolon</span>
+      </div>
+      <div class="mg-cols">
+        ${names.map((h, i) => `<span class="mg-col"><i>${i + 1}</i>${esc(h)}</span>`).join('')}
+        ${res.cols.slice(res.tplCount).map(n => `<span class="mg-col add">+ ${esc(n)}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="mg-srcs">${MG.srcs.map((s, i) => mgCardHtml(s, i, names)).join('')}</div>
+
+    <div class="mg-stats">
+      ${mgStat('Kaynak', nf(MG.srcs.filter(s => s.on).length), 'dosya/sayfa')}
+      ${mgStat('Satır', nf(res.rows.length), 'birleşik')}
+      ${mgStat('Kolon', nf(res.cols.length + (res.withSrc ? 1 : 0)), res.addedCount ? res.addedCount + ' tanesi sonradan eklendi' : 'şablondan')}
+      ${mgStat('Tekrar eden satır', nf(res.dup), !MG.dup ? 'kontrol kapalı' : (MG.dupKey >= 0 ? 'ölçüt: ' + names[MG.dupKey] : 'tüm satır aynı'), res.dup > 0)}
+      ${mgStat('Eşleşmeyen kolon', nf(eksik), eksik ? 'boş kalacak' : 'hepsi eşleşti', eksik > 0)}
+    </div>
+
+    <div class="mg-acts">
+      <button class="btn btn-primary" id="mgToStudio" type="button"${res.rows.length ? '' : ' disabled'}>Rapor Stüdyosu'na gönder</button>
+      <button class="btn btn-ghost" id="mgDl" type="button"${res.rows.length ? '' : ' disabled'}>Excel olarak indir</button>
+      <span id="mgMsg" class="hint" style="margin:0"></span>
+    </div>
+    <div id="mgDlErr"></div>
+
+    <div class="mg-out">
+      <div class="mg-out-head">
+        <p class="eyebrow" style="margin:0">Birleşik önizleme</p>
+        <span class="mg-tag">${res.rows.length ? nf(res.rows.length) + ' satır' : '0 satır'}</span>
+        <span class="spacer"></span>
+        <div class="mg-opts">
+          <label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu</label>
+          <label><input type="checkbox" id="mgOptAdd"${MG.append ? ' checked' : ''}> Eşleşmeyen kolonları ekle</label>
+          <label><input type="checkbox" id="mgOptDup"${MG.dup ? ' checked' : ''}> Tekrarları işaretle</label>
+          <label>şuna göre:
+            <select id="mgDupKey"${MG.dup ? '' : ' disabled'}>
+              <option value="-1">tüm satır</option>
+              ${names.map((h, i) => `<option value="${i}"${MG.dupKey === i ? ' selected' : ''}>${esc(h)}</option>`).join('')}
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="mg-scroll">${mgTableHtml(res)}</div>
+      <div class="mg-foot">${res.rows.length > 60 ? 'İlk 60 satır gösteriliyor · çıktıda ' + nf(res.rows.length) + ' satırın tamamı olacak. ' : ''}${res.agg ? nf(res.agg) + ' ara/genel toplam satırı ayıklandı. ' : ''}Dosya adı: ${esc(mgOutName())}</div>
+    </div>
+`;
+
+  mgWire(names);
+}
+
+function mgStat(k, v, u, bad) {
+  return `<div class="mg-stat${bad ? ' bad' : ''}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="u">${esc(u)}</div></div>`;
+}
+
+function mgCardHtml(s, i, names) {
+  const isTpl = i === MG.tpl;
+  const m = mgMatched(s), ex = mgExtra(s);
+  const satir = s.t.dataRowCount;
+  return `
+    <div class="mg-src${s.on ? '' : ' off'}" data-i="${i}">
+      <div class="mg-src-head">
+        <label class="mg-tag" style="display:flex;align-items:center;gap:.35rem;cursor:pointer">
+          <input type="checkbox" class="mg-on" ${s.on ? 'checked' : ''}${isTpl ? ' disabled' : ''}>
+          ${isTpl ? 'şablon' : (s.on ? 'dahil' : 'dahil değil')}
+        </label>
+        <span class="mg-name">${esc(s.file)}</span>
+        ${s.sheet ? `<span class="mg-tag">sayfa: ${esc(s.sheet)}</span>` : ''}
+        ${isTpl ? '<span class="mg-tag tpl">ŞABLON</span>'
+                : `<span class="mg-tag ${m === names.length ? 'ok' : 'no'}">${m}/${names.length} kolon eşleşti</span>`}
+        <span class="mg-tag">${nf(satir)} satır</span>
+        ${s.t.aggCount ? `<span class="mg-tag">${s.t.aggCount} toplam satırı ayıklandı</span>` : ''}
+        <span class="spacer"></span>
+        ${isTpl ? '' : '<button class="mg-link mg-mk" type="button">şablon yap</button>'}
+        <button class="mg-link mg-rm" type="button">kaldır</button>
+      </div>
+      <div class="mg-src-body">
+        ${isTpl ? `<div class="mg-line">Şablon kolonları yukarıda. Bu dosyanın başlıkları diğerlerinin oturacağı düzeni belirler.</div>` : `
+        <div class="mg-line">
+          <button class="mg-link mg-tg" type="button">${s.open ? 'eşleştirmeyi gizle' : 'eşleştirmeyi göster / düzelt'}</button>
+          ${ex.length ? `<span>şablona girmeyen kolon: ${esc(ex.map(u => u.name).join(', '))}</span>` : ''}
+        </div>
+        ${s.open ? `<div class="mg-map">${names.map((th, ti) => mgFieldHtml(s, ti, th)).join('')}</div>` : ''}`}
+      </div>
+    </div>`;
+}
+
+function mgFieldHtml(s, ti, th) {
+  const c = s.map[ti], sn = mgNames(s);
+  let ornek = '';
+  if (c >= 0) {
+    for (let i = 0; i < s.t.data.length; i++) {
+      if (s.t.aggRows.has(i)) continue;
+      if (!mgBlank(s.t.data[i][c])) { ornek = 'örnek: ' + mgShow(s.t.data[i][c]); break; }
+    }
+    if (!ornek) ornek = 'veri yok';
+  } else ornek = 'bu kolon boş kalacak';
+  return `
+    <div class="mg-f">
+      <label for="mg-${s.id}-${ti}">${ti + 1}. ${esc(th)}</label>
+      <select id="mg-${s.id}-${ti}" class="mg-sel${c < 0 ? ' void' : ''}" data-ti="${ti}">
+        <option value="-1"${c < 0 ? ' selected' : ''}>— boş bırak —</option>
+        ${sn.map((h, k) => `<option value="${k}"${c === k ? ' selected' : ''}>${esc(h)}</option>`).join('')}
+      </select>
+      <small>${esc(ornek)}</small>
+    </div>`;
+}
+
+function mgTableHtml(res) {
+  if (!res.rows.length) return '<div class="mg-empty">Birleşecek satır yok.</div>';
+  const head = res.cols.map((h, i) => `<th${i >= res.tplCount ? ' class="add"' : ''}>${esc(h)}</th>`).join('')
+             + (res.withSrc ? '<th class="add">Kaynak</th>' : '');
+  const body = res.rows.slice(0, 60).map(r => {
+    const tds = r.vals.map(v => { const t = mgShow(v); return `<td title="${esc(t)}">${esc(t)}</td>`; }).join('')
+              + (res.withSrc ? `<td>${esc(r.src)}</td>` : '');
+    return `<tr${r.dup ? ' class="dup"' : ''}>${tds}</tr>`;
+  }).join('');
+  return `<table class="mg-t"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+/* ---------- olaylar ---------- */
+function mgWire(names) {
+  $$('#mgBody .mg-src').forEach(card => {
+    const i = +card.dataset.i, s = MG.srcs[i];
+    const on = card.querySelector('.mg-on');
+    if (on) on.addEventListener('change', () => { s.on = on.checked; renderMerge(); });
+    const mk = card.querySelector('.mg-mk');
+    if (mk) mk.addEventListener('click', () => {
+      MG.tpl = i; MG.dupKey = -1; MG.srcs.forEach(x => { x.locked = false; }); mgRemap(); renderMerge();
+    });
+    const rm = card.querySelector('.mg-rm');
+    if (rm) rm.addEventListener('click', () => {
+      MG.srcs.splice(i, 1);
+      if (MG.tpl >= MG.srcs.length) MG.tpl = 0;
+      MG.dupKey = -1;
+      MG.srcs.forEach(x => { x.locked = false; });
+      mgRemap(); renderMerge();
+    });
+    const tg = card.querySelector('.mg-tg');
+    if (tg) tg.addEventListener('click', () => { s.open = !s.open; renderMerge(); });
+    card.querySelectorAll('.mg-sel').forEach(sel => {
+      sel.addEventListener('change', () => {
+        s.map[+sel.dataset.ti] = +sel.value; s.locked = true; renderMerge();
+      });
+    });
+  });
+
+  $('#mgOptSrc').addEventListener('change', function () { MG.source = this.checked; renderMerge(); });
+  $('#mgOptAdd').addEventListener('change', function () { MG.append = this.checked; renderMerge(); });
+  $('#mgOptDup').addEventListener('change', function () { MG.dup = this.checked; renderMerge(); });
+  $('#mgDupKey').addEventListener('change', function () { MG.dupKey = +this.value; renderMerge(); });
+  $('#mgToStudio').addEventListener('click', mgToStudio);
+  $('#mgDl').addEventListener('click', mgDownload);
+}
+
+/* ---------- çıkışlar ---------- */
+function mgRowsAoa(res) {
+  const head = res.cols.concat(res.withSrc ? ['Kaynak'] : []);
+  const out = [head];
+  res.rows.forEach(r => out.push(r.vals.concat(res.withSrc ? [r.src] : [])));
+  return out;
+}
+
+/* Birleşik tabloyu stüdyoya devreder: oradan itibaren profil, kalite,
+   model, rapor ve Power BI akışının tamamı olduğu gibi çalışır. */
+function mgToStudio() {
+  const res = mgBuild();
+  if (!res || !res.rows.length) return;
+  S.fileName = mgOutName();
+  loadSheets([{ name: 'Birleşik', rows: mgRowsAoa(res) }], 0, true);
+  location.hash = '#/studyo';
+}
+
+async function mgDownload() {
+  const res = mgBuild();
+  if (!res || !res.rows.length) return;
+  const err = $('#mgDlErr');
+  err.innerHTML = '';
+  if (!indirmeIzni(err)) return;
+  const btn = $('#mgDl'); const eski = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Hazırlanıyor…';
+  try {
+    const aoa = mgRowsAoa(res);
+    const rows = [aoa[0].map(v => ({ v, bold: true }))].concat(aoa.slice(1));
+    if (MG.dup && res.dup) {
+      rows[0].push({ v: 'DENETİM', bold: true });
+      res.rows.forEach((r, i) => rows[i + 1].push(r.dup ? 'TEKRAR' : ''));
+    }
+    const book = xBook();
+    book.sheet('Birleşik', rows, { table: true, freezeHeader: true });
+    indir(await book.blob(), mgOutName());
+    $('#mgMsg').textContent = nf(res.rows.length) + ' satır indirildi.';
+  } catch (e) {
+    err.innerHTML = `<div class="err">Dosya oluşturulamadı: ${esc(e && e.message ? e.message : String(e))}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = eski;
+  }
+}
+
+/* ---------- dosya alma ---------- */
+async function mgHandleFiles(list) {
+  const files = [...list].filter(Boolean);
+  if (!files.length) return;
+  mgErr('');
+  const slots = files.map(() => []);
+  const hatalar = [], atlanan = [];
+
+  await Promise.all(files.map(async (file, fi) => {
+    try {
+      if (!file.size) { hatalar.push(esc(file.name) + ' boş görünüyor'); return; }
+      if (file.size / (1024 * 1024) > MAX_FILE_MB) {
+        hatalar.push(`${esc(file.name)} çok büyük (sınır ${MAX_FILE_MB} MB)`); return;
+      }
+      const isCsv = /\.(csv|tsv|txt)$/i.test(file.name);
+      const sheets = isCsv
+        ? [{ name: file.name.replace(/\.[^.]+$/, ''), rows: parseCSV(await file.text()) }]
+        : await readXlsx(await file.arrayBuffer());
+      const multi = sheets.length > 1;
+      sheets.forEach(sh => {
+        if (!sh.rows.length) { if (multi) atlanan.push(sh.name); return; }
+        const s = mgSource(file.name, sh.name, sh.rows, multi, !isCsv);
+        if (!s.t.fields.length || !s.t.dataRowCount) { if (multi) atlanan.push(sh.name); return; }
+        slots[fi].push(s);
+      });
+      if (!slots[fi].length && !multi) hatalar.push(esc(file.name) + ' içinde tablo biçiminde veri bulunamadı');
+    } catch (e) {
+      hatalar.push(esc(file.name) + ' okunamadı — ' + esc(e && e.message ? e.message : String(e)));
+    }
+  }));
+
+  // Seçim sırası korunur: şablon her zaman ilk seçilen dosyadır.
+  let yenilenen = 0;
+  slots.forEach(list2 => list2.forEach(s => {
+    const at = MG.srcs.findIndex(x => x.name === s.name);
+    if (at >= 0) { s.on = MG.srcs[at].on; MG.srcs[at] = s; yenilenen++; }
+    else MG.srcs.push(s);
+  }));
+
+  if (MG.tpl >= MG.srcs.length) MG.tpl = 0;
+  MG.srcs.forEach(x => { x.locked = false; });
+  mgRemap();
+  renderMerge();
+
+  const notlar = [];
+  if (yenilenen) notlar.push(yenilenen + ' kaynak güncellendi (aynı ad, üzerine yazıldı)');
+  if (atlanan.length) notlar.push('atlanan sayfa: ' + esc(atlanan.join(', ')));
+  if (hatalar.length) notlar.push(hatalar.join(' · '));
+  mgErr(notlar.length ? notlar.join(' · ') : '');
+}
+
+(function mgInit() {
+  const drop = $('#mgDrop'), input = $('#mgInput');
+  if (!drop || !input) return;
+  $('#mgPick').addEventListener('click', e => { e.stopPropagation(); input.click(); });
+  drop.addEventListener('click', e => { if (e.target.closest('button')) return; input.click(); });
+  drop.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+  });
+  input.addEventListener('change', () => { mgHandleFiles(input.files); input.value = ''; });
+  ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('hot'); }));
+  ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => {
+    e.preventDefault();
+    if (t === 'dragleave' && drop.contains(e.relatedTarget)) return;
+    drop.classList.remove('hot');
+  }));
+  drop.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files) mgHandleFiles(e.dataTransfer.files); });
+  $('#mgReset').addEventListener('click', () => {
+    MG.srcs = []; MG.tpl = 0; MG.dupKey = -1; mgErr(''); renderMerge();
+  });
+})();
+
 </script>
