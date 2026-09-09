@@ -1826,6 +1826,9 @@ pre.code .f { color: var(--s7); font-weight: 500; }
   border: 1px solid var(--line-strong); padding: .2rem .5rem; background: var(--surface-2) }
 #v-merge .mg-sheet i { font-style: normal; font-weight: 700; color: var(--accent); font-size: .72rem }
 #v-merge .mg-sheet b { font-weight: 400; font-size: .74rem; color: var(--muted) }
+#v-merge .mg-line label { display: flex; align-items: center; gap: .4rem }
+#v-merge .mg-line input[type=number] { width: 66px; font: inherit; padding: 3px 5px;
+  background: var(--surface-2); border: 1px solid var(--line-strong); color: var(--ink) }
 
 /* ============================================================
    MUTABAKAT (#/mutabakat) — hepsi #v-recon içinde kapsamlı
@@ -3507,7 +3510,10 @@ async function xZip(entries) {
   return out;
 }
 
-const xEsc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+/* XML kaçışı. Tırnak ŞART: sayfa adı <sheet name="..."/> özniteliğine yazılıyor
+   ve YAKACIK "VAROL gibi bir ad kaçışsız yazılınca dosya AÇILAMAZ hâle geliyor. */
+const xEsc = s => String(s).replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
 const xCol = n => { let s = ''; n++; while (n > 0) { const r = (n - 1) % 26; s = String.fromCharCode(65 + r) + s; n = (n - 1 - r) / 26; } return s; };
 const X_EPOCH = Date.UTC(1899, 11, 30);
 const X_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
@@ -8257,7 +8263,7 @@ function initCVControls() {
    ============================================================ */
 
 const MG = { srcs: [], tpl: 0, source: true, append: false, dup: true, dupKey: -1,
-             mod: 'tek', sirala: true, tarihKol: -1, ad: 'ikisi' };
+             mod: 'tek', sirala: true, tarihKol: -1, ad: 'sayfa' };
 let mgUid = 0;
 
 const mgBlank = v => v === null || v === undefined || String(v).trim() === '';
@@ -8274,12 +8280,35 @@ function mgErr(html) {
 
 /* ---------- kaynak kurma ---------- */
 function mgSource(fileName, sheetName, rows, multi, typed) {
-  const t = buildTable(rows, sheetName, { typed });
-  return {
-    id: ++mgUid, file: fileName, sheet: multi ? sheetName : '',
+  const s = {
+    id: ++mgUid, file: fileName, sheet: multi ? sheetName : '', sheetRaw: sheetName,
     name: multi ? (fileName + ' › ' + sheetName) : fileName,
-    t, typed, on: true, open: false, map: []
+    raw: rows, hr: -1, hrSet: false, typed, on: true, open: false, map: []
   };
+  mgKurT(s);
+  return s;
+}
+
+/* Tabloyu kurar. Başlık satırı elle verildiyse o satır başlık kabul edilir ve
+   BOŞ başlık hücreleri üstteki dolu hücreden doldurulur — hafriyat sefer formu
+   gibi iki katlı başlıklarda (üstte güzergâh, altta S.NO/ARAÇLAR) tek çare bu. */
+function mgKurT(s) {
+  if (s.hrSet && s.hr >= 0 && s.hr < s.raw.length) {
+    const hdr = (s.raw[s.hr] || []).slice();
+    let w = hdr.length;
+    s.raw.slice(s.hr, s.hr + 60).forEach(r => { if (r && r.length > w) w = r.length; });
+    for (let c = 0; c < w; c++) {
+      if (!mgBlank(hdr[c])) continue;
+      for (let up = s.hr - 1; up >= Math.max(0, s.hr - 4); up--) {
+        const v = (s.raw[up] || [])[c];
+        if (!mgBlank(v)) { hdr[c] = v; break; }
+      }
+    }
+    s.t = buildTable([hdr].concat(s.raw.slice(s.hr + 1)), s.sheetRaw, { typed: s.typed, hasHeader: true });
+  } else {
+    s.t = buildTable(s.raw, s.sheetRaw, { typed: s.typed });
+    s.hr = s.t.headerIndex;
+  }
 }
 
 /* Şablon kolonlarını kaynak kolonlarıyla eşler:
@@ -8322,6 +8351,15 @@ function mgRemap() {
 
 const mgMatched = s => s.map.filter(c => c >= 0).length;
 
+/* Başlık satırı bulunamamışsa kolon adları "Kolon A/1" diye uydurulur.
+   Bunu sessizce kabul etmek, formu düz tablo sanıp çöp üretmek demektir. */
+function mgBasliksiz(s) {
+  const n = mgNames(s);
+  if (!n.length) return true;
+  const uydurma = n.filter(x => /^Kolon\s/i.test(String(x))).length;
+  return uydurma / n.length > 0.5;
+}
+
 /* Şablona girmeyen, ama içinde veri olan kaynak kolonları */
 function mgExtra(s) {
   const used = {}; s.map.forEach(c => { if (c >= 0) used[c] = true; });
@@ -8338,6 +8376,8 @@ function mgExtra(s) {
 
 /* ---------- birleştirme ---------- */
 function mgBuild() {
+  if (MG.mod === 'ham') return mgHamBuild();
+  if (MG.mod === 'form') return mgFormBuild();
   const tpl = MG.srcs[MG.tpl];
   if (!tpl) return null;
   const cols = mgNames(tpl);
@@ -8349,7 +8389,7 @@ function mgBuild() {
     });
   }
   const onCount = MG.srcs.filter(s => s.on).length;
-  const withSrc = MG.mod === 'tek' && MG.source && onCount > 1;
+  const withSrc = MG.source && onCount > 1;   // sayfa modunda da: dosya adı satırın içinde durur
 
   const rows = [];
   const adlar = mgAdHarita();
@@ -8396,6 +8436,132 @@ function mgBuild() {
   return { cols: cols.concat(added), tplCount: cols.length, addedCount: added.length, rows, dup, agg, withSrc };
 }
 
+/* ============ SAYFALARI OLDUĞU GİBİ TAŞI ============
+   En sade birleştirme: hiçbir dosyaya dokunmadan bütün sayfaları tek
+   çalışma kitabında toplar. Şablon yok, kolon eşleştirme yok, başlık
+   tespiti yok — Excel'de sayfaları elle kopyalamanın karşılığı.
+   Aynı adlı sayfalar Excel'in yaptığı gibi "(2)" alır.
+   ==================================================== */
+function mgHamAdlar() {
+  const out = {}, gorulen = {};
+  MG.srcs.forEach(s => {
+    if (s.on === false) return;
+    let ad = (s.sheetRaw || s.file.replace(/\.[^.]+$/, '')).trim() || 'Sayfa';
+    if (gorulen[ad]) {
+      const n = ++gorulen[ad];
+      let yeni = ad + ' (' + n + ')';
+      if (yeni.length > 31) yeni = ad.slice(0, 31 - String(n).length - 3) + ' (' + n + ')';
+      ad = yeni;
+    } else gorulen[ad] = 1;
+    out[s.id] = ad.slice(0, 31);
+  });
+  return out;
+}
+function mgHamBuild() {
+  const adlar = mgHamAdlar(), sayfalar = [];
+  let satir = 0;
+  MG.srcs.forEach(s => {
+    if (s.on === false) return;
+    sayfalar.push({ ad: adlar[s.id], rows: s.raw, kaynak: s.file });
+    satir += s.raw.length;
+  });
+  return { ham: true, sayfalar, satir,
+           cols: [], tplCount: 0, addedCount: 0, rows: [], dup: 0, agg: 0, withSrc: false };
+}
+
+/* ============ SEFER FORMU → DÜZ LİSTE ============
+   Hafriyat sefer formu bir tablo değil, matris:
+     · tarih      → başlıkta ("TARİH:03.08.2026")
+     · şantiye    → sayfa adında
+     · güzergâh   → kolon başlıklarında
+     · sefer      → hücrede
+   Bunları alt alta eklemek anlamsız. Doğrusu her dolu hücreyi bir satıra açmak:
+     Tarih | Şantiye | S.NO | Araç | Güzergâh | Sefer
+   ================================================= */
+const MG_FORM_COLS = ['Tarih', 'Şantiye', 'S.NO', 'Araç', 'Güzergâh', 'Sefer'];
+
+function mgFormTarih(s) {
+  for (let r = 0; r < Math.min(s.raw.length, 12); r++) {
+    for (const v of (s.raw[r] || [])) {
+      if (mgBlank(v)) continue;
+      const m = String(v).match(/tar[iİı]h\s*[:.\-]?\s*(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/i);
+      if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(y, +m[2] - 1, +m[1]); }
+    }
+  }
+  return mgAdTarih(s.sheet) || mgAdTarih(s.file);
+}
+
+/* Araç kolonu: başlığı ARAÇ/PLAKA olan kolon; yoksa değerleri plakaya benzeyen kolon */
+const MG_PLAKA_RE = /^[0-8][0-9]\s?[A-ZÇĞİÖŞÜ]{1,3}\s?[0-9]{2,5}$/;
+function mgFormCoz(s) {
+  const R = s.raw;
+  // 1) başlık satırı: "ARAÇLAR" / "PLAKA" geçen satır
+  let hs = -1, ac = -1;
+  for (let r = 0; r < Math.min(R.length, 20) && hs < 0; r++) {
+    (R[r] || []).forEach((v, c) => {
+      const n = mgNorm(v);
+      if (hs < 0 && (n === 'araclar' || n === 'arac' || n === 'plaka' || n === 'plakano')) { hs = r; ac = c; }
+    });
+  }
+  if (hs < 0) return null;
+
+  // 2) güzergâh satırı: başlığın üstünde, araç kolonunun SAĞINDA adları olan ilk satır
+  let gs = -1;
+  for (let r = hs - 1; r >= 0 && gs < 0; r--) {
+    const row = R[r] || [];
+    let dolu = 0;
+    for (let c = ac + 1; c < row.length; c++) if (!mgBlank(row[c])) dolu++;
+    if (dolu >= 1) gs = r;
+  }
+  const guz = {};
+  if (gs >= 0) (R[gs] || []).forEach((v, c) => { if (c > ac && !mgBlank(v)) guz[c] = String(v).trim(); });
+  if (!Object.keys(guz).length) return null;
+
+  const tarih = mgFormTarih(s);
+  // Şantiye adı sayfanın gerçek adıdır; dosyada tek sayfa olsa bile
+  const santiye = (s.sheetRaw && !/^sayfa\d*$|^sheet\d*$/i.test(String(s.sheetRaw).trim()))
+                  ? String(s.sheetRaw).trim() : s.file.replace(/\.[^.]+$/, '');
+  const out = [];
+  for (let r = hs + 1; r < R.length; r++) {
+    const row = R[r] || [];
+    const arac = row[ac];
+    if (mgBlank(arac)) continue;                       // boş form satırı
+    const an = String(arac).trim();
+    if (mgNorm(an).indexOf('toplam') === 0) continue;  // TOPLAM SEFER satırı
+    const sno = ac > 0 ? row[ac - 1] : '';
+    Object.keys(guz).forEach(c => {
+      const v = row[c];
+      if (mgBlank(v)) return;
+      const n = typeof v === 'number' ? v : parseFloat(String(v).replace(',', '.'));
+      if (!isFinite(n) || n === 0) return;
+      out.push({ tarih, santiye, sno: mgBlank(sno) ? '' : sno, arac: an, guzergah: guz[c], sefer: n });
+    });
+  }
+  return out.length ? out : null;
+}
+
+function mgFormBuild() {
+  const rows = [];
+  let bos = 0;
+  MG.srcs.forEach(s => {
+    if (s.on === false) return;
+    const r = mgFormCoz(s);
+    if (!r) { bos++; return; }
+    r.forEach(x => rows.push({
+      vals: [x.tarih || '', x.santiye, x.sno, x.arac, x.guzergah, x.sefer],
+      src: s.name, sheet: x.santiye, dup: false
+    }));
+  });
+  rows.sort((a, b) => {
+    const A = a.vals[0], B = b.vals[0];
+    if (A && B && +A !== +B) return A - B;
+    return String(a.vals[1]).localeCompare(String(b.vals[1]), TR);
+  });
+  const withSrc = MG.source && MG.srcs.filter(s => s.on !== false).length > 1;
+  return { cols: MG_FORM_COLS.slice(), tplCount: MG_FORM_COLS.length, addedCount: 0,
+           rows, dup: 0, agg: 0, withSrc, form: true, cozulemeyen: bos };
+}
+
 /* Çıktı sayfa adı.
    'ikisi' : "dosya - sayfa". Hangi sayfanın hangi dosyadan geldiği kaybolmaz;
              iki dosyada aynı adlı sayfa olduğunda da çakışma olmaz.
@@ -8411,9 +8577,33 @@ function mgAdHarita() {
   acik.forEach(s => {
     let a = mgHamAd(s);
     if (say[a] > 1) a = s.file.replace(/\.[^.]+$/, '') + ' - ' + a;   // çakışmayı dosya adı çözer
-    out[s.id] = String(a).trim().slice(0, 31) || 'Sayfa';
+    out[s.id] = mgKisalt(a, s);
+  });
+  // Excel sayfa adı 31 karakter: kesme yüzünden iki sayfa aynı ada düşerse numaralanır
+  const gorulen = {};
+  Object.keys(out).forEach(id => {
+    let a = out[id];
+    if (gorulen[a]) { const n = ++gorulen[a]; a = a.slice(0, 31 - String(n).length - 1) + ' ' + n; }
+    else gorulen[a] = 1;
+    out[id] = a;
   });
   return out;
+}
+
+/* 31 karakter sınırı: SAYFA adı korunur, kırpılan taraf dosya adı olur.
+   "01.08.2026 HAFRİYAT SEFERLER - CEVİZLİ TEKNİK YAPI" düz kesilince iki
+   farklı sayfa aynı ada düşüyor ve biri kayboluyordu. */
+function mgKisalt(a, s) {
+  a = String(a).trim();
+  if (a.length <= 31) return a || 'Sayfa';
+  const sayfa = (s.sheet || '').trim();
+  if (sayfa && sayfa.length <= 29) {
+    const kalan = 31 - sayfa.length - 3;               // " - "
+    const dosya = s.file.replace(/\.[^.]+$/, '').trim();
+    if (kalan >= 3) return dosya.slice(0, kalan) + ' - ' + sayfa;
+    return sayfa.slice(0, 31);
+  }
+  return a.slice(0, 31);
 }
 
 /* Tarih kolonu: değerlerinin çoğu tarihe çözülen ilk kolon */
@@ -8528,6 +8718,9 @@ function renderMerge() {
 
   const eksik = MG.srcs.reduce((a, s, i) => (s.on && i !== MG.tpl) ? a + (names.length - mgMatched(s)) : a, 0);
 
+  if (MG.mod === 'ham') { renderMergeHam(res); return; }
+  if (MG.mod === 'form') { renderMergeForm(res); return; }
+
   host.innerHTML = `
     <div class="mg-tpl">
       <div class="mg-tpl-head">
@@ -8567,8 +8760,10 @@ function renderMerge() {
         <div class="mg-opts">
           <label>Çıktı:
             <select id="mgMod">
+              <option value="ham"${MG.mod === 'ham' ? ' selected' : ''}>Sayfaları olduğu gibi taşı</option>
               <option value="tek"${MG.mod === 'tek' ? ' selected' : ''}>Tek sayfa — alt alta</option>
               <option value="sayfa"${MG.mod === 'sayfa' ? ' selected' : ''}>Her kaynak ayrı sayfa</option>
+              <option value="form"${MG.mod === 'form' ? ' selected' : ''}>Sefer formu → düz liste</option>
             </select>
           </label>
           ${MG.mod === 'sayfa' ? `<label>Sayfa adı:
@@ -8577,8 +8772,7 @@ function renderMerge() {
               <option value="sayfa"${MG.ad === 'sayfa' ? ' selected' : ''}>Sadece sayfa adı</option>
             </select></label>
           <label><input type="checkbox" id="mgSirala"${MG.sirala ? ' checked' : ''}> Sayfaları tarihe göre sırala</label>` : ''}
-          <label${MG.mod === 'sayfa' ? '' : ' hidden'}><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''} hidden></label>
-          ${MG.mod === 'tek' ? `<label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu</label>` : ''}
+          <label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu (dosya adı satırın içinde)</label>
           <label><input type="checkbox" id="mgOptAdd"${MG.append ? ' checked' : ''}> Eşleşmeyen kolonları ekle</label>
           <label><input type="checkbox" id="mgOptDup"${MG.dup ? ' checked' : ''}> Tekrarları işaretle</label>
           <label>şuna göre:
@@ -8612,6 +8806,160 @@ function mgSayfaListesi(res) {
   </div>`;
 }
 
+/* Ham mod: sadece hangi sayfaların hangi adla taşınacağını gösterir. */
+function renderMergeHam(res) {
+  $('#mgBody').innerHTML = `
+    <div class="mg-tpl">
+      <div class="mg-tpl-head">
+        <p class="eyebrow" style="margin:0">Taşınacak sayfalar</p>
+        <span class="mg-tag">${res.sayfalar.length} sayfa</span>
+        <span class="spacer"></span>
+        <span class="mg-tag">${nf(res.satir)} satır</span>
+      </div>
+      <div class="mg-sheets">
+        <p class="mg-sheets-h">Dosyalara dokunulmuyor: satırlar, başlık blokları, boş form satırları — hepsi olduğu gibi taşınıyor.</p>
+        ${res.sayfalar.map((x, i) => `<span class="mg-sheet"><i>${i + 1}</i>${esc(x.ad)}<b>${nf(x.rows.length)} satır · ${esc(x.kaynak)}</b></span>`).join('')}
+      </div>
+    </div>
+
+    <div class="mg-srcs">${MG.srcs.map((s, i) => mgHamKart(s, i)).join('')}</div>
+
+    <div class="mg-acts">
+      <button class="btn btn-primary" id="mgToStudio" type="button"${res.sayfalar.length ? '' : ' disabled'}>Rapor Stüdyosu'na gönder</button>
+      <button class="btn btn-ghost" id="mgDl" type="button"${res.sayfalar.length ? '' : ' disabled'}>Excel olarak indir</button>
+      <span id="mgMsg" class="hint" style="margin:0"></span>
+    </div>
+    <div id="mgDlErr"></div>
+
+    <div class="mg-out">
+      <div class="mg-out-head">
+        <p class="eyebrow" style="margin:0">Çıktı</p>
+        <span class="spacer"></span>
+        <div class="mg-opts">
+          <label>Çıktı:
+            <select id="mgMod">
+              <option value="ham" selected>Sayfaları olduğu gibi taşı</option>
+              <option value="tek">Tek sayfa — alt alta</option>
+              <option value="sayfa">Her kaynak ayrı sayfa</option>
+              <option value="form">Sefer formu → düz liste</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="mg-foot">Sayfalar ham hâliyle taşınır: renk, çerçeve, birleştirilmiş hücre, kolon genişliği ve satır yüksekliği korunur. İnecek dosya: ${esc(mgOutName())}</div>
+    </div>`;
+  $('#mgMod').addEventListener('change', function () { MG.mod = this.value; renderMerge(); });
+  $('#mgToStudio').addEventListener('click', mgToStudio);
+  $('#mgDl').addEventListener('click', mgDownload);
+  $$('#mgBody .mg-on').forEach(b => b.addEventListener('change', function () {
+    MG.srcs[+this.dataset.i].on = this.checked; renderMerge();
+  }));
+  $$('#mgBody .mg-rm').forEach(b => b.addEventListener('click', function () {
+    MG.srcs.splice(+this.dataset.i, 1); if (MG.tpl >= MG.srcs.length) MG.tpl = 0; mgRemap(); renderMerge();
+  }));
+}
+function mgHamKart(s, i) {
+  return `<div class="mg-src${s.on === false ? ' off' : ''}">
+    <div class="mg-src-head">
+      <label class="mg-tag" style="display:flex;align-items:center;gap:.35rem;cursor:pointer">
+        <input type="checkbox" class="mg-on" data-i="${i}" ${s.on !== false ? 'checked' : ''}> dahil
+      </label>
+      <span class="mg-name">${esc(s.file)}</span>
+      ${s.sheetRaw ? `<span class="mg-tag sheet">sayfa: ${esc(s.sheetRaw)}</span>` : ''}
+      <span class="mg-tag">${nf(s.raw.length)} satır</span>
+      <span class="spacer"></span>
+      <button class="mg-link mg-rm" data-i="${i}" type="button">kaldır</button>
+    </div>
+  </div>`;
+}
+
+/* Form modu ayrı çizilir: şablon/eşleştirme kavramı burada yok. */
+function renderMergeForm(res) {
+  const kaynak = MG.srcs.filter(s => s.on !== false).length;
+  const gz = {}; res.rows.forEach(r => { gz[r.vals[4]] = (gz[r.vals[4]] || 0) + r.vals[5]; });
+  const gList = Object.keys(gz).sort((a, b) => gz[b] - gz[a]);
+  $('#mgBody').innerHTML = `
+    <div class="mg-tpl">
+      <div class="mg-tpl-head">
+        <p class="eyebrow" style="margin:0">Sefer formu → düz liste</p>
+        <span class="mg-tag">${kaynak} kaynak</span>
+        <span class="spacer"></span>
+        ${res.cozulemeyen ? `<span class="mg-tag no">${res.cozulemeyen} kaynak çözülemedi</span>` : '<span class="mg-tag ok">hepsi çözüldü</span>'}
+      </div>
+      <div class="mg-cols">
+        ${MG_FORM_COLS.map((h, i) => `<span class="mg-col"><i>${i + 1}</i>${esc(h)}</span>`).join('')}
+        ${res.withSrc ? '<span class="mg-col add">+ Kaynak</span>' : ''}
+      </div>
+    </div>
+
+    <div class="mg-srcs">${MG.srcs.map((s, i) => mgFormKart(s, i)).join('')}</div>
+
+    <div class="mg-stats">
+      ${mgStat('Kaynak', nf(kaynak), 'dosya/sayfa')}
+      ${mgStat('Satır', nf(res.rows.length), 'sefer kaydı')}
+      ${mgStat('Toplam sefer', nf(res.rows.reduce((a, r) => a + r.vals[5], 0)), 'adet')}
+      ${mgStat('Araç', nf(new Set(res.rows.map(r => r.vals[3])).size), 'farklı plaka')}
+      ${mgStat('Güzergâh', nf(gList.length), gList.length ? 'en çok: ' + gList[0] : '')}
+    </div>
+
+    <div class="mg-acts">
+      <button class="btn btn-primary" id="mgToStudio" type="button"${res.rows.length ? '' : ' disabled'}>Rapor Stüdyosu'na gönder</button>
+      <button class="btn btn-ghost" id="mgDl" type="button"${res.rows.length ? '' : ' disabled'}>Excel olarak indir</button>
+      <span id="mgMsg" class="hint" style="margin:0"></span>
+    </div>
+    <div id="mgDlErr"></div>
+
+    <div class="mg-out">
+      <div class="mg-out-head">
+        <p class="eyebrow" style="margin:0">Önizleme</p>
+        <span class="mg-tag">${nf(res.rows.length)} satır</span>
+        <span class="spacer"></span>
+        <div class="mg-opts">
+          <label>Çıktı:
+            <select id="mgMod">
+              <option value="ham">Sayfaları olduğu gibi taşı</option>
+              <option value="tek">Tek sayfa — alt alta</option>
+              <option value="sayfa">Her kaynak ayrı sayfa</option>
+              <option value="form" selected>Sefer formu → düz liste</option>
+            </select>
+          </label>
+          <label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu</label>
+        </div>
+      </div>
+      <div class="mg-scroll">${mgTableHtml(res)}</div>
+      <div class="mg-foot">Her dolu hücre bir satıra açıldı; boş form satırları ve TOPLAM satırı alınmadı. İnecek dosya: ${esc(mgOutName())}</div>
+    </div>`;
+
+  $('#mgMod').addEventListener('change', function () { MG.mod = this.value; renderMerge(); });
+  $('#mgOptSrc').addEventListener('change', function () { MG.source = this.checked; renderMerge(); });
+  $('#mgToStudio').addEventListener('click', mgToStudio);
+  $('#mgDl').addEventListener('click', mgDownload);
+  $$('#mgBody .mg-on').forEach((b, i) => b.addEventListener('change', function () {
+    MG.srcs[+this.dataset.i].on = this.checked; renderMerge();
+  }));
+  $$('#mgBody .mg-rm').forEach(b => b.addEventListener('click', function () {
+    MG.srcs.splice(+this.dataset.i, 1); if (MG.tpl >= MG.srcs.length) MG.tpl = 0; mgRemap(); renderMerge();
+  }));
+}
+
+function mgFormKart(s, i) {
+  const c = mgFormCoz(s);
+  const t = c && c.length ? mgFormTarih(s) : null;
+  return `<div class="mg-src${s.on === false ? ' off' : ''}">
+    <div class="mg-src-head">
+      <label class="mg-tag" style="display:flex;align-items:center;gap:.35rem;cursor:pointer">
+        <input type="checkbox" class="mg-on" data-i="${i}" ${s.on !== false ? 'checked' : ''}> dahil
+      </label>
+      <span class="mg-name">${esc(s.file)}</span>
+      ${s.sheet ? `<span class="mg-tag sheet">sayfa: ${esc(s.sheet)}</span>` : ''}
+      ${c ? `<span class="mg-tag ok">${nf(c.length)} sefer kaydı</span>` : '<span class="mg-tag no">form yapısı çözülemedi</span>'}
+      ${t ? `<span class="mg-tag">${t.toLocaleDateString(TR)}</span>` : '<span class="mg-tag no">tarih bulunamadı</span>'}
+      <span class="spacer"></span>
+      <button class="mg-link mg-rm" data-i="${i}" type="button">kaldır</button>
+    </div>
+  </div>`;
+}
+
 function mgStat(k, v, u, bad) {
   return `<div class="mg-stat${bad ? ' bad' : ''}"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div><div class="u">${esc(u)}</div></div>`;
 }
@@ -8630,6 +8978,7 @@ function mgCardHtml(s, i, names) {
         <span class="mg-name">${esc(s.file)}</span>
         ${s.sheet ? `<span class="mg-tag">sayfa: ${esc(s.sheet)}</span>` : ''}
         ${MG.mod === 'sayfa' && s.on !== false ? `<span class="mg-tag">→ ${esc(mgAdHarita()[s.id] || '')}</span>` : ''}
+        ${mgBasliksiz(s) ? '<span class="mg-tag no">başlık bulunamadı — başlık satırını seçin</span>' : ''}
         ${isTpl ? '<span class="mg-tag tpl">ŞABLON</span>'
                 : `<span class="mg-tag ${m === names.length ? 'ok' : 'no'}">${m}/${names.length} kolon eşleşti</span>`}
         <span class="mg-tag">${nf(satir)} satır</span>
@@ -8639,7 +8988,14 @@ function mgCardHtml(s, i, names) {
         <button class="mg-link mg-rm" type="button">kaldır</button>
       </div>
       <div class="mg-src-body">
-        ${isTpl ? `<div class="mg-line">Şablon kolonları yukarıda. Bu dosyanın başlıkları diğerlerinin oturacağı düzeni belirler.</div>` : `
+        ${isTpl ? `<div class="mg-line">
+          <label>Başlık satırı <input type="number" class="mg-hr" min="1" max="${s.raw.length}" value="${s.hr + 1}"></label>
+          <span>Şablon kolonları yukarıda; bu dosyanın başlıkları düzeni belirler.</span>
+        </div>` : `
+        <div class="mg-line">
+          <label>Başlık satırı <input type="number" class="mg-hr" min="1" max="${s.raw.length}" value="${s.hr + 1}"></label>
+          <span>başlıklar: ${esc(mgNames(s).slice(0, 6).join(' · '))}${mgNames(s).length > 6 ? ' …' : ''}</span>
+        </div>
         <div class="mg-line">
           <button class="mg-link mg-tg" type="button">${s.open ? 'eşleştirmeyi gizle' : 'eşleştirmeyi göster / düzelt'}</button>
           ${ex.length ? `<span>şablona girmeyen kolon: ${esc(ex.map(u => u.name).join(', '))}</span>` : ''}
@@ -8700,6 +9056,15 @@ function mgWire(names) {
       MG.srcs.forEach(x => { x.locked = false; });
       mgRemap(); renderMerge();
     });
+    const hr = card.querySelector('.mg-hr');
+    if (hr) hr.addEventListener('change', function () {
+      s.hr = Math.max(0, (parseInt(this.value, 10) || 1) - 1);
+      s.hrSet = true;
+      mgKurT(s);
+      s.locked = false;
+      if (i === MG.tpl) MG.srcs.forEach(x => { x.locked = false; });
+      mgRemap(); renderMerge();
+    });
     const tg = card.querySelector('.mg-tg');
     if (tg) tg.addEventListener('click', () => { s.open = !s.open; renderMerge(); });
     card.querySelectorAll('.mg-sel').forEach(sel => {
@@ -8735,11 +9100,19 @@ function mgRowsAoa(res) {
    model, rapor ve Power BI akışının tamamı olduğu gibi çalışır. */
 function mgToStudio() {
   const res = mgBuild();
-  if (!res || !res.rows.length) return;
+  if (!res || (!res.rows.length && !(res.ham && res.sayfalar.length))) return;
   S.fileName = mgOutName();
+  if (MG.mod === 'ham') {
+    loadSheets(res.sayfalar.map(sh => ({ name: sh.ad, rows: sh.rows })), 0, true);
+    location.hash = '#/studyo';
+    return;
+  }
   if (MG.mod === 'sayfa') {
     const head = mgRowsAoa(res)[0];
-    const sheets = mgSayfalar(res).list.map(sh => ({ name: sh.ad, rows: [head].concat(sh.rows.map(x => x.vals.slice())) }));
+    const sheets = mgSayfalar(res).list.map(sh => ({
+      name: sh.ad,
+      rows: [head].concat(sh.rows.map(x => res.withSrc ? x.vals.concat([x.src]) : x.vals.slice()))
+    }));
     loadSheets(sheets, 0, true);
   } else {
     loadSheets([{ name: 'Birleşik', rows: mgRowsAoa(res) }], 0, true);
@@ -8749,7 +9122,7 @@ function mgToStudio() {
 
 async function mgDownload() {
   const res = mgBuild();
-  if (!res || !res.rows.length) return;
+  if (!res || (!res.rows.length && !res.ham)) return;
   const err = $('#mgDlErr');
   err.innerHTML = '';
   if (!indirmeIzni(err)) return;
@@ -8765,10 +9138,30 @@ async function mgDownload() {
     const book = xBook();
     // Excel Tablosu (ListObject) DEĞİL: düz hücreler.
     // Filtre ve donuk başlık kalır; mavi şeritli tablo biçimi gelmez.
-    if (MG.mod === 'sayfa') {
+    if (MG.mod === 'ham') {
+      // Biçimiyle kopyala: sayfaların ham XML'i taşınır; renk, çerçeve,
+      // birleştirilmiş hücre ve kolon genişliği korunur. Ham veri yoksa
+      // (CSV gibi) değer bazlı yazıma düşülür.
+      const secili = MG.srcs.filter(s => s.on !== false);
+      if (secili.length && secili.every(s => s.buf)) {
+        indir(await mgHamKopyala(secili), mgOutName());
+        $('#mgMsg').textContent = secili.length + ' sayfa biçimiyle birlikte taşındı.';
+        btn.disabled = false; btn.textContent = eski;
+        return;
+      }
+      res.sayfalar.forEach(sh => book.sheet(sh.ad, sh.rows, { freezeHeader: false }));
+    } else if (MG.mod === 'sayfa') {
+      // Başlıkta olan her kolonun satırda da karşılığı olmalı: kaynak ve denetim
+      // değerleri sayfa modunda eklenmiyordu, başlıklar boş kolona bakıyordu.
       const head = rows[0];
+      const denetim = MG.dup && res.dup;
       mgSayfalar(res).list.forEach(sh => {
-        const r = [head].concat(sh.rows.map(x => x.vals.slice()));
+        const r = [head].concat(sh.rows.map(x => {
+          const line = x.vals.slice();
+          if (res.withSrc) line.push(x.src);
+          if (denetim) line.push(x.dup ? 'TEKRAR' : '');
+          return line;
+        }));
         book.sheet(sh.ad, r, { autoFilter: true, freezeHeader: true });
       });
     } else {
@@ -8798,14 +9191,17 @@ async function mgHandleFiles(list) {
         hatalar.push(`${esc(file.name)} çok büyük (sınır ${MAX_FILE_MB} MB)`); return;
       }
       const isCsv = /\.(csv|tsv|txt)$/i.test(file.name);
+      // Ham baytlar saklanır: "olduğu gibi taşı" modu sayfanın XML'ini kopyalıyor.
+      const buf = isCsv ? null : await file.arrayBuffer();
       const sheets = isCsv
         ? [{ name: file.name.replace(/\.[^.]+$/, ''), rows: parseCSV(await file.text()) }]
-        : await readXlsx(await file.arrayBuffer());
+        : await readXlsx(buf);
       const multi = sheets.length > 1;
       sheets.forEach(sh => {
         if (!sh.rows.length) { if (multi) atlanan.push(sh.name); return; }
         const s = mgSource(file.name, sh.name, sh.rows, multi, !isCsv);
         if (!s.t.fields.length || !s.t.dataRowCount) { if (multi) atlanan.push(sh.name); return; }
+        s.buf = buf;
         slots[fi].push(s);
       });
       if (!slots[fi].length && !multi) hatalar.push(esc(file.name) + ' içinde tablo biçiminde veri bulunamadı');
@@ -8854,6 +9250,330 @@ async function mgHandleFiles(list) {
     MG.srcs = []; MG.tpl = 0; MG.dupKey = -1; mgErr(''); renderMerge();
   });
 })();
+
+/* ============================================================
+   SAYFAYI OLDUĞU GİBİ KOPYALA (biçimiyle birlikte)
+   Hücreleri yeniden yazmak renk, çerçeve, birleştirilmiş hücre ve
+   kolon genişliğini kaybettiriyordu. Burada sayfanın HAM XML'i
+   taşınır; biçim de onunla birlikte gelir.
+
+   İşin püf noktası stil indeksleri: her dosyanın kendi styles.xml'i
+   var ve hücreler oraya indeksle bakar. Yabancı dosyanın stilleri
+   tabanın sonuna eklenir, kopyalanan sayfadaki s="N" değerleri de
+   o kadar kaydırılır. Ortak metin tablosu (sharedStrings) ise
+   taşınmaz — kopyalanan sayfadaki metinler satır içine gömülür.
+   ============================================================ */
+
+/* Tüm zip girdilerini döndürür (sitenin unzip'i yalnız birkaçını alır) */
+async function mgUnzipAll(buf) {
+  const b = new Uint8Array(buf);
+  let eocd = -1;
+  for (let i = b.length - 22; i >= Math.max(0, b.length - 66000); i--) {
+    if (u32(b, i) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error('Geçerli bir .xlsx arşivi değil.');
+  const count = u16(b, eocd + 10);
+  let p = u32(b, eocd + 16);
+  const out = {};
+  for (let n = 0; n < count && p + 46 <= b.length; n++) {
+    if (u32(b, p) !== 0x02014b50) break;
+    const method = u16(b, p + 10), csize = u32(b, p + 20);
+    const nameLen = u16(b, p + 28), extraLen = u16(b, p + 30), cmtLen = u16(b, p + 32);
+    const lho = u32(b, p + 42);
+    const name = new TextDecoder().decode(b.subarray(p + 46, p + 46 + nameLen));
+    p += 46 + nameLen + extraLen + cmtLen;
+    if (name.endsWith('/')) continue;
+    if (u32(b, lho) !== 0x04034b50) continue;
+    const dataStart = lho + 30 + u16(b, lho + 26) + u16(b, lho + 28);
+    const raw = b.subarray(dataStart, dataStart + csize);
+    out[name] = method === 0 ? raw : await inflateRaw(raw);
+  }
+  return out;
+}
+
+const mgDec = b => new TextDecoder().decode(b);
+/* Bir koleksiyonun doğrudan çocuklarını eleman metni olarak ayırır */
+/* DİKKAT: koleksiyonun çocuk etiketi adından türetilemez —
+   <cellXfs> içindeki eleman <cellXf> değil <xf>'tir. Bunu türetmeye
+   çalışmak cellXfs'i boş sanıp bütün stilleri siliyordu. */
+const MG_COCUK = { numFmts: 'numFmt', fonts: 'font', fills: 'fill', borders: 'border',
+                   cellXfs: 'xf', cellStyleXfs: 'xf' };
+function mgOgeler(xml, tag) {
+  const blok = xml.match(new RegExp('<' + tag + '(?:\\s[^>]*)?>([\\s\\S]*?)</' + tag + '>'));
+  if (!blok) return [];
+  const tek = MG_COCUK[tag] || tag.replace(/s$/, '');
+  const re = new RegExp('<' + tek + '\\b(?:[^>]*?/>|[^>]*>[\\s\\S]*?</' + tek + '>)', 'g');
+  return blok[1].match(re) || [];
+}
+function mgAttr(el, ad) {
+  const m = el.match(new RegExp(ad + '="([^"]*)"'));
+  return m ? m[1] : null;
+}
+function mgSetAttr(el, ad, deger) {
+  return el.match(new RegExp(ad + '="[^"]*"'))
+    ? el.replace(new RegExp(ad + '="[^"]*"'), ad + '="' + deger + '"')
+    : el.replace(/^<(\w+)/, '<$1 ' + ad + '="' + deger + '"');
+}
+
+/* ---- Tema renkleri ----------------------------------------------------
+   Gri başlık şeridi gibi dolgular styles.xml'de renk değeriyle değil
+   theme="1" tint="0.4999" diye durur; karşılığı xl/theme/theme1.xml'de.
+   Tema parçası çıktıya konmazsa o hücreler BEYAZ görünür. Taban dosyanın
+   teması çıktıya taşınır; teması farklı olan yabancı dosyaların tema
+   renkleri de kendi temasından çözülüp düz RGB'ye çevrilir. */
+const MG_TEMA_SIRA = ['lt1', 'dk1', 'lt2', 'dk2',
+                      'accent1', 'accent2', 'accent3', 'accent4', 'accent5', 'accent6',
+                      'hlink', 'folHlink'];
+function mgTemaPalet(themeXml) {
+  const blok = (themeXml.match(/<a:clrScheme[\s\S]*?<\/a:clrScheme>/) || [''])[0];
+  const bul = ad => {
+    const m = blok.match(new RegExp('<a:' + ad + '>[\\s\\S]*?<\\/a:' + ad + '>'));
+    if (!m) return null;
+    const s = m[0].match(/srgbClr val="([0-9A-Fa-f]{6})"/);
+    if (s) return s[1].toUpperCase();
+    const y = m[0].match(/lastClr="([0-9A-Fa-f]{6})"/);
+    return y ? y[1].toUpperCase() : null;
+  };
+  return MG_TEMA_SIRA.map(bul);
+}
+/* ECMA-376 tint: HSL'e çevir, açıklığı kaydır, geri dön */
+function mgTint(hex, tint) {
+  if (!hex) return null;
+  if (!tint) return hex;
+  const r = parseInt(hex.slice(0, 2), 16) / 255,
+        g = parseInt(hex.slice(2, 4), 16) / 255,
+        b = parseInt(hex.slice(4, 6), 16) / 255;
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+  let h = 0, s = 0, l = (mx + mn) / 2;
+  if (mx !== mn) {
+    const d = mx - mn;
+    s = l > .5 ? d / (2 - mx - mn) : d / (mx + mn);
+    h = mx === r ? ((g - b) / d + (g < b ? 6 : 0)) : mx === g ? ((b - r) / d + 2) : ((r - g) / d + 4);
+    h /= 6;
+  }
+  l = tint < 0 ? l * (1 + tint) : l * (1 - tint) + tint;
+  const h2 = (p, q, t) => {
+    if (t < 0) t += 1; if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  let R, G, B;
+  if (!s) { R = G = B = l; }
+  else {
+    const q = l < .5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+    R = h2(p, q, h + 1 / 3); G = h2(p, q, h); B = h2(p, q, h - 1 / 3);
+  }
+  const iki = v => ('0' + Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).toUpperCase()).slice(-2);
+  return iki(R) + iki(G) + iki(B);
+}
+/* styles.xml içindeki theme="N" renklerini düz rgb'ye çevirir */
+function mgTemaCoz(xml, palet) {
+  return xml.replace(/<(color|fgColor|bgColor)\b([^>]*)\/>/g, (tam, etiket, oz) => {
+    const t = oz.match(/\stheme="(\d+)"/);
+    if (!t) return tam;
+    const temel = palet[+t[1]];
+    if (!temel) return tam;
+    const tn = oz.match(/\stint="([-\d.eE]+)"/);
+    const renk = mgTint(temel, tn ? parseFloat(tn[1]) : 0);
+    const kalan = oz.replace(/\stheme="\d+"/, '').replace(/\stint="[-\d.eE]+"/, '')
+                    .replace(/\srgb="[^"]*"/, '');
+    return '<' + etiket + ' rgb="FF' + renk + '"' + kalan + '/>';
+  });
+}
+
+/* Yabancı stilleri tabana ekler, indeks kaydırma haritasını döndürür */
+function mgStilBirlestir(taban, yabanci) {
+  const bF = mgOgeler(taban, 'fonts'), bL = mgOgeler(taban, 'fills'),
+        bB = mgOgeler(taban, 'borders'), bX = mgOgeler(taban, 'cellXfs'),
+        bN = mgOgeler(taban, 'numFmts');
+  const yF = mgOgeler(yabanci, 'fonts'), yL = mgOgeler(yabanci, 'fills'),
+        yB = mgOgeler(yabanci, 'borders'), yX = mgOgeler(yabanci, 'cellXfs'),
+        yN = mgOgeler(yabanci, 'numFmts');
+
+  let sonNumFmt = 164;
+  bN.forEach(e => { const id = +mgAttr(e, 'numFmtId'); if (id >= sonNumFmt) sonNumFmt = id + 1; });
+  const nfMap = {};
+  const yeniN = yN.map(e => {
+    const eski = +mgAttr(e, 'numFmtId');
+    if (eski < 164) return null;                       // yerleşik biçimler taşınmaz
+    nfMap[eski] = sonNumFmt++;
+    return mgSetAttr(e, 'numFmtId', nfMap[eski]);
+  }).filter(Boolean);
+
+  const oF = bF.length, oL = bL.length, oB = bB.length, oX = bX.length;
+  const yeniX = yX.map(e => {
+    let x = e;
+    const f = +mgAttr(x, 'fontId'), l = +mgAttr(x, 'fillId'), b2 = +mgAttr(x, 'borderId');
+    const nf = +mgAttr(x, 'numFmtId');
+    if (isFinite(f)) x = mgSetAttr(x, 'fontId', f + oF);
+    if (isFinite(l)) x = mgSetAttr(x, 'fillId', l + oL);
+    if (isFinite(b2)) x = mgSetAttr(x, 'borderId', b2 + oB);
+    if (isFinite(nf) && nf >= 164) x = mgSetAttr(x, 'numFmtId', nfMap[nf] === undefined ? 0 : nfMap[nf]);
+    return x;
+  });
+
+  const yaz = (xml, tag, liste) => {
+    if (!liste.length) return xml;                   // boşsa dokunma
+    const hepsi = liste.join('');
+    if (xml.match(new RegExp('<' + tag + '(?:\\s[^>]*)?>[\\s\\S]*?</' + tag + '>'))) {
+      return xml.replace(new RegExp('<' + tag + '(?:\\s[^>]*)?>([\\s\\S]*?)</' + tag + '>'),
+        '<' + tag + ' count="' + liste.length + '">' + hepsi + '</' + tag + '>');
+    }
+    return xml;
+  };
+  let yeni = taban;
+  yeni = yaz(yeni, 'fonts', bF.concat(yF));
+  yeni = yaz(yeni, 'fills', bL.concat(yL));
+  yeni = yaz(yeni, 'borders', bB.concat(yB));
+  yeni = yaz(yeni, 'cellXfs', bX.concat(yeniX));
+  const tumN = bN.concat(yeniN);
+  if (tumN.length) {
+    yeni = yeni.match(/<numFmts(?:\s[^>]*)?>[\s\S]*?<\/numFmts>/)
+      ? yaz(yeni, 'numFmts', tumN)
+      : yeni.replace(/<fonts/, '<numFmts count="' + tumN.length + '">' + tumN.join('') + '</numFmts><fonts');
+  }
+  return { xml: yeni, xfOfset: oX };
+}
+
+/* Kopyalanan sayfadaki stil indekslerini kaydırır ve ortak metinleri gömer */
+function mgSayfaCevir(sheetXml, xfOfset, ortak) {
+  let x = sheetXml.replace(/\ss="(\d+)"/g, (m, n) => ' s="' + (+n + xfOfset) + '"');
+  x = x.replace(/<c([^>]*?)\st="s"([^>]*?)>\s*<v>(\d+)<\/v>/g, (m, a, b, i) => {
+    const metin = ortak[+i] === undefined ? '' : ortak[+i];
+    return '<c' + a + ' t="inlineStr"' + b + '><is><t xml:space="preserve">' + xEsc(metin) + '</t></is>';
+  });
+  return x;
+}
+
+/* Kopyalanan sayfada, taşımadığımız parçalara giden bağlantıları temizler.
+   pageSetup'ın r:id'si yazıcı ayarları parçasını gösterir; parça yoksa
+   Excel dosyayı "onarılması gerek" diye açar. Kâğıt boyu/ölçek kalır. */
+function mgSayfaTemizle(xml) {
+  return xml
+    .replace(/(<pageSetup\b[^>]*?)\s+r:id="[^"]*"/g, '$1')
+    .replace(/<legacyDrawing\b[^>]*\/>/g, '')
+    .replace(/<drawing\b[^>]*\/>/g, '')
+    .replace(/<picture\b[^>]*\/>/g, '')
+    .replace(/<oleObjects[\s\S]*?<\/oleObjects>/g, '')
+    .replace(/<hyperlinks[\s\S]*?<\/hyperlinks>/g, '');
+}
+
+/* Kaynakları biçimiyle birlikte tek kitapta toplar */
+async function mgHamKopyala(secili) {
+  const kitaplar = new Map();                       // dosya adı → { parcalar, ss, sayfaYolu }
+  for (const s of secili) {
+    if (kitaplar.has(s.file)) continue;
+    if (!s.buf) throw new Error(s.file + ' için ham veri yok — dosyayı yeniden yükleyin.');
+    const parcalar = await mgUnzipAll(s.buf);
+    const wb = mgDec(parcalar['xl/workbook.xml'] || new Uint8Array());
+    const rels = parcalar['xl/_rels/workbook.xml.rels']
+      ? mgDec(parcalar['xl/_rels/workbook.xml.rels']) : '';
+    const rMap = {};
+    (rels.match(/<Relationship\s[^>]*\/>/g) || []).forEach(r => {
+      rMap[mgAttr(r, 'Id')] = (mgAttr(r, 'Target') || '').replace(/^\/?xl\//, '').replace(/^\.\//, '');
+    });
+    const yol = {}, sira = {};
+    (wb.match(/<sheet\s[^>]*\/>/g) || []).forEach((sh, i) => {
+      const ad = unesc(mgAttr(sh, 'name') || ('Sayfa' + (i + 1)));
+      const rid = mgAttr(sh, 'r:id') || mgAttr(sh, 'id');
+      yol[ad] = 'xl/' + (rMap[rid] || ('worksheets/sheet' + (i + 1) + '.xml'));
+      sira[ad] = i;                                   // yazdırma alanı bu indekse bağlı
+    });
+    const ss = parcalar['xl/sharedStrings.xml']
+      ? parseSharedStrings(mgDec(parcalar['xl/sharedStrings.xml'])) : [];
+    kitaplar.set(s.file, { parcalar, ss, yol, sira, wb });
+  }
+
+  const taban = kitaplar.get(secili[0].file);
+  let stil = taban.parcalar['xl/styles.xml'] ? mgDec(taban.parcalar['xl/styles.xml']) : X_STYLES;
+  const tabanTema = taban.parcalar['xl/theme/theme1.xml'] ? mgDec(taban.parcalar['xl/theme/theme1.xml']) : '';
+  const ofsetler = new Map([[secili[0].file, 0]]);
+  for (const [ad, k] of kitaplar) {
+    if (ad === secili[0].file) continue;
+    let y = k.parcalar['xl/styles.xml'] ? mgDec(k.parcalar['xl/styles.xml']) : X_STYLES;
+    const yTema = k.parcalar['xl/theme/theme1.xml'] ? mgDec(k.parcalar['xl/theme/theme1.xml']) : '';
+    /* teması tabandan farklıysa tema renklerini kendi temasından çöz */
+    if (yTema && yTema !== tabanTema) y = mgTemaCoz(y, mgTemaPalet(yTema));
+    const r = mgStilBirlestir(stil, y);
+    stil = r.xml;
+    ofsetler.set(ad, r.xfOfset);
+  }
+
+  const adlar = mgHamAdlar();
+  const sayfalar = [];
+  secili.forEach(s => {
+    const k = kitaplar.get(s.file);
+    const yol = k.yol[s.sheetRaw];
+    if (!yol || !k.parcalar[yol]) return;
+    let xml = mgDec(k.parcalar[yol]);
+    const ofs = ofsetler.get(s.file) || 0;
+    if (s.file !== secili[0].file) xml = mgSayfaCevir(xml, ofs, k.ss);
+    xml = mgSayfaTemizle(xml);
+    sayfalar.push({ ad: adlar[s.id], xml, kitap: k, kaynakAd: s.sheetRaw });
+  });
+  if (!sayfalar.length) throw new Error('Kopyalanacak sayfa bulunamadı.');
+
+  const girdiler = [];
+  const ctypes = X_XML +
+    '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+    '<Default Extension="xml" ContentType="application/xml"/>' +
+    `<Override PartName="/xl/workbook.xml" ContentType="${X_CT}.sheet.main+xml"/>` +
+    sayfalar.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="${X_CT}.worksheet+xml"/>`).join('') +
+    `<Override PartName="/xl/styles.xml" ContentType="${X_CT}.styles+xml"/>` +
+    (tabanTema ? '<Override PartName="/xl/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>' : '') +
+    (taban.parcalar['xl/sharedStrings.xml'] ? `<Override PartName="/xl/sharedStrings.xml" ContentType="${X_CT}.sharedStrings+xml"/>` : '') +
+    '</Types>';
+  girdiler.push(['[Content_Types].xml', ctypes, true]);
+  girdiler.push(['_rels/.rels', X_XML +
+    `<Relationships xmlns="${X_NS_PR}"><Relationship Id="rId1" Type="${X_NS_R}/officeDocument" Target="xl/workbook.xml"/></Relationships>`, true]);
+
+  /* Yazdırma alanı ve yinelenen başlık satırları workbook.xml'de
+     _xlnm.Print_Area / _xlnm.Print_Titles adlarında durur, sayfaya
+     localSheetId ile bağlanır. Taşınmazsa Excel'de görünüş aynı ama
+     çıktı sayfanın tamamını basar. Dış kitaba bakan diğer adlar
+     (SUM('[1]...')) taşınmaz — bağlantı gitmiş, #REF verirdi. */
+  const adTanimlari = sayfalar.map((sh, i) => {
+    const kwb = (sh.kitap && sh.kitap.wb) || '';
+    const kIdx = sh.kitap && sh.kitap.sira ? sh.kitap.sira[sh.kaynakAd] : undefined;
+    if (kIdx === undefined) return '';
+    return (kwb.match(/<definedName\s[^>]*>[\s\S]*?<\/definedName>/g) || []).map(dn => {
+      const ad = mgAttr(dn, 'name') || '';
+      if (!/^_xlnm\./.test(ad)) return '';
+      if (+mgAttr(dn, 'localSheetId') !== kIdx) return '';
+      const govde = dn.replace(/^<definedName\s[^>]*>/, '').replace(/<\/definedName>$/, '');
+      /* sayfa adı değişmiş olabilir (ör. "(2)" eki) — başvuruyu yenile */
+      const yeniAd = "'" + sh.ad.replace(/'/g, "''") + "'";
+      const duzeltilmis = govde.replace(/(^|,)\s*(?:'(?:[^']|'')*'|[^!,]+)!/g, (m, on) => on + yeniAd + '!');
+      return `<definedName name="${xEsc(ad)}" localSheetId="${i}">${xEsc(unesc(duzeltilmis))}</definedName>`;
+    }).join('');
+  }).join('');
+
+  const wbXml = X_XML + `<workbook xmlns="${X_NS}" xmlns:r="${X_NS_R}"><sheets>` +
+    sayfalar.map((sh, i) => `<sheet name="${xEsc(sh.ad)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') +
+    '</sheets>' + (adTanimlari ? '<definedNames>' + adTanimlari + '</definedNames>' : '') +
+    '</workbook>';
+  girdiler.push(['xl/workbook.xml', wbXml, true]);
+
+  const relXml = X_XML + `<Relationships xmlns="${X_NS_PR}">` +
+    sayfalar.map((_, i) => `<Relationship Id="rId${i + 1}" Type="${X_NS_R}/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') +
+    `<Relationship Id="rId${sayfalar.length + 1}" Type="${X_NS_R}/styles" Target="styles.xml"/>` +
+    (tabanTema ? `<Relationship Id="rId${sayfalar.length + 2}" Type="${X_NS_R}/theme" Target="theme/theme1.xml"/>` : '') +
+    (taban.parcalar['xl/sharedStrings.xml']
+      ? `<Relationship Id="rId${sayfalar.length + 3}" Type="${X_NS_R}/sharedStrings" Target="sharedStrings.xml"/>` : '') +
+    '</Relationships>';
+  girdiler.push(['xl/_rels/workbook.xml.rels', relXml, true]);
+  girdiler.push(['xl/styles.xml', stil, true]);
+  if (tabanTema) girdiler.push(['xl/theme/theme1.xml', taban.parcalar['xl/theme/theme1.xml'], true]);
+  if (taban.parcalar['xl/sharedStrings.xml']) {
+    girdiler.push(['xl/sharedStrings.xml', taban.parcalar['xl/sharedStrings.xml'], true]);
+  }
+  sayfalar.forEach((sh, i) => girdiler.push(['xl/worksheets/sheet' + (i + 1) + '.xml', sh.xml, true]));
+
+  return new Blob([await xZip(girdiler)], { type: X_CT + '.sheet' });
+}
 
 
 /* ============================================================
