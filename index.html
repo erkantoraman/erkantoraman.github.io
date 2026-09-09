@@ -1820,6 +1820,12 @@ pre.code .f { color: var(--s7); font-weight: 500; }
 #v-merge .mg-acts { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; margin: 1.25rem 0 0 }
 #v-merge .mg-empty { padding: 2rem .95rem; text-align: center; color: var(--ink-3) }
 #v-merge .mg-link { background: none; border: none; color: var(--accent-hi); font: inherit; text-decoration: underline; cursor: pointer; padding: 0 }
+#v-merge .mg-sheets { padding: .8rem .95rem; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: .4rem; align-items: center }
+#v-merge .mg-sheets-h { width: 100%; margin: 0 0 .2rem; font-size: .8rem; color: var(--muted) }
+#v-merge .mg-sheet { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem;
+  border: 1px solid var(--line-strong); padding: .2rem .5rem; background: var(--surface-2) }
+#v-merge .mg-sheet i { font-style: normal; font-weight: 700; color: var(--accent); font-size: .72rem }
+#v-merge .mg-sheet b { font-weight: 400; font-size: .74rem; color: var(--muted) }
 
 /* ============================================================
    MUTABAKAT (#/mutabakat) — hepsi #v-recon içinde kapsamlı
@@ -8250,7 +8256,8 @@ function initCVControls() {
    Böylece birleştirme, stüdyonun gördüğü veriyle birebir aynı veriyi görür.
    ============================================================ */
 
-const MG = { srcs: [], tpl: 0, source: true, append: false, dup: true, dupKey: -1 };
+const MG = { srcs: [], tpl: 0, source: true, append: false, dup: true, dupKey: -1,
+             mod: 'tek', sirala: true, tarihKol: -1 };
 let mgUid = 0;
 
 const mgBlank = v => v === null || v === undefined || String(v).trim() === '';
@@ -8342,7 +8349,7 @@ function mgBuild() {
     });
   }
   const onCount = MG.srcs.filter(s => s.on).length;
-  const withSrc = MG.source && onCount > 1;
+  const withSrc = MG.mod === 'tek' && MG.source && onCount > 1;
 
   const rows = [];
   let agg = 0;
@@ -8363,7 +8370,7 @@ function mgBuild() {
       ex.forEach(u => { if (!mgBlank(r[u.c])) extra[u.name] = r[u.c]; });
       if (!any && !Object.keys(extra).length) return;
       added.forEach(n => vals.push(extra[n] === undefined ? '' : extra[n]));
-      rows.push({ vals, src: s.name, dup: false });
+      rows.push({ vals, src: s.name, sheet: mgSayfaAd(s), dup: false });
     });
   });
 
@@ -8386,6 +8393,95 @@ function mgBuild() {
   }
 
   return { cols: cols.concat(added), tplCount: cols.length, addedCount: added.length, rows, dup, agg, withSrc };
+}
+
+/* Sayfa adı: çok sayfalı dosyada sayfa adı, tekse dosya adı (uzantısız) */
+function mgSayfaAd(s) {
+  const ad = s.sheet ? s.sheet : s.file.replace(/\.[^.]+$/, '');
+  return String(ad).trim().slice(0, 31) || 'Sayfa';
+}
+
+/* Tarih kolonu: değerlerinin çoğu tarihe çözülen ilk kolon */
+/* DİKKAT: çıplak sayıyı tarihe çevirmeyiz. "25000 kg" Excel seri numarası
+   aralığına düşüyor ve tonaj kolonu tarih sanılıyordu. Gerçek tarih kolonu
+   zaten Date olarak okunur; metin tarihler ayrıca ayrıştırılır. */
+function mgTarih(v) {
+  if (v instanceof Date) return isNaN(v) ? null : v;
+  if (typeof v === 'string') {
+    const a = v.match(/(\d{4})-(\d{2})-(\d{2})/);
+    if (a) return new Date(+a[1], +a[2] - 1, +a[3]);
+    const b = v.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
+    if (b) { let y = +b[3]; if (y < 100) y += 2000; return new Date(y, +b[2] - 1, +b[1]); }
+  }
+  return null;
+}
+function mgTarihKol(res) {
+  if (MG.tarihKol >= 0 && MG.tarihKol < res.cols.length) return MG.tarihKol;
+  let best = -1, bestScore = 0;
+  for (let c = 0; c < res.tplCount; c++) {
+    let ok = 0, n = 0;
+    for (let i = 0; i < res.rows.length && n < 40; i++) {
+      const v = res.rows[i].vals[c];
+      if (mgBlank(v)) continue;
+      n++; if (mgTarih(v)) ok++;
+    }
+    if (n < 3 || ok / n <= 0.7) continue;
+    // adı "tarih"/"date" geçen kolon öncelikli
+    const ad = mgNorm(res.cols[c]);
+    const sc = 10 + (ad.indexOf('tarih') >= 0 || ad.indexOf('date') >= 0 ? 20 : 0);
+    if (sc > bestScore) { bestScore = sc; best = c; }
+  }
+  return best;
+}
+
+/* Sayfa ADINDAKİ tarih: "1.8.2026", "2026-08-01", "AGUSTOS 2026", "temmuz".
+   Alfabetik sıralama burada yanlış sonuç verir (1, 10, 2…), o yüzden ad ayrıştırılır. */
+var MG_AYLAR = ['ocak', 'subat', 'mart', 'nisan', 'mayis', 'haziran',
+                'temmuz', 'agustos', 'eylul', 'ekim', 'kasim', 'aralik'];
+function mgAdTarih(ad) {
+  const s = String(ad);
+  let m = s.match(/(\d{1,2})[.\-_\/](\d{1,2})[.\-_\/](\d{2,4})/);       // 1.8.2026
+  if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(y, +m[2] - 1, +m[1]); }
+  m = s.match(/(\d{4})[.\-_](\d{1,2})(?:[.\-_](\d{1,2}))?/);              // 2026-08-01
+  if (m) return new Date(+m[1], +m[2] - 1, +(m[3] || 1));
+  const n = mgNorm(ad);
+  for (let i = 0; i < 12; i++) {                                            // AGUSTOS 2026
+    if (n.indexOf(MG_AYLAR[i]) >= 0) {
+      const y = n.match(/(20\d{2})/);
+      return new Date(y ? +y[1] : new Date().getFullYear(), i, 1);
+    }
+  }
+  return null;
+}
+
+/* Satırları kaynak kaynak sayfalara böler; istenirse sayfaları tarihe göre sıralar */
+function mgSayfalar(res) {
+  const g = new Map();
+  res.rows.forEach(r => {
+    if (!g.has(r.sheet)) g.set(r.sheet, []);
+    g.get(r.sheet).push(r);
+  });
+  const tk = mgTarihKol(res);
+  const list = [...g.entries()].map(([ad, rows]) => {
+    let min = null, max = null;
+    if (tk >= 0) rows.forEach(r => {
+      const d = mgTarih(r.vals[tk]);
+      if (!d) return;
+      if (min === null || d < min) min = d;
+      if (max === null || d > max) max = d;
+    });
+    const adT = mgAdTarih(ad);
+    return { ad, rows, min, max, sira: min !== null ? min : adT, adT };
+  });
+  if (MG.sirala) {
+    list.sort((a, b) => {
+      if (a.sira === null && b.sira === null) return 0;
+      if (a.sira === null) return 1;          // tarihi çözülemeyen sayfa sona
+      if (b.sira === null) return -1;
+      return a.sira - b.sira;
+    });
+  }
+  return { list, tk };
 }
 
 function mgOutName() {
@@ -8454,7 +8550,15 @@ function renderMerge() {
         <span class="mg-tag">${res.rows.length ? nf(res.rows.length) + ' satır' : '0 satır'}</span>
         <span class="spacer"></span>
         <div class="mg-opts">
-          <label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu</label>
+          <label>Çıktı:
+            <select id="mgMod">
+              <option value="tek"${MG.mod === 'tek' ? ' selected' : ''}>Tek sayfa — alt alta</option>
+              <option value="sayfa"${MG.mod === 'sayfa' ? ' selected' : ''}>Her kaynak ayrı sayfa</option>
+            </select>
+          </label>
+          ${MG.mod === 'sayfa' ? `<label><input type="checkbox" id="mgSirala"${MG.sirala ? ' checked' : ''}> Sayfaları tarihe göre sırala</label>` : ''}
+          <label${MG.mod === 'sayfa' ? '' : ' hidden'}><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''} hidden></label>
+          ${MG.mod === 'tek' ? `<label><input type="checkbox" id="mgOptSrc"${MG.source ? ' checked' : ''}> Kaynak kolonu</label>` : ''}
           <label><input type="checkbox" id="mgOptAdd"${MG.append ? ' checked' : ''}> Eşleşmeyen kolonları ekle</label>
           <label><input type="checkbox" id="mgOptDup"${MG.dup ? ' checked' : ''}> Tekrarları işaretle</label>
           <label>şuna göre:
@@ -8465,12 +8569,27 @@ function renderMerge() {
           </label>
         </div>
       </div>
+      ${MG.mod === 'sayfa' ? mgSayfaListesi(res) : ''}
       <div class="mg-scroll">${mgTableHtml(res)}</div>
       <div class="mg-foot">${res.rows.length > 60 ? 'İlk 60 satır gösteriliyor · çıktıda ' + nf(res.rows.length) + ' satırın tamamı olacak. ' : ''}${res.agg ? nf(res.agg) + ' ara/genel toplam satırı ayıklandı. ' : ''}Dosya adı: ${esc(mgOutName())}</div>
     </div>
 `;
 
   mgWire(names);
+}
+
+function mgSayfaListesi(res) {
+  const s = mgSayfalar(res);
+  const tarih = s.tk >= 0 ? res.cols[s.tk] : null;
+  return `<div class="mg-sheets">
+    <p class="mg-sheets-h">${s.list.length} sayfa üretilecek${
+      !MG.sirala ? ' · yükleme sırası korunuyor'
+      : tarih ? ' · sıralama: ' + esc(tarih) + ' kolonundaki tarihe göre'
+      : (s.list.some(x => x.adT) ? ' · sıralama: sayfa adındaki tarihe göre'
+                                 : ' · tarih bulunamadı, yükleme sırası korunuyor')}</p>
+    ${s.list.map((x, i) => `<span class="mg-sheet"><i>${i + 1}</i>${esc(x.ad)}<b>${nf(x.rows.length)} satır${x.min ? ' · ' + x.min.toLocaleDateString(TR) + (x.max && +x.max !== +x.min ? ' – ' + x.max.toLocaleDateString(TR) : '')
+                    : (x.adT ? ' · addan: ' + x.adT.toLocaleDateString(TR) : '')}</b></span>`).join('')}
+  </div>`;
 }
 
 function mgStat(k, v, u, bad) {
@@ -8569,7 +8688,11 @@ function mgWire(names) {
     });
   });
 
-  $('#mgOptSrc').addEventListener('change', function () { MG.source = this.checked; renderMerge(); });
+  const src = $('#mgOptSrc');
+  if (src) src.addEventListener('change', function () { MG.source = this.checked; renderMerge(); });
+  $('#mgMod').addEventListener('change', function () { MG.mod = this.value; renderMerge(); });
+  const sr = $('#mgSirala');
+  if (sr) sr.addEventListener('change', function () { MG.sirala = this.checked; renderMerge(); });
   $('#mgOptAdd').addEventListener('change', function () { MG.append = this.checked; renderMerge(); });
   $('#mgOptDup').addEventListener('change', function () { MG.dup = this.checked; renderMerge(); });
   $('#mgDupKey').addEventListener('change', function () { MG.dupKey = +this.value; renderMerge(); });
@@ -8591,7 +8714,13 @@ function mgToStudio() {
   const res = mgBuild();
   if (!res || !res.rows.length) return;
   S.fileName = mgOutName();
-  loadSheets([{ name: 'Birleşik', rows: mgRowsAoa(res) }], 0, true);
+  if (MG.mod === 'sayfa') {
+    const head = mgRowsAoa(res)[0];
+    const sheets = mgSayfalar(res).list.map(sh => ({ name: sh.ad, rows: [head].concat(sh.rows.map(x => x.vals.slice())) }));
+    loadSheets(sheets, 0, true);
+  } else {
+    loadSheets([{ name: 'Birleşik', rows: mgRowsAoa(res) }], 0, true);
+  }
   location.hash = '#/studyo';
 }
 
@@ -8613,7 +8742,15 @@ async function mgDownload() {
     const book = xBook();
     // Excel Tablosu (ListObject) DEĞİL: düz hücreler.
     // Filtre ve donuk başlık kalır; mavi şeritli tablo biçimi gelmez.
-    book.sheet('Birleşik', rows, { autoFilter: true, freezeHeader: true });
+    if (MG.mod === 'sayfa') {
+      const head = rows[0];
+      mgSayfalar(res).list.forEach(sh => {
+        const r = [head].concat(sh.rows.map(x => x.vals.slice()));
+        book.sheet(sh.ad, r, { autoFilter: true, freezeHeader: true });
+      });
+    } else {
+      book.sheet('Birleşik', rows, { autoFilter: true, freezeHeader: true });
+    }
     indir(await book.blob(), mgOutName());
     $('#mgMsg').textContent = nf(res.rows.length) + ' satır indirildi.';
   } catch (e) {
