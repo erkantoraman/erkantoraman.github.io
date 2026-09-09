@@ -8460,7 +8460,9 @@ async function mgDownload() {
       res.rows.forEach((r, i) => rows[i + 1].push(r.dup ? 'TEKRAR' : ''));
     }
     const book = xBook();
-    book.sheet('Birleşik', rows, { table: true, freezeHeader: true });
+    // Excel Tablosu (ListObject) DEĞİL: düz hücreler.
+    // Filtre ve donuk başlık kalır; mavi şeritli tablo biçimi gelmez.
+    book.sheet('Birleşik', rows, { autoFilter: true, freezeHeader: true });
     indir(await book.blob(), mgOutName());
     $('#mgMsg').textContent = nf(res.rows.length) + ' satır indirildi.';
   } catch (e) {
