@@ -8480,12 +8480,17 @@ function mgHamBuild() {
    ================================================= */
 const MG_FORM_COLS = ['Tarih', 'Şantiye', 'S.NO', 'Araç', 'Güzergâh', 'Sefer'];
 
+/* TARİHLER HEP UTC GECE YARISI (bkz. mutabakattaki aynı not): Excel seri
+   numarası UTC tabanlı; yerel gece yarısı üretirsek UTC+3'te tarih dosyada
+   bir gün geri düşüyor. Metinden üretilen her tarih buradan geçer. */
+const mgGun = (y, ay, g) => new Date(Date.UTC(y, ay, g));
+
 function mgFormTarih(s) {
   for (let r = 0; r < Math.min(s.raw.length, 12); r++) {
     for (const v of (s.raw[r] || [])) {
       if (mgBlank(v)) continue;
       const m = String(v).match(/tar[iİı]h\s*[:.\-]?\s*(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/i);
-      if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(y, +m[2] - 1, +m[1]); }
+      if (m) { let y = +m[3]; if (y < 100) y += 2000; return mgGun(y, +m[2] - 1, +m[1]); }
     }
   }
   return mgAdTarih(s.sheet) || mgAdTarih(s.file);
@@ -8611,12 +8616,12 @@ function mgKisalt(a, s) {
    aralığına düşüyor ve tonaj kolonu tarih sanılıyordu. Gerçek tarih kolonu
    zaten Date olarak okunur; metin tarihler ayrıca ayrıştırılır. */
 function mgTarih(v) {
-  if (v instanceof Date) return isNaN(v) ? null : v;
+  if (v instanceof Date) return isNaN(v) ? null : mgGun(v.getUTCFullYear(), v.getUTCMonth(), v.getUTCDate());
   if (typeof v === 'string') {
     const a = v.match(/(\d{4})-(\d{2})-(\d{2})/);
-    if (a) return new Date(+a[1], +a[2] - 1, +a[3]);
+    if (a) return mgGun(+a[1], +a[2] - 1, +a[3]);
     const b = v.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
-    if (b) { let y = +b[3]; if (y < 100) y += 2000; return new Date(y, +b[2] - 1, +b[1]); }
+    if (b) { let y = +b[3]; if (y < 100) y += 2000; return mgGun(y, +b[2] - 1, +b[1]); }
   }
   return null;
 }
@@ -8646,14 +8651,14 @@ var MG_AYLAR = ['ocak', 'subat', 'mart', 'nisan', 'mayis', 'haziran',
 function mgAdTarih(ad) {
   const s = String(ad);
   let m = s.match(/(\d{1,2})[.\-_\/](\d{1,2})[.\-_\/](\d{2,4})/);       // 1.8.2026
-  if (m) { let y = +m[3]; if (y < 100) y += 2000; return new Date(y, +m[2] - 1, +m[1]); }
+  if (m) { let y = +m[3]; if (y < 100) y += 2000; return mgGun(y, +m[2] - 1, +m[1]); }
   m = s.match(/(\d{4})[.\-_](\d{1,2})(?:[.\-_](\d{1,2}))?/);              // 2026-08-01
-  if (m) return new Date(+m[1], +m[2] - 1, +(m[3] || 1));
+  if (m) return mgGun(+m[1], +m[2] - 1, +(m[3] || 1));
   const n = mgNorm(ad);
   for (let i = 0; i < 12; i++) {                                            // AGUSTOS 2026
     if (n.indexOf(MG_AYLAR[i]) >= 0) {
       const y = n.match(/(20\d{2})/);
-      return new Date(y ? +y[1] : new Date().getFullYear(), i, 1);
+      return mgGun(y ? +y[1] : new Date().getFullYear(), i, 1);
     }
   }
   return null;
@@ -8801,8 +8806,8 @@ function mgSayfaListesi(res) {
       : tarih ? ' · sıralama: ' + esc(tarih) + ' kolonundaki tarihe göre'
       : (s.list.some(x => x.adT) ? ' · sıralama: sayfa adındaki tarihe göre'
                                  : ' · tarih bulunamadı, yükleme sırası korunuyor')}</p>
-    ${s.list.map((x, i) => `<span class="mg-sheet"><i>${i + 1}</i>${esc(x.ad)}<b>${nf(x.rows.length)} satır${x.min ? ' · ' + x.min.toLocaleDateString(TR) + (x.max && +x.max !== +x.min ? ' – ' + x.max.toLocaleDateString(TR) : '')
-                    : (x.adT ? ' · addan: ' + x.adT.toLocaleDateString(TR) : '')}</b></span>`).join('')}
+    ${s.list.map((x, i) => `<span class="mg-sheet"><i>${i + 1}</i>${esc(x.ad)}<b>${nf(x.rows.length)} satır${x.min ? ' · ' + x.min.toLocaleDateString(TR, { timeZone: 'UTC' }) + (x.max && +x.max !== +x.min ? ' – ' + x.max.toLocaleDateString(TR, { timeZone: 'UTC' }) : '')
+                    : (x.adT ? ' · addan: ' + x.adT.toLocaleDateString(TR, { timeZone: 'UTC' }) : '')}</b></span>`).join('')}
   </div>`;
 }
 
@@ -8953,7 +8958,7 @@ function mgFormKart(s, i) {
       <span class="mg-name">${esc(s.file)}</span>
       ${s.sheet ? `<span class="mg-tag sheet">sayfa: ${esc(s.sheet)}</span>` : ''}
       ${c ? `<span class="mg-tag ok">${nf(c.length)} sefer kaydı</span>` : '<span class="mg-tag no">form yapısı çözülemedi</span>'}
-      ${t ? `<span class="mg-tag">${t.toLocaleDateString(TR)}</span>` : '<span class="mg-tag no">tarih bulunamadı</span>'}
+      ${t ? `<span class="mg-tag">${t.toLocaleDateString(TR, { timeZone: 'UTC' })}</span>` : '<span class="mg-tag no">tarih bulunamadı</span>'}
       <span class="spacer"></span>
       <button class="mg-link mg-rm" data-i="${i}" type="button">kaldır</button>
     </div>
@@ -9623,19 +9628,29 @@ function mrNum(v) {
   const n = parseFloat(s);
   return isFinite(n) ? n : null;
 }
+/* TARİHLER HEP UTC GECE YARISI OLUR — bu kural bozulursa çıktı bir gün kayar.
+   Excel'in seri numarası UTC tabanlıdır (serialToDate ve yazıcıdaki X_EPOCH
+   öyle kurulmuş). Metinden `new Date(y, m, d)` ile üretilen tarih ise YEREL
+   gece yarısıdır; UTC+3'te bu, bir önceki günün 21:00'ı demektir. Seri
+   numarasına çevrilince tam sayının altında kalır, Excel de gün biçiminde
+   gösterirken aşağı yuvarlar: ekranda doğru görünen tarih dosyada bir gün
+   geri düşer. Bu yüzden metin de, Date nesnesi de UTC'ye sabitlenir. */
+const mrGun = (y, ay, g) => new Date(Date.UTC(y, ay, g));
+
 function mrDate(v) {
-  if (v instanceof Date) return isNaN(v) ? null : new Date(v.getFullYear(), v.getMonth(), v.getDate());
+  if (v instanceof Date) return isNaN(v) ? null : mrGun(v.getUTCFullYear(), v.getUTCMonth(), v.getUTCDate());
   if (typeof v === 'number' && v > 20000 && v < 80000) return serialToDate(v);
   if (typeof v === 'string') {
     const m = v.match(/(\d{4})-(\d{2})-(\d{2})/);
-    if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+    if (m) return mrGun(+m[1], +m[2] - 1, +m[3]);
     const t = v.match(/(\d{1,2})[.\-\/](\d{1,2})[.\-\/](\d{2,4})/);
-    if (t) { let y = +t[3]; if (y < 100) y += 2000; return new Date(y, +t[2] - 1, +t[1]); }
+    if (t) { let y = +t[3]; if (y < 100) y += 2000; return mrGun(y, +t[2] - 1, +t[1]); }
   }
   return null;
 }
-const mrDay = d => d ? Math.round(d.getTime() / 86400000) : null;
-const mrFmt = d => d ? d.toLocaleDateString(TR) : '';
+const mrDay = d => d ? Math.floor(d.getTime() / 86400000) : null;
+/* Ekranda da UTC okunur; yoksa gösterim ile dosya birbirini tutmaz. */
+const mrFmt = d => d ? d.toLocaleDateString(TR, { timeZone: 'UTC' }) : '';
 const mrPlate = v => mrBlank(v) ? '' : String(v).toUpperCase().replace(/[\s\-.]/g, '');
 
 /* ---------- kolon tanıma ---------- */
